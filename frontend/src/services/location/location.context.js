@@ -27,8 +27,8 @@ export const LocationContextProvider = ({ children }) => {
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation([location.coords.latitude, location.coords.longitude]);
+      let location2 = await Location.getCurrentPositionAsync({});
+      setLocation([location2.coords.latitude, location2.coords.longitude]);
     })();
   }, []);
 
