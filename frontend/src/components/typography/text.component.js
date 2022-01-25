@@ -15,7 +15,7 @@ const body = (theme) => `
 
 const hint = (theme) => `
 font-size: ${theme.fontSizes.body};
-font-family: ${theme.fonts.body};
+font-family: ${theme.fonts.bold};
 font-weight: ${theme.fontWeights.bold};
 color: #FAFAFA;
 flex-wrap: wrap;
@@ -33,7 +33,7 @@ const caption = (theme) => `
 `;
 
 const label = (theme) => `
-    font-family: ${theme.fonts.heading};
+    font-family: ${theme.fonts.body};
     font-size: ${theme.fontSizes.body};
     font-weight: ${theme.fontWeights.medium};
 `;

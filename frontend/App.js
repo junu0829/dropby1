@@ -9,6 +9,8 @@ import { Navigation } from "./src/infrastructure/navigation";
 import {
   useFonts as useNanum,
   NanumGothic_400Regular,
+  NanumGothic_700Bold,
+  NanumGothic_800ExtraBold,
 } from "@expo-google-fonts/nanum-gothic";
 import {
   useFonts as useDongle,
@@ -23,6 +25,8 @@ import { LocationContextProvider } from "./src/services/location/location.contex
 export default function App() {
   const [nanumLoaded] = useNanum({
     NanumGothic_400Regular,
+    NanumGothic_700Bold,
+    NanumGothic_800ExtraBold,
   });
   const [dongleLoaded] = useDongle({
     Dongle_400Regular,

@@ -14,88 +14,73 @@ import { useEffect, useContext, useState } from "react";
 
 import { LocationContext } from "../../../services/location/location.context";
 import { LinearGradient } from "expo-linear-gradient";
-import styled from "styled-components/native";
+
 import { SvgXml } from "react-native-svg";
 import ExpoStatusBar from "expo-status-bar/build/ExpoStatusBar";
+import {
+  Map,
+  SearchContainer,
+  Container,
+  PlaceContainer,
+  ContainerEnd,
+  TextContainer,
+  styles,
+  PlaceNameContainer,
+} from "./map.screen.styles";
 
 //assets
 import cloud from "../../../../assets/cloud.png";
 import write from "../../../../assets/write";
-
+import LocationSelected from "../../../../assets/LocationSelected";
 import currentLocation from "../../../../assets/currentLocation";
-import { theme } from "../../../infrastructure/theme";
 
 import currentLocationIcon from "../../../../assets/currentLocationIcon";
-
-//style 정의하는 부분: css style로 벡틱안에서 정의하게 됨
-const Map = styled(MapView)`
-  height: 100%;
-  width: 100%;
-`;
-const SearchContainer = styled.View`
-  position: absolute;
-  z-index: 999;
-
-  width: 100%;
-`;
-
-const Container = styled.View`
-position: absolute
-flex-direction: row
-padding: ${(props) => props.theme.space[3]};
-  z-index: 998;
-  bottom: 67px
-
-  width: 100%;
- 
-`;
-
-const PlaceContainer = styled.View`
-position: absolute
-backgroundColor: #FAFAFA
-flex-direction: row
-padding: ${(props) => props.theme.space[3]};
-  z-index: 998;
-  bottom: 0px
-height: 165px
-  width: 100%;
- 
-`;
-
-const ContainerEnd = styled.View`
-  justify-content: flex-end;
-  flex-direction: row;
-  z-index: 999;
-  bottom: -8px
-  flex: 1;
-  width: 100%;
-`;
-
-const TextContainer = styled.View`
-flex:3
-flex-direction: column;
-justify-content: flex-end;
-top: 80px
-align-items: center;
-  width: 100%;
-  z-index: 999;
- 
-`;
 
 //아래부터 맵 불러오는 단
 
 export const MapScreen = ({ navigation, route }) => {
-  const { location } = useContext(LocationContext);
-
   let { width, height } = Dimensions.get("window");
   const ASPECT_RATIO = width / height;
   const LATITUDE_DELTA = 0.008; //Very high zoom level
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+
+  const { location } = useContext(LocationContext);
   const [writeMode, setWriteMode] = useState(false);
   const [pressedLocation, setPressedLocation] = useState({
     latitude: location[0],
     longitude: location[1],
   });
+  const [pressedAddressID, setPressedAddressID] = useState(null);
+  const [pressedAddress, setPressedAddress] = useState(null);
+  const [pressedAddressName, setPressedAddressName] = useState("새로운 장소");
+  // 위치 주소 구하는 함수
+  const getAddress = () => {
+    fetch(
+      "https://maps.googleapis.com/maps/api/geocode/json?address=" +
+        pressedLocation.latitude +
+        "," +
+        pressedLocation.longitude +
+        "&key=AIzaSyDQqeh7m2DxLefbyzLfl4DK96j0-2NZASY"
+    )
+      .then((response) => response.json())
+      .then((responseJson) => {
+        setPressedAddressID(responseJson.results[0].place_id);
+      });
+  };
+
+  const getPlaceDetail = () => {
+    fetch(
+      `https://maps.googleapis.com/maps/api/place/details/json?place_id=${pressedAddressID}&key=AIzaSyBYyWlYdAIT4Ur2d2QsPfD_OcZKutxOl0c`
+    )
+      .then((response) => response.json())
+      .then((responseJson) => {
+        setPressedAddress(responseJson.result.formatted_address);
+        setPressedAddressName(responseJson.result.name);
+      })
+      .then(fetch());
+  };
+  getAddress();
+  getPlaceDetail();
 
   return (
     <>
@@ -105,17 +90,17 @@ export const MapScreen = ({ navigation, route }) => {
         <LinearGradient
           colors={[
             "rgba(166, 110, 159, 0.9)",
-            "rgba(166, 110, 159, 0.7)",
-            "rgba(166, 110, 159, 0.2)",
+            "rgba(166, 110, 159, 0.65)",
+            "rgba(166, 110, 159, 0.15)",
             "rgba(166, 110, 159, 0.0)",
           ]}
           style={styles.background}
-          locations={[0.1, 0.3, 0.7, 1.0]}
+          locations={[0.1, 0.45, 0.77, 1.0]}
         >
           {/* writeMode이지 않을 경우에 cloud */}
-          {!writeMode && (
+          {!writeMode ? (
             <Image source={cloud} height={542} width={158}></Image>
-          )}
+          ) : null}
         </LinearGradient>
 
         {writeMode && (
@@ -128,7 +113,6 @@ export const MapScreen = ({ navigation, route }) => {
         provider={PROVIDER_GOOGLE}
         onPress={(event) => {
           setPressedLocation(event.nativeEvent.coordinate);
-          console.log(pressedLocation);
         }}
         region={{
           // 지도의 센터값 위도 경도
@@ -140,8 +124,6 @@ export const MapScreen = ({ navigation, route }) => {
         }}
       >
         <MapView.Marker
-          key={"you"}
-          title={"you"}
           //맵 마커의 위치
           coordinate={{
             latitude: location[0],
@@ -150,6 +132,17 @@ export const MapScreen = ({ navigation, route }) => {
         >
           <SvgXml xml={currentLocationIcon} width={30} height={30}></SvgXml>
         </MapView.Marker>
+        {writeMode ? (
+          <MapView.Marker
+            //장소선택 마커의 위치
+            coordinate={{
+              latitude: pressedLocation.latitude,
+              longitude: pressedLocation.longitude,
+            }}
+          >
+            <SvgXml xml={LocationSelected} width={33} height={45}></SvgXml>
+          </MapView.Marker>
+        ) : null}
       </Map>
       {/* 아래부터 writemode일경우에 아래에 박스 뜨게 하는 코드 */}
       {!writeMode ? (
@@ -177,19 +170,13 @@ export const MapScreen = ({ navigation, route }) => {
           >
             <SvgXml xml={write} width={56} height={65} />
           </TouchableOpacity>
-          <Text>{[pressedLocation.latitude, pressedLocation.longitude]}</Text>
+
+          <PlaceNameContainer>
+            <Text variant="label">{pressedAddressName}</Text>
+            <Text variant="caption">{pressedAddress}</Text>
+          </PlaceNameContainer>
         </PlaceContainer>
       )}
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  background: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    height: 230,
-  },
-});
