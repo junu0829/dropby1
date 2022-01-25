@@ -13,14 +13,14 @@ export const colors = {
     error: "#D0421B",
     success: "#138000",
   },
-
+  //a,b,c,d는 각기 다른 보랏빛 컬러입니다
   bg: {
     a: "#A66E9F",
     b: "#922A92",
     c: "#7D2D9D",
     d: "#5A3084",
-    primary: "#262626",
-    secondary: "#757575",
+    white: "#FAFAFA",
+    secondary: "#FBFAFA",
   },
   text: {
     primary: "#262626",

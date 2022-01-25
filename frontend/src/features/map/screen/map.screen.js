@@ -26,6 +26,10 @@ import {
   TextContainer,
   styles,
   PlaceNameContainer,
+  PlaceContainer2,
+  PlaceContainer3,
+  SelectButtonContainer,
+  BackButtonContainer,
 } from "./map.screen.styles";
 
 //assets
@@ -35,6 +39,8 @@ import LocationSelected from "../../../../assets/LocationSelected";
 import currentLocation from "../../../../assets/currentLocation";
 
 import currentLocationIcon from "../../../../assets/currentLocationIcon";
+import selectButton from "../../../../assets/selectButton";
+import backButton from "../../../../assets/backButton";
 
 //아래부터 맵 불러오는 단
 
@@ -163,18 +169,32 @@ export const MapScreen = ({ navigation, route }) => {
         </Container>
       ) : (
         <PlaceContainer>
-          <TouchableOpacity
-            onPress={() => {
-              setWriteMode(false);
-            }}
-          >
-            <SvgXml xml={write} width={56} height={65} />
-          </TouchableOpacity>
-
-          <PlaceNameContainer>
-            <Text variant="label">{pressedAddressName}</Text>
-            <Text variant="caption">{pressedAddress}</Text>
-          </PlaceNameContainer>
+          <PlaceContainer2>
+            <BackButtonContainer
+              onPress={() => {
+                setWriteMode(false);
+              }}
+            >
+              <SvgXml xml={backButton} width={50} height={50} />
+            </BackButtonContainer>
+            <PlaceNameContainer>
+              <Text variant="label">{pressedAddressName}</Text>
+              <Text variant="caption">{pressedAddress}</Text>
+            </PlaceNameContainer>
+          </PlaceContainer2>
+          <PlaceContainer3>
+            <SelectButtonContainer
+              onPress={() => {
+                navigation.navigate("WriteScreen", [
+                  { pressedAddress },
+                  { pressedAddressName },
+                  { pressedLocation },
+                ]);
+              }}
+            >
+              <SvgXml xml={selectButton} width={170} height={32}></SvgXml>
+            </SelectButtonContainer>
+          </PlaceContainer3>
         </PlaceContainer>
       )}
     </>

@@ -6,6 +6,7 @@ import { LogIn } from "../../features/login/LogIn";
 import { Loading } from "../../components/Loading";
 import { NavigationContainer } from "@react-navigation/native";
 import { MapScreen } from "../../features/map/screen/map.screen";
+import { WriteScreen } from "../../features/write/screen/write.screen";
 
 const IntroStack = createStackNavigator();
 
@@ -16,6 +17,7 @@ export const IntroNavigator = () => {
         <IntroStack.Screen name="LogIn" component={LogIn} />
         <IntroStack.Screen name="Loading" component={Loading} />
         <IntroStack.Screen name="MapScreen" component={MapScreen} />
+        <IntroStack.Screen name="WriteScreen" component={WriteScreen} />
       </IntroStack.Navigator>
     </NavigationContainer>
   );

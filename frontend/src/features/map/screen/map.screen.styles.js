@@ -1,5 +1,6 @@
 import styled from "styled-components/native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import selectButton from "../../../../assets/selectButton";
 
 import { StyleSheet } from "react-native";
 
@@ -28,13 +29,28 @@ padding: ${(props) => props.theme.space[3]};
 
 export const PlaceContainer = styled.View`
 position: absolute
-backgroundColor: #FAFAFA
-flex-direction: row
+backgroundColor:  ${(props) => props.theme.colors.bg.secondary};
+flex-direction: column
 padding: ${(props) => props.theme.space[3]};
   z-index: 998;
   bottom: 0px
 height: 165px
   width: 100%;
+ 
+`;
+export const PlaceContainer2 = styled.View`
+
+flex-direction: row
+flex: 1
+ 
+`;
+
+export const PlaceContainer3 = styled.View`
+
+flex-direction: row
+justify-content:center
+flex: 1
+bottom: 30px
  
 `;
 
@@ -60,12 +76,20 @@ align-items: center;
 
 export const PlaceNameContainer = styled.View`
 flex:5
+left: 5px
 flex-direction: column;
 justify-content: flex-start;
 
 align-items: flex-start;
 
  
+`;
+export const SelectButtonContainer = styled.TouchableOpacity`
+  bottom: -50px;
+`;
+
+export const BackButtonContainer = styled.TouchableOpacity`
+  bottom: -6px;
 `;
 
 export const styles = StyleSheet.create({
