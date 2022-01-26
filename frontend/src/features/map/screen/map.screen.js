@@ -37,6 +37,7 @@ import cloud from "../../../../assets/cloud.png";
 import write from "../../../../assets/write";
 import LocationSelected from "../../../../assets/LocationSelected";
 import currentLocation from "../../../../assets/currentLocation";
+import cur from "../../../../assets/cur";
 
 import currentLocationIcon from "../../../../assets/currentLocationIcon";
 import selectButton from "../../../../assets/selectButton";
@@ -45,6 +46,7 @@ import backButton from "../../../../assets/backButton";
 //아래부터 맵 불러오는 단
 
 export const MapScreen = ({ navigation, route }) => {
+  const mapRef = React.createRef();
   let { width, height } = Dimensions.get("window");
   const ASPECT_RATIO = width / height;
   const LATITUDE_DELTA = 0.008; //Very high zoom level
@@ -82,9 +84,9 @@ export const MapScreen = ({ navigation, route }) => {
       .then((responseJson) => {
         setPressedAddress(responseJson.result.formatted_address);
         setPressedAddressName(responseJson.result.name);
-      })
-      .then(fetch());
+      });
   };
+
   getAddress();
   getPlaceDetail();
 
@@ -116,6 +118,10 @@ export const MapScreen = ({ navigation, route }) => {
         )}
       </SearchContainer>
       <Map
+        ref={mapRef}
+        showsUserLocation={true}
+        followsUserLocation={true}
+        showsCompass={true}
         provider={PROVIDER_GOOGLE}
         onPress={(event) => {
           setPressedLocation(event.nativeEvent.coordinate);
@@ -129,7 +135,8 @@ export const MapScreen = ({ navigation, route }) => {
           longitudeDelta: LONGITUDE_DELTA,
         }}
       >
-        <MapView.Marker
+        {/* <MapView.Marker
+          styles={{ zIndex: 1 }}
           //맵 마커의 위치
           coordinate={{
             latitude: location[0],
@@ -137,16 +144,17 @@ export const MapScreen = ({ navigation, route }) => {
           }}
         >
           <SvgXml xml={currentLocationIcon} width={30} height={30}></SvgXml>
-        </MapView.Marker>
+        </MapView.Marker> */}
         {writeMode ? (
           <MapView.Marker
+            styles={{ zIndex: 999 }}
             //장소선택 마커의 위치
             coordinate={{
               latitude: pressedLocation.latitude,
               longitude: pressedLocation.longitude,
             }}
           >
-            <SvgXml xml={LocationSelected} width={33} height={45}></SvgXml>
+            <SvgXml xml={LocationSelected} width={33.5} height={45}></SvgXml>
           </MapView.Marker>
         ) : null}
       </Map>
@@ -156,13 +164,28 @@ export const MapScreen = ({ navigation, route }) => {
           <TouchableOpacity
             onPress={() => {
               setWriteMode(true);
+              setPressedLocation({
+                latitude: location[0],
+                longitude: location[1],
+              });
+              console.log(location);
             }}
           >
             <SvgXml xml={write} width={56} height={65} />
           </TouchableOpacity>
 
           <ContainerEnd>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                mapRef.current.animateToRegion({
+                  // 현재위치 버튼
+                  latitude: location[0],
+                  longitude: location[1],
+                  latitudeDelta: LATITUDE_DELTA,
+                  longitudeDelta: LONGITUDE_DELTA,
+                });
+              }}
+            >
               <SvgXml xml={currentLocation} width={50} height={50} />
             </TouchableOpacity>
           </ContainerEnd>
