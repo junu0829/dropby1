@@ -17,17 +17,12 @@
     "ios": {
       "supportsTablet": true,
       "buildNumber": "1.0.0",
-      "bundleIdentifier": "com.dropby1.jun",
-      "config": {
-        "googleMaps": { "apiKey": "AIzaSyAIz9MbwUjvQn3NJAeW8SRLB1J5g8NB9XI" }
-      }
+      "bundleIdentifier": "com.dropby1.jun"
     },
     "android": {
       "package": "com.dropby1.jun",
       "versionCode": 1,
-      "config": {
-        "googleMaps": { "apiKey": "AIzaSyBYyWlYdAIT4Ur2d2QsPfD_OcZKutxOl0c" }
-      },
+
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"

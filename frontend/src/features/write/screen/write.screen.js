@@ -22,6 +22,7 @@ export const WriteScreen = ({ navigation, route }) => {
     setPlaceLatlng(route.params[2].pressedLocation);
     console.log(route);
   }, []);
+
   return (
     <>
       <SafeArea>
@@ -36,7 +37,7 @@ export const WriteScreen = ({ navigation, route }) => {
         <Text>{placeAddress}</Text>
 
         <View styles={styles.container}>
-          <TextInput placeholder="텍스트를 입력하세요"></TextInput>
+          <TextInput placeholder="텍스트를 입력"></TextInput>
         </View>
         <TouchableOpacity>
           <SvgXml xml={sendButton} width={86} height={44}></SvgXml>

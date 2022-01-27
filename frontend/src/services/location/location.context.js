@@ -7,10 +7,11 @@ import * as Location from "expo-location";
 export const LocationContext = React.createContext();
 
 export const LocationContextProvider = ({ children }) => {
-  const [location, setLocation] = useState([
-    37.58646601781994, 127.02913699768948,
-  ]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [location, setLocation] = useState(
+    [37.58646601781994, 127.02913699768948]
+    // null
+  );
+  const [isLoading, setIsLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState(null);
 
   useEffect(() => {
@@ -28,7 +29,12 @@ export const LocationContextProvider = ({ children }) => {
       }
 
       let location2 = await Location.getCurrentPositionAsync({});
-      setLocation([location2.coords.latitude, location2.coords.longitude]);
+
+      await setLocation([
+        location2.coords.latitude,
+        location2.coords.longitude,
+      ]);
+      await setIsLoading(false);
     })();
   }, []);
 
@@ -36,6 +42,8 @@ export const LocationContextProvider = ({ children }) => {
     <LocationContext.Provider
       value={{
         location,
+        errorMsg,
+        isLoading,
       }}
     >
       {children}
