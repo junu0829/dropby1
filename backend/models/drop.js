@@ -12,8 +12,12 @@ module.exports = (sequelize, DataTypes) => {
                 type:DataTypes.TEXT,
                 allowNull:false,
             },
-            coordinates: {
-                type:DataTypes.GEOMETRY('POINT'),
+            latitude: {
+                type:DataTypes.FLOAT,
+                allowNull:false,
+            },
+            longitude:{
+                type:DataTypes.FLOAT,
                 allowNull:false,
             }
         }
