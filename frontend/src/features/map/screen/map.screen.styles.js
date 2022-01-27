@@ -8,6 +8,7 @@ import { StyleSheet } from "react-native";
 export const Map = styled(MapView)`
   height: 100%;
   width: 100%;
+  z-index: 1;
 `;
 export const SearchContainer = styled.View`
   position: absolute;
@@ -20,7 +21,7 @@ export const Container = styled.View`
 position: absolute
 flex-direction: row
 padding: ${(props) => props.theme.space[3]};
-  z-index: 998;
+  z-index: 990;
   bottom: 67px
 
   width: 100%;
@@ -54,10 +55,16 @@ bottom: 30px
  
 `;
 
+export const CurrentLocationButton = styled.TouchableOpacity`
+  z-index: 999;
+`;
+export const WriteButton = styled.TouchableOpacity`
+  z-index: 999;
+`;
 export const ContainerEnd = styled.View`
   justify-content: flex-end;
   flex-direction: row;
-  z-index: 999;
+  z-index: 995;
   bottom: -8px
   flex: 1;
   width: 100%;

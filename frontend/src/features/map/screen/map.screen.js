@@ -31,6 +31,8 @@ import {
   PlaceContainer3,
   SelectButtonContainer,
   BackButtonContainer,
+  WriteButton,
+  CurrentLocationButton,
 } from "./map.screen.styles";
 
 //assets
@@ -42,15 +44,15 @@ import currentLocation from "../../../../assets/currentLocation";
 import selectButton from "../../../../assets/selectButton";
 import backButton from "../../../../assets/backButton";
 
-//아래부터 맵 불러오는 단
-
 export const MapScreen = ({ navigation, route }) => {
   const mapRef = React.createRef();
+  // 화면비율 조정하는 것
   let { width, height } = Dimensions.get("window");
   const ASPECT_RATIO = width / height;
   const LATITUDE_DELTA = 0.008; //Very high zoom level
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
+  ///////처음 데이터셋팅
   const { location, isLoading } = useContext(LocationContext);
 
   const [writeMode, setWriteMode] = useState(false);
@@ -80,7 +82,11 @@ export const MapScreen = ({ navigation, route }) => {
       )
         .then((response) => response.json())
         .then((responseJson) => {
-          setPressedAddressID(responseJson.results[0].place_id);
+          const responseResultsNumber = 0;
+
+          setPressedAddressID(
+            responseJson.results[responseResultsNumber].place_id
+          );
         });
     };
 
@@ -97,7 +103,7 @@ export const MapScreen = ({ navigation, route }) => {
 
     getAddress();
     getPlaceDetail();
-
+    //////////////////////////맵그리는 것 여기서부터 시작
     return (
       <>
         <ExpoStatusBar style="auto"></ExpoStatusBar>
@@ -124,107 +130,121 @@ export const MapScreen = ({ navigation, route }) => {
             </TextContainer>
           )}
         </SearchContainer>
-        <Map
-          ref={mapRef}
-          showsUserLocation={true}
-          showsCompass={true}
-          provider={PROVIDER_GOOGLE}
-          onPress={(event) => {
-            setPressedLocation(event.nativeEvent.coordinate);
-          }}
-          initialRegion={{
-            // 지도의 센터값 위도 경도
-            latitude: location[0],
-            longitude: location[1],
-            //ZoomLevel 아래에 있는 것은 건드리지 않아도 됨
-            latitudeDelta: LATITUDE_DELTA,
-            longitudeDelta: LONGITUDE_DELTA,
-          }}
-        >
-          {/* <MapView.Marker
-            styles={{ zIndex: 1 }}
-            //맵 마커의 위치
-            coordinate={{
-              latitude: location[0],
-              longitude: location[1],
-            }}
-          >
-            <SvgXml xml={currentLocationIcon} width={30} height={30}></SvgXml>
-          </MapView.Marker> */}
-          {writeMode ? (
-            <MapView.Marker
-              styles={{ zIndex: 999 }}
-              //장소선택 마커의 위치
-              coordinate={{
-                latitude: pressedLocation.latitude,
-                longitude: pressedLocation.longitude,
-              }}
-            >
-              <SvgXml xml={LocationSelected} width={33.5} height={45}></SvgXml>
-            </MapView.Marker>
-          ) : null}
-        </Map>
-        {/* 아래부터 writemode일경우에 아래에 박스 뜨게 하는 코드 */}
         {!writeMode ? (
-          <Container>
-            <TouchableOpacity
-              onPress={() => {
-                setWriteMode(true);
-
-                setPressedLocation({
-                  latitude: location[0],
-                  longitude: location[1],
-                });
+          ///////////////////////////여기서부터 기본 Map Mode/////////////////////////////////////////////////
+          <>
+            <Map
+              ref={mapRef}
+              showsUserLocation={true}
+              showsCompass={true}
+              provider={PROVIDER_GOOGLE}
+              // onPress={(event) => {
+              //   setPressedLocation(event.nativeEvent.coordinate);
+              // }}
+              initialRegion={{
+                // 지도의 센터값 위도 경도
+                latitude: location[0],
+                longitude: location[1],
+                //ZoomLevel 아래에 있는 것은 건드리지 않아도 됨
+                latitudeDelta: LATITUDE_DELTA,
+                longitudeDelta: LONGITUDE_DELTA,
               }}
-            >
-              <SvgXml xml={write} width={56} height={65} />
-            </TouchableOpacity>
-
-            <ContainerEnd>
-              <TouchableOpacity
+            ></Map>
+            <Container>
+              <WriteButton
                 onPress={() => {
-                  mapRef.current.animateToRegion({
-                    // 현재위치 버튼
+                  setWriteMode(true);
+
+                  setPressedLocation({
                     latitude: location[0],
                     longitude: location[1],
-                    latitudeDelta: LATITUDE_DELTA,
-                    longitudeDelta: LONGITUDE_DELTA,
                   });
                 }}
               >
-                <SvgXml xml={currentLocation} width={50} height={50} />
-              </TouchableOpacity>
-            </ContainerEnd>
-          </Container>
+                <SvgXml xml={write} width={56} height={65} />
+              </WriteButton>
+
+              <ContainerEnd>
+                <CurrentLocationButton
+                  onPress={() => {
+                    mapRef.current.animateToRegion({
+                      // 현재위치 버튼
+                      latitude: location[0],
+                      longitude: location[1],
+                      latitudeDelta: LATITUDE_DELTA,
+                      longitudeDelta: LONGITUDE_DELTA,
+                    });
+                  }}
+                >
+                  <SvgXml xml={currentLocation} width={50} height={50} />
+                </CurrentLocationButton>
+              </ContainerEnd>
+            </Container>
+          </>
         ) : (
-          <PlaceContainer>
-            <PlaceContainer2>
-              <BackButtonContainer
-                onPress={() => {
-                  setWriteMode(false);
+          ///////////////////////////여기서부터 writeMode/////////////////////////////////////////////////
+          <>
+            <Map
+              onLongPress={(event) => {
+                setPressedLocation(event.nativeEvent.coordinate);
+              }}
+              ref={mapRef}
+              showsUserLocation={true}
+              showsCompass={true}
+              provider={PROVIDER_GOOGLE}
+              initialRegion={{
+                // 지도의 센터값 위도 경도
+                latitude: location[0],
+                longitude: location[1],
+                //ZoomLevel 아래에 있는 것은 건드리지 않아도 됨
+                latitudeDelta: LATITUDE_DELTA,
+                longitudeDelta: LONGITUDE_DELTA,
+              }}
+            >
+              <MapView.Marker
+                styles={{ zIndex: 999 }}
+                //장소선택 마커의 위치
+                coordinate={{
+                  latitude: pressedLocation.latitude,
+                  longitude: pressedLocation.longitude,
                 }}
               >
-                <SvgXml xml={backButton} width={50} height={50} />
-              </BackButtonContainer>
-              <PlaceNameContainer>
-                <Text variant="label">{pressedAddressName}</Text>
-                <Text variant="caption">{pressedAddress}</Text>
-              </PlaceNameContainer>
-            </PlaceContainer2>
-            <PlaceContainer3>
-              <SelectButtonContainer
-                onPress={() => {
-                  navigation.navigate("WriteScreen", [
-                    { pressedAddress },
-                    { pressedAddressName },
-                    { pressedLocation },
-                  ]);
-                }}
-              >
-                <SvgXml xml={selectButton} width={170} height={32}></SvgXml>
-              </SelectButtonContainer>
-            </PlaceContainer3>
-          </PlaceContainer>
+                <SvgXml
+                  xml={LocationSelected}
+                  width={33.5}
+                  height={45}
+                ></SvgXml>
+              </MapView.Marker>
+            </Map>
+            <PlaceContainer>
+              <PlaceContainer2>
+                <BackButtonContainer
+                  onPress={() => {
+                    setWriteMode(false);
+                  }}
+                >
+                  <SvgXml xml={backButton} width={50} height={50} />
+                </BackButtonContainer>
+                <PlaceNameContainer>
+                  <Text variant="label">{pressedAddressName}</Text>
+                  <Text variant="caption">{pressedAddress}</Text>
+                </PlaceNameContainer>
+              </PlaceContainer2>
+              <PlaceContainer3>
+                <SelectButtonContainer
+                  onPress={() => {
+                    navigation.navigate("WriteScreen", [
+                      { pressedAddress },
+                      { pressedAddressName },
+                      { pressedLocation },
+                    ]);
+                  }}
+                >
+                  <SvgXml xml={selectButton} width={170} height={32}></SvgXml>
+                </SelectButtonContainer>
+              </PlaceContainer3>
+            </PlaceContainer>
+          </>
         )}
       </>
     );
