@@ -4,15 +4,21 @@ const app = express();
 const bodyParser = require('body-parser');
 const {sequelize} = require('./models/index'); 
 const router = require('./routes/index');
-
+const db = require('./config/db');
 //DB, 서버 등 보안 관련
 const dotenv = require('dotenv');
 dotenv.config(); 
 
 // DB와 동기화하기
-sequelize.sync().then( 
-    () => console.log('connected to database')
-).catch(err => console.error('occured error in database connecting', err))
+db.authenticate().then((result) => {
+    console.log("Connection established!");
+}).catch((error) => {
+    console.log("unable to connect to db: ", error)
+})
+db.sync({alter:true});
+// sequelize.sync().then( 
+//     () => console.log('connected to database')
+// ).catch(err => console.error('occured error in database connecting', err))
 
 // request body 안의 데이터를 json 형식으로 변환
 app.use(express.json());
