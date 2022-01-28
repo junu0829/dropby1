@@ -88,7 +88,7 @@ export const MapScreen = ({ navigation, route }) => {
           pressedLocation.latitude +
           "," +
           pressedLocation.longitude +
-          "&key=AIzaSyDQqeh7m2DxLefbyzLfl4DK96j0-2NZASY"
+          "&key"
       )
         .then((response) => response.json())
         .then((responseJson) => {
@@ -104,7 +104,7 @@ export const MapScreen = ({ navigation, route }) => {
 
     const getPlaceDetail = () => {
       fetch(
-        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${pressedAddressID}&key=AIzaSyBYyWlYdAIT4Ur2d2QsPfD_OcZKutxOl0c`
+        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${pressedAddressID}&key=`
       )
         .then((response) => response.json())
         .then(async (responseJson) => {
