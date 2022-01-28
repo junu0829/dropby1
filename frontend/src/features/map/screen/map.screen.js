@@ -100,7 +100,7 @@ export const MapScreen = ({ navigation, route }) => {
     const getPlaceDetail = () => {
       fetch(
 
-        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${pressedAddressID}&key=AOl0c`
+        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${pressedAddressID}&key=`
 =
       )
         .then((response) => response.json())
