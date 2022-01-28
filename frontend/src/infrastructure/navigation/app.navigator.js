@@ -6,8 +6,9 @@ import { LogIn } from "../../features/login/LogIn";
 import { Loading } from "../../components/Loading";
 import { NavigationContainer } from "@react-navigation/native";
 import { MapScreen } from "../../features/map/screen/map.screen";
-import { WriteScreen } from "../../features/map/screen/map.screen";
+import { WriteScreen } from "../../features/write/screen/write.screen";
 import DropsOnMap from '../../features/map/screen/map.screen.drops';
+
 const IntroStack = createStackNavigator();
 
 export const IntroNavigator = () => {

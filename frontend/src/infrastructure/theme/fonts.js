@@ -1,6 +1,8 @@
 export const fonts = {
   body: "NanumGothic_400Regular",
   icon: "Dongle_400Regular",
+  bold: "NanumGothic_700Bold",
+  extrabold: "NanumGothic_800ExtraBold",
 };
 
 export const fontWeights = {
@@ -12,7 +14,7 @@ export const fontWeights = {
 export const fontSizes = {
   caption: "12px",
   button: "14px",
-  body: "16px",
+  body: "18px",
   title: "20px",
   h5: "24px",
   h4: "34px",
