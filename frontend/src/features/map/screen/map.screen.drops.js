@@ -71,39 +71,16 @@ export default DropsOnMap = ({ navigation, route }) => {
                 method:'GET',
                 url:'http://192.168.0.18:3000/drops/'
             }).then((res) => {
-                console.log('##1111');
-                console.log('res is' + res );
-                console.log(res.data.data);
-                // console.log(res.status);
-                // console.log(res.statusText);
-                // console.log(res.request);
-                console.log('res.data is ' + res.data.data);
-                console.log('#2222222');
+
                 setDrops(res.data.data);
-                console.log('#3333333');
+
                 setLoading(false);
-                console.log('drops -----------')
-                console.log('#4444444444444')
-                console.log(drops);
 
             }).catch(error => console.log('error = ' + error));
-            // await axios.get('http://192.168.0.18:3000/drops/')
-            // .then(res => {
-            //     console.log('res : ' + res.body);
-            //     console.log('res.data : ' + res.data[1]);
-            //     setLoading(false);
-            //     console.log('drops -----------')
-            //     console.log(drops);
-            //     setDrops(res.data[1]);
-
-            // }).catch(error => console.log('error = ' + error));
-
         } catch(e) {
             console.log('catch error' + e);
         }
         setLoading(false);
-        console.log('drops2' + '---------------')
-        console.log(drops);
     };
 
     useEffect(() => {
@@ -149,27 +126,7 @@ export default DropsOnMap = ({ navigation, route }) => {
                     longitudeDelta: LONGITUDE_DELTA,
                 }}
             >
-
                 {dropsList(drops)}
-                {/* 이게 현재 위치 찍는 마커 */}
-                {/* {drops.map(drop => (
-                    <MapView.Marker
-                        key={drop.pk}
-                        title={drop.content}
-                        coordinate={{
-                            latitude:drop.latitude,
-                            longitude:drop.longitude
-                        }}
-                        ></MapView.Marker>
-                ))} */}
-                {/* <MapView.Marker
-                    key={"you"}
-                    title={"you"}
-                    coordinate={{
-                        latitude: location[0],
-                        longitude: location[1],
-                    }}
-                ></MapView.Marker> */}
             </Map>
             {/* + 버튼 부분  */}
             <Container>
@@ -179,9 +136,6 @@ export default DropsOnMap = ({ navigation, route }) => {
                 {/* 현재 위치로 이동하는 버튼 부분 */}
                 <ContainerEnd>
 
-                    {/* <TouchableOpacity>
-                        <SvgXml xml={currentLocation} width={50} height={50} />
-                    </TouchableOpacity> */}
                 </ContainerEnd>
             </Container>
         </>
