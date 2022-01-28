@@ -83,7 +83,7 @@ export const MapScreen = ({ navigation, route }) => {
           pressedLocation.latitude +
           "," +
           pressedLocation.longitude +
-          "&key=AIzaSyDQqeh7m2DxLefbyzLfl4DK96j0-2NZASY"
+          "&key"
       )
         .then((response) => response.json())
         .then((responseJson) => {
@@ -99,7 +99,9 @@ export const MapScreen = ({ navigation, route }) => {
 
     const getPlaceDetail = () => {
       fetch(
+
         `https://maps.googleapis.com/maps/api/place/details/json?place_id=${pressedAddressID}&key=AOl0c`
+=
       )
         .then((response) => response.json())
         .then(async (responseJson) => {
@@ -157,7 +159,7 @@ export const MapScreen = ({ navigation, route }) => {
           definedLocation.latitude +
           "," +
           definedLocation.longitude +
-          "&key=AIzaSyDQqeh7m2DxLefbyzLfl4DK96j0-2NZASY"
+          "&key"
       )
         .then((response) => response.json())
         .then((responseJson) => {
@@ -169,7 +171,7 @@ export const MapScreen = ({ navigation, route }) => {
 
     const getDefinedPlaceDetail = () => {
       fetch(
-        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${definedAddressID}&key=AIzautxOl0c`
+        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${definedAddressID}&key=`
       )
         .then((response) => response.json())
         .then(async (responseJson) => {
