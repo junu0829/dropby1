@@ -18,6 +18,7 @@ exports.newDrop = async(req, res, next) => {
 exports.getDrops = async(req, res, next) => {
     try {
         const drops = await dropServices.getDrops();
+        console.log('drops sent');
         res.json({
             msg: '전체 드롭 조회 완료',
             data:drops
