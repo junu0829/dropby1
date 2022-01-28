@@ -59,7 +59,7 @@ export default DropsOnMap = ({ navigation, route }) => {
     const [drops, setDrops] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
-
+// api에 요청 보내서 드롭들 반환받는 함수
     const fetchDrops = async() => {
         try {
             // 요청이 시작될 때는 error와 drops를 초기화
@@ -94,7 +94,7 @@ export default DropsOnMap = ({ navigation, route }) => {
     }
     if (!drops) {
         return null;
-    }
+    } // 반환받은 드롭들을 반복문을 통해 mapview.marker로 바꾸고, 반환하는 함수.
     const dropsList = (drops) => {
         return drops.map(drop => {
             return (<MapView.Marker
@@ -125,8 +125,9 @@ export default DropsOnMap = ({ navigation, route }) => {
                     latitudeDelta: LATITUDE_DELTA,
                     longitudeDelta: LONGITUDE_DELTA,
                 }}
-            >
-                {dropsList(drops)}
+            > 
+            {/* dropsList 부분에서 dropsList 함수의 반환값들을 렌더링한다. */}
+                {dropsList(drops)}    
             </Map>
             {/* + 버튼 부분  */}
             <Container>
