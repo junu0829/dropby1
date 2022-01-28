@@ -4,7 +4,7 @@ import { Dimensions, Image, View } from "react-native";
 
 import { Text } from "../../../components/typography/text.component";
 
-import { useEffect, useContext, useState, useMemo } from "react";
+import { useEffect, useContext, useState } from "react";
 
 import { LocationContext } from "../../../services/location/location.context";
 import { LinearGradient } from "expo-linear-gradient";
@@ -39,6 +39,7 @@ import selectButton from "../../../../assets/selectButton";
 import backButton from "../../../../assets/backButton";
 
 export const MapScreen = ({ navigation, route }) => {
+  const axios = require("axios");
   const mapRef = React.createRef();
   // 화면비율 조정하는 것
   let { width, height } = Dimensions.get("window");
@@ -58,30 +59,24 @@ export const MapScreen = ({ navigation, route }) => {
   });
   const [Markers, setMarkers] = useState([
     {
-      latitude: 37.58646601781994,
-      longitude: 127.02913699768948,
+      latitude: location[0],
+      longitude: location[1],
     },
   ]);
-  const [definedLocation, setDefinedLocation] = useState(null);
+
+  const [Drops, setDrops] = useState(null);
+
+  const [definedLocation, setDefinedLocation] = useState({
+    latitude: 37.58646601781994,
+    longitude: 127.02913699768948,
+  });
+  const [definedAddressID, setDefinedAddressID] = useState(null);
   const [pressedAddressID, setPressedAddressID] = useState(null);
   const [pressedAddress, setPressedAddress] = useState(null);
   const [pressedAddressName, setPressedAddressName] = useState("새로운 장소");
 
-  // const DefinedPlaceLoad = (responseJson) => {
-  //   for (let i = 0; i < 5; i++) {
-  //     //  if (responseJson.results[i].geomtry.location_type == "GEOMETRIC_CENTER") {}
-  //     if (
-  //       responseJson.results[i].geometry.location_type === "GEOMETRIC_CENTER"
-  //     ) {
-  //       setPressedAddressID(responseJson.results[i].place_id);
-  //       setDefinedLocation(responseJson.results[i].geometry.location);
-
-  //       break;
-  //     }
-  //   }
-  // };
-
   useEffect(() => {
+    /////정보가져오는 함수 정의
     const getAddress = () => {
       fetch(
         "https://maps.googleapis.com/maps/api/geocode/json?address=" +
@@ -104,7 +99,7 @@ export const MapScreen = ({ navigation, route }) => {
 
     const getPlaceDetail = () => {
       fetch(
-        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${pressedAddressID}&key=AIzaSyBYyWlYdAIT4Ur2d2QsPfD_OcZKutxOl0c`
+        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${pressedAddressID}&key=AOl0c`
       )
         .then((response) => response.json())
         .then(async (responseJson) => {
@@ -115,21 +110,86 @@ export const MapScreen = ({ navigation, route }) => {
 
     getAddress();
     getPlaceDetail();
+
     setMarkers([
       {
         latitude: pressedLocation.latitude,
         longitude: pressedLocation.longitude,
       },
     ]);
-    console.log("clicked");
+    console.log("longclicked");
   }, [pressedAddress, pressedAddressName, pressedAddressID, pressedLocation]);
+
+  useEffect(() => {
+    setWriteMode(false);
+  }, [route.params]);
+
+  useEffect(() => {
+    const LoadDrop = () => {
+      axios({
+        method: "get",
+        url: "http://localhost:3000/drops",
+      }).then((res) => {
+        console.log(res.data);
+      });
+    };
+    LoadDrop();
+  }, [Drops, axios]);
+
+  useEffect(() => {
+    const DefinedPlaceLoad = (responseJson) => {
+      for (let i = 0; i < 10; i++) {
+        //  if (responseJson.results[i].geomtry.location_type == "GEOMETRIC_CENTER") {}
+        if (
+          responseJson.results[i].geometry.location_type === "GEOMETRIC_CENTER"
+        ) {
+          setDefinedAddressID(responseJson.results[i].place_id);
+          setDefinedLocation(responseJson.results[i].geometry.location);
+
+          break;
+        }
+      }
+    };
+
+    const getDefinedAddress = () => {
+      fetch(
+        "https://maps.googleapis.com/maps/api/geocode/json?address=" +
+          definedLocation.latitude +
+          "," +
+          definedLocation.longitude +
+          "&key=AIzaSyDQqeh7m2DxLefbyzLfl4DK96j0-2NZASY"
+      )
+        .then((response) => response.json())
+        .then((responseJson) => {
+          // DefinedPlaceLoad(responseJson);
+
+          DefinedPlaceLoad();
+        });
+    };
+
+    const getDefinedPlaceDetail = () => {
+      fetch(
+        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${definedAddressID}&key=AIzautxOl0c`
+      )
+        .then((response) => response.json())
+        .then(async (responseJson) => {
+          await setPressedAddress(responseJson.result.formatted_address);
+          await setPressedAddressName(responseJson.result.name);
+        });
+    };
+    getDefinedAddress();
+    getDefinedPlaceDetail();
+
+    console.log("lightclicked");
+  }, [definedLocation, definedAddressID]);
+
+  ///////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////맵그리는 것 여기서부터 시작//////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////
 
   if (isLoading) {
     return <Loading />;
   } else {
-    /////정보가져오는 함수 정의
-
-    //////////////////////////맵그리는 것 여기서부터 시작
     return (
       <View onStartShouldSetResponder={() => {}}>
         <ExpoStatusBar style="auto" />
@@ -158,19 +218,25 @@ export const MapScreen = ({ navigation, route }) => {
         </SearchContainer>
 
         <Map
-          onPress={async (event) => {
+          onLongPress={async (event) => {
             await setPressedLocation(event.nativeEvent.coordinate);
             SetIsAddressLoading(false);
 
-            setMarkers([]);
+            setMarkers([
+              {
+                latitude: definedLocation.latitude,
+                longitude: definedLocation.longitude,
+              },
+            ]);
           }}
           ref={mapRef}
           showsUserLocation={true}
           showsCompass={true}
           provider={PROVIDER_GOOGLE}
-          // onPress={(event) => {
-          //   setPressedLocation(event.nativeEvent.coordinate);
-          // }}
+          onPress={async (event) => {
+            await setDefinedLocation(event.nativeEvent.coordinate);
+            setMarkers([]);
+          }}
           initialRegion={{
             // 지도의 센터값 위도 경도
             latitude: location[0],
@@ -202,6 +268,11 @@ export const MapScreen = ({ navigation, route }) => {
               <WriteButton
                 onPress={() => {
                   setWriteMode(true);
+                  setPressedLocation({
+                    latitude: location[0],
+                    longitude: location[1],
+                  });
+                  SetIsAddressLoading(false);
                 }}
               >
                 <SvgXml xml={write} width={56} height={65} />
@@ -242,7 +313,6 @@ export const MapScreen = ({ navigation, route }) => {
                 <PlaceNameContainer>
                   <Text variant="label">{pressedAddressName}</Text>
                   <Text variant="caption">{pressedAddress}</Text>
-                  <Text variant="caption">{isAddressLoading.toString()}</Text>
                 </PlaceNameContainer>
               </PlaceContainer2>
               <PlaceContainer3>

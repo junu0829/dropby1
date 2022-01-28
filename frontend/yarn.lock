@@ -3401,7 +3401,7 @@ expo-app-loading@~1.3.0:
   dependencies:
     expo-splash-screen "~0.14.0"
 
-expo-application@^4.0.1, expo-application@~4.0.1:
+expo-application@~4.0.1:
   version "4.0.1"
   resolved "https://registry.npmjs.org/expo-application/-/expo-application-4.0.1.tgz"
   integrity sha512-yZM/SrpWdi84m5+5F3VDfhrMZOz/uKwXcgBhOP1wzfXt0otGSRW1V5tM+a0sgaKZsDRCGojTU7Jm73BVwwVrwg==
