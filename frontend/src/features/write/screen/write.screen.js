@@ -31,16 +31,16 @@ export const WriteScreen = ({ navigation, route }) => {
             navigation.navigate("MapScreen");
           }}
         >
-          <SvgXml xml={backButton2} width={60} height={60}></SvgXml>
+          <SvgXml xml={backButton2} width={60} height={60} />
         </TouchableOpacity>
         <Text>{placeName}</Text>
         <Text>{placeAddress}</Text>
 
         <View styles={styles.container}>
-          <TextInput placeholder="텍스트를 입력"></TextInput>
+          <TextInput placeholder="텍스트를 입력" />
         </View>
         <TouchableOpacity>
-          <SvgXml xml={sendButton} width={86} height={44}></SvgXml>
+          <SvgXml xml={sendButton} width={86} height={44} />
         </TouchableOpacity>
       </SafeArea>
     </>

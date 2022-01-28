@@ -1,6 +1,5 @@
 import styled from "styled-components/native";
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
-import selectButton from "../../../../assets/selectButton";
+import MapView from "react-native-maps";
 
 import { StyleSheet } from "react-native";
 

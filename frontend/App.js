@@ -17,7 +17,7 @@ import {
   Dongle_400Regular,
 } from "@expo-google-fonts/dongle";
 
-import { Loading2 } from "./src/components/Loading2";
+import { Loading } from "./src/components/Loading";
 
 import { LocationContextProvider } from "./src/services/location/location.context";
 
@@ -44,6 +44,6 @@ export default function App() {
       </>
     );
   } else {
-    return <Loading2 />;
+    return <Loading />;
   }
 }

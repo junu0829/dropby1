@@ -1,16 +1,10 @@
 import React from "react";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
-import {
-  StyleSheet,
-  View,
-  Dimensions,
-  TouchableOpacity,
-  Image,
-} from "react-native";
+import { Dimensions, Image, View } from "react-native";
 
 import { Text } from "../../../components/typography/text.component";
 
-import { useEffect, useContext, useState } from "react";
+import { useEffect, useContext, useState, useMemo } from "react";
 
 import { LocationContext } from "../../../services/location/location.context";
 import { LinearGradient } from "expo-linear-gradient";
@@ -55,23 +49,39 @@ export const MapScreen = ({ navigation, route }) => {
   ///////처음 데이터셋팅
   const { location, isLoading } = useContext(LocationContext);
 
-  const [writeMode, setWriteMode] = useState(false);
-  const [pressedLocation, setPressedLocation] = useState(null);
+  const [isAddressLoading, SetIsAddressLoading] = useState(true);
 
+  const [writeMode, setWriteMode] = useState(false);
+  const [pressedLocation, setPressedLocation] = useState({
+    latitude: 37.58646601781994,
+    longitude: 127.02913699768948,
+  });
+  const [Markers, setMarkers] = useState([
+    {
+      latitude: 37.58646601781994,
+      longitude: 127.02913699768948,
+    },
+  ]);
+  const [definedLocation, setDefinedLocation] = useState(null);
   const [pressedAddressID, setPressedAddressID] = useState(null);
   const [pressedAddress, setPressedAddress] = useState(null);
   const [pressedAddressName, setPressedAddressName] = useState("새로운 장소");
 
-  useEffect(() => {
-    setPressedLocation({
-      latitude: location[0],
-      longitude: location[1],
-    });
-  }, [location]);
+  // const DefinedPlaceLoad = (responseJson) => {
+  //   for (let i = 0; i < 5; i++) {
+  //     //  if (responseJson.results[i].geomtry.location_type == "GEOMETRIC_CENTER") {}
+  //     if (
+  //       responseJson.results[i].geometry.location_type === "GEOMETRIC_CENTER"
+  //     ) {
+  //       setPressedAddressID(responseJson.results[i].place_id);
+  //       setDefinedLocation(responseJson.results[i].geometry.location);
 
-  if (isLoading) {
-    return <Loading></Loading>;
-  } else {
+  //       break;
+  //     }
+  //   }
+  // };
+
+  useEffect(() => {
     const getAddress = () => {
       fetch(
         "https://maps.googleapis.com/maps/api/geocode/json?address=" +
@@ -82,6 +92,8 @@ export const MapScreen = ({ navigation, route }) => {
       )
         .then((response) => response.json())
         .then((responseJson) => {
+          // DefinedPlaceLoad(responseJson);
+
           const responseResultsNumber = 0;
 
           setPressedAddressID(
@@ -95,18 +107,32 @@ export const MapScreen = ({ navigation, route }) => {
         `https://maps.googleapis.com/maps/api/place/details/json?place_id=${pressedAddressID}&key=AIzaSyBYyWlYdAIT4Ur2d2QsPfD_OcZKutxOl0c`
       )
         .then((response) => response.json())
-        .then((responseJson) => {
-          setPressedAddress(responseJson.result.formatted_address);
-          setPressedAddressName(responseJson.result.name);
+        .then(async (responseJson) => {
+          await setPressedAddress(responseJson.result.formatted_address);
+          await setPressedAddressName(responseJson.result.name);
         });
     };
 
     getAddress();
     getPlaceDetail();
+    setMarkers([
+      {
+        latitude: pressedLocation.latitude,
+        longitude: pressedLocation.longitude,
+      },
+    ]);
+    console.log("clicked");
+  }, [pressedAddress, pressedAddressName, pressedAddressID, pressedLocation]);
+
+  if (isLoading) {
+    return <Loading />;
+  } else {
+    /////정보가져오는 함수 정의
+
     //////////////////////////맵그리는 것 여기서부터 시작
     return (
-      <>
-        <ExpoStatusBar style="auto"></ExpoStatusBar>
+      <View onStartShouldSetResponder={() => {}}>
+        <ExpoStatusBar style="auto" />
         <SearchContainer>
           <LinearGradient
             colors={[
@@ -120,7 +146,7 @@ export const MapScreen = ({ navigation, route }) => {
           >
             {/* writeMode이지 않을 경우에 cloud */}
             {!writeMode ? (
-              <Image source={cloud} height={542} width={158}></Image>
+              <Image source={cloud} height={542} width={158} />
             ) : null}
           </LinearGradient>
 
@@ -130,35 +156,52 @@ export const MapScreen = ({ navigation, route }) => {
             </TextContainer>
           )}
         </SearchContainer>
+
+        <Map
+          onPress={async (event) => {
+            await setPressedLocation(event.nativeEvent.coordinate);
+            SetIsAddressLoading(false);
+
+            setMarkers([]);
+          }}
+          ref={mapRef}
+          showsUserLocation={true}
+          showsCompass={true}
+          provider={PROVIDER_GOOGLE}
+          // onPress={(event) => {
+          //   setPressedLocation(event.nativeEvent.coordinate);
+          // }}
+          initialRegion={{
+            // 지도의 센터값 위도 경도
+            latitude: location[0],
+            longitude: location[1],
+            //ZoomLevel 아래에 있는 것은 건드리지 않아도 됨
+            latitudeDelta: LATITUDE_DELTA,
+            longitudeDelta: LONGITUDE_DELTA,
+          }}
+        >
+          {writeMode && !isAddressLoading
+            ? Markers.map((Marker, i) => {
+                return (
+                  <MapView.Marker
+                    styles={{ zIndex: 999 }}
+                    //장소선택 마커의 위치
+
+                    coordinate={Markers[0]}
+                  >
+                    <SvgXml xml={LocationSelected} width={33.5} height={45} />
+                  </MapView.Marker>
+                );
+              })
+            : null}
+        </Map>
+
         {!writeMode ? (
-          ///////////////////////////여기서부터 기본 Map Mode/////////////////////////////////////////////////
           <>
-            <Map
-              ref={mapRef}
-              showsUserLocation={true}
-              showsCompass={true}
-              provider={PROVIDER_GOOGLE}
-              // onPress={(event) => {
-              //   setPressedLocation(event.nativeEvent.coordinate);
-              // }}
-              initialRegion={{
-                // 지도의 센터값 위도 경도
-                latitude: location[0],
-                longitude: location[1],
-                //ZoomLevel 아래에 있는 것은 건드리지 않아도 됨
-                latitudeDelta: LATITUDE_DELTA,
-                longitudeDelta: LONGITUDE_DELTA,
-              }}
-            ></Map>
             <Container>
               <WriteButton
                 onPress={() => {
                   setWriteMode(true);
-
-                  setPressedLocation({
-                    latitude: location[0],
-                    longitude: location[1],
-                  });
                 }}
               >
                 <SvgXml xml={write} width={56} height={65} />
@@ -174,6 +217,10 @@ export const MapScreen = ({ navigation, route }) => {
                       latitudeDelta: LATITUDE_DELTA,
                       longitudeDelta: LONGITUDE_DELTA,
                     });
+                    setPressedLocation({
+                      latitude: location[0],
+                      longitude: location[1],
+                    });
                   }}
                 >
                   <SvgXml xml={currentLocation} width={50} height={50} />
@@ -182,40 +229,7 @@ export const MapScreen = ({ navigation, route }) => {
             </Container>
           </>
         ) : (
-          ///////////////////////////여기서부터 writeMode/////////////////////////////////////////////////
           <>
-            <Map
-              onLongPress={(event) => {
-                setPressedLocation(event.nativeEvent.coordinate);
-              }}
-              ref={mapRef}
-              showsUserLocation={true}
-              showsCompass={true}
-              provider={PROVIDER_GOOGLE}
-              initialRegion={{
-                // 지도의 센터값 위도 경도
-                latitude: location[0],
-                longitude: location[1],
-                //ZoomLevel 아래에 있는 것은 건드리지 않아도 됨
-                latitudeDelta: LATITUDE_DELTA,
-                longitudeDelta: LONGITUDE_DELTA,
-              }}
-            >
-              <MapView.Marker
-                styles={{ zIndex: 999 }}
-                //장소선택 마커의 위치
-                coordinate={{
-                  latitude: pressedLocation.latitude,
-                  longitude: pressedLocation.longitude,
-                }}
-              >
-                <SvgXml
-                  xml={LocationSelected}
-                  width={33.5}
-                  height={45}
-                ></SvgXml>
-              </MapView.Marker>
-            </Map>
             <PlaceContainer>
               <PlaceContainer2>
                 <BackButtonContainer
@@ -228,6 +242,7 @@ export const MapScreen = ({ navigation, route }) => {
                 <PlaceNameContainer>
                   <Text variant="label">{pressedAddressName}</Text>
                   <Text variant="caption">{pressedAddress}</Text>
+                  <Text variant="caption">{isAddressLoading.toString()}</Text>
                 </PlaceNameContainer>
               </PlaceContainer2>
               <PlaceContainer3>
@@ -240,13 +255,13 @@ export const MapScreen = ({ navigation, route }) => {
                     ]);
                   }}
                 >
-                  <SvgXml xml={selectButton} width={170} height={32}></SvgXml>
+                  <SvgXml xml={selectButton} width={170} height={32} />
                 </SelectButtonContainer>
               </PlaceContainer3>
             </PlaceContainer>
           </>
         )}
-      </>
+      </View>
     );
   }
 };

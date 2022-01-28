@@ -32,4 +32,4 @@ export default `<svg width="58" height="58" viewBox="0 0 58 58" fill="none" xmln
 <feGaussianBlur stdDeviation="0.5" result="effect1_foregroundBlur_2_1317"/>
 </filter>
 </defs>
-</svg>`
+</svg>`;

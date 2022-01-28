@@ -9,26 +9,20 @@ export const LocationContext = React.createContext();
 export const LocationContextProvider = ({ children }) => {
   const [location, setLocation] = useState(
     [37.58646601781994, 127.02913699768948]
-    // null
+    // 37.58646601781994,127.02913699768948
   );
   const [isLoading, setIsLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState(null);
 
   useEffect(() => {
     (async () => {
-      if (Platform.OS === "android" && !Constants.isDevice) {
-        setErrorMsg(
-          "Oops, this will not work on Snack in an Android emulator. Try it on your device!"
-        );
-        return;
-      }
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         setErrorMsg("Permission to access location was denied");
         return;
       }
 
-      let location2 = await Location.getCurrentPositionAsync({});
+      let location2 = await Location.getCurrentPositionAsync();
 
       await setLocation([
         location2.coords.latitude,
