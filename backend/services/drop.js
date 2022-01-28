@@ -9,3 +9,8 @@ exports.newDrop = async ({content, latitude, longitude}) => {
     });
     return drop;
 }
+
+exports.getDrops = async () => {
+    const drops = await Drop.findAll({});
+    return drops;
+}
