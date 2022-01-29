@@ -62,18 +62,17 @@ export const WriteScreen = ({ navigation, route }) => {
 
   const PostWrite = async () => {
     axios
-      .post("http://localhost:3000/drops", {
+      .post("http://192.168.35.8:3000/drops", {
         pk: 0,
         content: content,
         latitude: latitude,
         longitude: longitude,
       })
-      .then((res) => {
-        console.log(res);
+      .then(() => {
+        console.log("드롭 등록 완료");
       });
   };
 
-  console.log(pk, content, latitude, longitude);
   return (
     <>
       <SafeArea>

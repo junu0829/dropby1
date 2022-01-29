@@ -30,6 +30,7 @@ import {
 } from "./map.screen.styles";
 
 //assets
+import DropDefault from "../../../../assets/DropDefault";
 import cloud from "../../../../assets/cloud.png";
 import write from "../../../../assets/write";
 import LocationSelected from "../../../../assets/LocationSelected";
@@ -37,11 +38,35 @@ import currentLocation from "../../../../assets/currentLocation";
 
 import selectButton from "../../../../assets/selectButton";
 import backButton from "../../../../assets/backButton";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 export const MapScreen = ({ navigation, route }) => {
   const axios = require("axios");
   const mapRef = React.createRef();
   // 화면비율 조정하는 것
+
+  // const fetchDrops = async () => {
+  //   try {
+  //     // 요청이 시작될 때는 error와 drops를 초기화
+  //     setError(null);
+  //     setDrops(null);
+  //     // loading 상태는 true
+  //     setLoading(true);
+  //     await axios({
+  //       method: "GET",
+  //       url: "http://172.30.121.94:3000/drops/",
+  //     })
+  //       .then((res) => {
+  //         setDrops(res.data.data);
+
+  //         setLoading(false);
+  //       })
+  //       .catch((error) => console.log("error = " + error));
+  //   } catch (e) {
+  //     console.log("catch error" + e);
+  //   }
+  //   setLoading(false);
+  // };
   let { width, height } = Dimensions.get("window");
   const ASPECT_RATIO = width / height;
   const LATITUDE_DELTA = 0.008; //Very high zoom level
@@ -51,6 +76,8 @@ export const MapScreen = ({ navigation, route }) => {
   const { location, isLoading } = useContext(LocationContext);
 
   const [isAddressLoading, SetIsAddressLoading] = useState(true);
+
+  const [isDropViewMode, setIsDropViewMode] = useState(false);
 
   const [writeMode, setWriteMode] = useState(false);
   const [pressedLocation, setPressedLocation] = useState({
@@ -64,7 +91,7 @@ export const MapScreen = ({ navigation, route }) => {
     },
   ]);
 
-  const [Drops, setDrops] = useState(null);
+  const [drops, setDrops] = useState(null);
 
   const [definedLocation, setDefinedLocation] = useState({
     latitude: 37.58646601781994,
@@ -83,7 +110,7 @@ export const MapScreen = ({ navigation, route }) => {
           pressedLocation.latitude +
           "," +
           pressedLocation.longitude +
-          "&key"
+          "&key=AIzaSyDQqeh7m2DxLefbyzLfl4DK96j0-2NZASY"
       )
         .then((response) => response.json())
         .then((responseJson) => {
@@ -99,9 +126,7 @@ export const MapScreen = ({ navigation, route }) => {
 
     const getPlaceDetail = () => {
       fetch(
-
-        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${pressedAddressID}&key=`
-=
+        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${pressedAddressID}&key=AIzaSyBYyWlYdAIT4Ur2d2QsPfD_OcZKutxOl0c`
       )
         .then((response) => response.json())
         .then(async (responseJson) => {
@@ -130,13 +155,31 @@ export const MapScreen = ({ navigation, route }) => {
     const LoadDrop = () => {
       axios({
         method: "get",
-        url: "http://localhost:3000/drops",
+        url: "http://192.168.35.8:3000/drops",
       }).then((res) => {
-        console.log(res.data);
+        setDrops(res.data.data);
       });
     };
     LoadDrop();
-  }, [Drops, axios]);
+  }, [drops, axios, pressedAddress]);
+
+  const dropsList = (drops) => {
+    return drops.map((drop) => {
+      return (
+        <MapView.Marker
+          key={drop.pk}
+          title={drop.content}
+          coordinate={{
+            latitude: drop.latitude,
+            longitude: drop.longitude,
+          }}
+          onPress={() => {}}
+        >
+          <SvgXml xml={DropDefault} width={40} height={36}></SvgXml>
+        </MapView.Marker>
+      );
+    });
+  };
 
   useEffect(() => {
     const DefinedPlaceLoad = (responseJson) => {
@@ -159,7 +202,7 @@ export const MapScreen = ({ navigation, route }) => {
           definedLocation.latitude +
           "," +
           definedLocation.longitude +
-          "&key"
+          "&key=AIzaSyDQqeh7m2DxLefbyzLfl4DK96j0-2NZASY"
       )
         .then((response) => response.json())
         .then((responseJson) => {
@@ -171,7 +214,7 @@ export const MapScreen = ({ navigation, route }) => {
 
     const getDefinedPlaceDetail = () => {
       fetch(
-        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${definedAddressID}&key=`
+        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${definedAddressID}&key=AIzaSyBYyWlYdAIT4Ur2d2QsPfD_OcZKutxOl0c`
       )
         .then((response) => response.json())
         .then(async (responseJson) => {
@@ -248,6 +291,7 @@ export const MapScreen = ({ navigation, route }) => {
             longitudeDelta: LONGITUDE_DELTA,
           }}
         >
+          {dropsList(drops)}
           {writeMode && !isAddressLoading
             ? Markers.map((Marker, i) => {
                 return (
