@@ -1,17 +1,28 @@
 import React from "react";
 
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Keyboard,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { useEffect, useState } from "react";
 
 import { SafeArea } from "../../../components/utility/safe-area.component";
 import { TextInput } from "react-native-gesture-handler";
 import { theme } from "../../../infrastructure/theme";
 import { SvgXml } from "react-native-svg";
-import sendButton from "../../../../assets/sendButton";
+import sendButton from "../../../../assets/sendingButton";
 import Constants from "expo-constants";
-import { fetchApi } from "../../../services/fetch";
 
-import backButton2 from "../../../../assets/backButton2";
+import addIcon from "../../../../assets/addIcon";
+import backButton2 from "../../../../assets/backButton";
+import sendingButton from "../../../../assets/sendingButton";
+import bar from "../../../../assets/bar";
+import addPicture from "../../../../assets/addPicture";
+import LockButtonUnlocked from "../../../../assets/LockButton(Unlocked)";
 
 export const WriteScreen = ({ navigation, route }) => {
   const [placeName, setPlaceName] = useState("새로운 장소");
@@ -73,41 +84,147 @@ export const WriteScreen = ({ navigation, route }) => {
       });
   };
 
-  return (
-    <>
-      <SafeArea>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("MapScreen");
-          }}
-        >
-          <SvgXml xml={backButton2} width={60} height={60} />
-        </TouchableOpacity>
-        <Text>{placeName}</Text>
-        <Text>{placeAddress}</Text>
+  const styles = StyleSheet.create({
+    container: {
+      backgroundColor: theme.colors.bg.secondary,
+      flexDirection: "column",
+      flex: 1,
+    },
+    containerTop: {
+      flexDirection: "row",
+      marginTop: 10,
+      backgroundColor: theme.colors.bg.secondary,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    backButton: {
+      marginRight: 80,
+    },
+    addIcon: {
+      justifyContent: "center",
+    },
+    sendingButton: {
+      marginLeft: 65,
+    },
 
-        <View styles={styles.container}>
-          <TextInput
-            placeholder="텍스트를 입력하세요"
-            onChangeText={(content) => handleContent(content)}
-            value={content}
-          />
+    textContainer: {
+      backgroundColor: theme.colors.bg.secondary,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+
+    place: {
+      marginTop: 20,
+      fontSize: 20,
+      fontWeight: "700",
+      color: "#000",
+      textAlign: "center",
+    },
+    address: {
+      fontSize: 12,
+      fontWeight: "500",
+      color: "#000",
+    },
+    bar: {
+      padding: 15,
+    },
+
+    enter: {
+      fontSize: 20,
+      fontWeight: "500",
+      color: "#9A9A9A",
+      textAlign: "center",
+    },
+
+    containerLow: {
+      backgroundColor: theme.colors.bg.secondary,
+      flexDirection: "row",
+      marginBottom: 5,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    addPicture: {
+      marginRight: 70,
+    },
+    LockButtonUnlocked: {
+      marginLeft: 70,
+    },
+  });
+  return (
+    <SafeArea style={styles.container}>
+      <View style={styles.container}>
+        <View style={styles.containerTop}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("MapScreen");
+            }}
+          >
+            <SvgXml
+              xml={backButton2}
+              width={50}
+              height={50}
+              style={styles.backButton}
+            ></SvgXml>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <SvgXml
+              xml={addIcon}
+              width={65}
+              height={50}
+              style={styles.addIcon}
+            ></SvgXml>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              PostWrite();
+              navigation.navigate("MapScreen", drop);
+            }}
+          >
+            <SvgXml
+              xml={sendingButton}
+              width={67}
+              height={40}
+              style={styles.sendingButton}
+            ></SvgXml>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          onPress={() => {
-            PostWrite();
-            navigation.navigate("MapScreen", drop);
-          }}
-        >
-          <SvgXml xml={sendButton} width={86} height={44} />
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.textContainer}>
+            <Text style={styles.place}>{placeName}</Text>
+            <Text style={styles.address}>{placeAddress}</Text>
+            <SvgXml
+              xml={bar}
+              width={280}
+              height={2}
+              style={styles.bar}
+            ></SvgXml>
+            <TextInput
+              style={styles.enter}
+              placeholder="텍스트를 입력하세요"
+              onChangeText={(content) => handleContent(content)}
+              value={content}
+            />
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
+      <View style={styles.containerLow}>
+        <TouchableOpacity>
+          <SvgXml
+            xml={addPicture}
+            width={90}
+            height={90}
+            style={styles.addPicture}
+          ></SvgXml>
         </TouchableOpacity>
-      </SafeArea>
-    </>
+        <TouchableOpacity>
+          <SvgXml
+            xml={LockButtonUnlocked}
+            width={41}
+            height={55}
+            style={styles.LockButtonUnlocked}
+          ></SvgXml>
+        </TouchableOpacity>
+      </View>
+    </SafeArea>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: theme.colors.bg.secondary,
-  },
-});

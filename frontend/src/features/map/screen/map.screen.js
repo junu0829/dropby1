@@ -152,8 +152,8 @@ export const MapScreen = ({ navigation, route }) => {
   }, [route.params]);
 
   useEffect(() => {
-    const LoadDrop = () => {
-      axios({
+    const LoadDrop = async () => {
+      await axios({
         method: "get",
         url: "http://192.168.35.8:3000/drops",
       }).then((res) => {
@@ -161,7 +161,7 @@ export const MapScreen = ({ navigation, route }) => {
       });
     };
     LoadDrop();
-  }, [drops, axios, pressedAddress]);
+  }, [axios, pressedAddress]);
 
   const dropsList = (drops) => {
     return drops.map((drop) => {
