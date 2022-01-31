@@ -1,6 +1,6 @@
 import React from "react";
-import { IntroNavigator } from "./app.navigator";
+import { MainNavigator } from "./app.navigator";
 
 export const Navigation = () => {
-  return <IntroNavigator />;
+  return <MainNavigator />;
 };

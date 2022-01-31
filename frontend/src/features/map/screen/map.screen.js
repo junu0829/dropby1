@@ -45,28 +45,6 @@ export const MapScreen = ({ navigation, route }) => {
   const mapRef = React.createRef();
   // 화면비율 조정하는 것
 
-  // const fetchDrops = async () => {
-  //   try {
-  //     // 요청이 시작될 때는 error와 drops를 초기화
-  //     setError(null);
-  //     setDrops(null);
-  //     // loading 상태는 true
-  //     setLoading(true);
-  //     await axios({
-  //       method: "GET",
-  //       url: "http://172.30.121.94:3000/drops/",
-  //     })
-  //       .then((res) => {
-  //         setDrops(res.data.data);
-
-  //         setLoading(false);
-  //       })
-  //       .catch((error) => console.log("error = " + error));
-  //   } catch (e) {
-  //     console.log("catch error" + e);
-  //   }
-  //   setLoading(false);
-  // };
   let { width, height } = Dimensions.get("window");
   const ASPECT_RATIO = width / height;
   const LATITUDE_DELTA = 0.008; //Very high zoom level
@@ -91,7 +69,16 @@ export const MapScreen = ({ navigation, route }) => {
     },
   ]);
 
-  const [drops, setDrops] = useState(null);
+  const [drops, setDrops] = useState([
+    {
+      content: "드롭바이짱",
+      createdAt: "2022-01-29T04:55:47.000Z",
+      latitude: 37.398811798656766,
+      longitude: 126.6377265751362,
+      pk: 22,
+      updatedAt: "2022-01-29T04:55:47.472Z",
+    },
+  ]);
 
   const [definedLocation, setDefinedLocation] = useState({
     latitude: 37.58646601781994,
@@ -151,6 +138,8 @@ export const MapScreen = ({ navigation, route }) => {
     setWriteMode(false);
   }, [route.params]);
 
+  /////드롭불러오기
+
   useEffect(() => {
     const LoadDrop = async () => {
       await axios({
@@ -158,6 +147,7 @@ export const MapScreen = ({ navigation, route }) => {
         url: "http://192.168.35.8:3000/drops",
       }).then((res) => {
         setDrops(res.data.data);
+        console.log(res.data.data);
       });
     };
     LoadDrop();

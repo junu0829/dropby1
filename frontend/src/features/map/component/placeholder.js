@@ -4,10 +4,10 @@ import { StatusBar } from "expo-status-bar";
 
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 
-import backButton from "../../../../../assets/backButton";
-import Drops from "../../../../../assets/Drops";
+import backButton from "../../../../assets/backButton";
+import Drops from "../../../../assets/Drops";
 
-import SelectPlace from "../../../../../assets/SelectPlace";
+import SelectPlace from "../../../../assets/SelectPlace";
 
 export default function App() {
   return (
