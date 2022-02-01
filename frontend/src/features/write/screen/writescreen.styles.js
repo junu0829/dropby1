@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { theme } from "../../../infrastructure/theme";
 const utils = StyleSheet.create({
   centerHorizontal: {
     alignItems: "center",
@@ -97,24 +98,7 @@ const utils = StyleSheet.create({
     aspectRatio: 1,
   },
 });
-const navbar = StyleSheet.create({
-  image: {
-    padding: 20,
-  },
-  custom: {
-    marginTop: 30,
-    height: 60,
-    backgroundColor: "white",
-    padding: 15,
-    borderBottomWidth: 1,
-    borderColor: "lightgrey",
-  },
 
-  title: {
-    fontWeight: "700",
-    fontSize: 20, //'larger',
-  },
-});
 const container = StyleSheet.create({
   container: {
     flex: 1,
@@ -198,80 +182,71 @@ const container = StyleSheet.create({
   },
 });
 
-const form = StyleSheet.create({
-  textInput: {
-    marginBottom: 10,
-    borderColor: "gray",
-    backgroundColor: "whitesmoke",
-    padding: 10,
-    borderWidth: 1,
-    borderRadius: 8,
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: theme.colors.bg.secondary,
+    flexDirection: "column",
+    flex: 1,
   },
-  bottomButton: {
-    alignContent: "center",
-    borderTopColor: "gray",
-    borderTopWidth: 1,
-    padding: 10,
-    textAlign: "center",
+  containerTop: {
+    flexDirection: "row",
+    marginTop: 10,
+    backgroundColor: theme.colors.bg.secondary,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  roundImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 100 / 2,
+  backButton: {
+    marginRight: 80,
   },
-});
+  addIcon: {
+    justifyContent: "center",
+  },
+  sendingButton: {
+    marginLeft: 65,
+  },
 
-const text = StyleSheet.create({
-  center: {
-    textAlign: "center",
+  textContainer: {
+    backgroundColor: theme.colors.bg.secondary,
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 50,
   },
-  notAvailable: {
-    textAlign: "center",
-    fontWeight: "700", //'bolder',
-    fontSize: 20, //'large',
-  },
-  profileDescription: {
-    fontWeight: "300",
-  },
-  changePhoto: {
-    marginTop: 5,
-    color: "deepskyblue",
-  },
-  deepskyblue: {
-    color: "deepskyblue",
-  },
-  username: {
-    fontWeight: "600",
-    color: "black",
-  },
-  name: {
-    color: "grey",
-  },
-  bold: {
+
+  place: {
+    marginTop: 20,
+    fontSize: 20,
     fontWeight: "700",
+    color: "#000",
+    textAlign: "center",
   },
-  large: {
-    fontSize: 20, //'large'
+  address: {
+    fontSize: 12,
+    fontWeight: "500",
+    color: "#000",
   },
-  small: {
-    fontSize: 10, //'large'
+  bar: {
+    padding: 15,
   },
-  medium: {
-    fontSize: 15, //'large'
-    marginBottom: 10,
+
+  enter: {
+    fontSize: 20,
+    fontWeight: "500",
+    color: "#9A9A9A",
+    textAlign: "center",
   },
-  grey: {
-    color: "grey",
+
+  containerLow: {
+    backgroundColor: theme.colors.bg.secondary,
+    flexDirection: "row",
+    marginBottom: 5,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  green: {
-    color: "lightgreen",
+  addPicture: {
+    marginRight: 70,
   },
-  white: {
-    color: "white",
-  },
-  whitesmoke: {
-    color: "whitesmoke",
+  LockButtonUnlocked: {
+    marginLeft: 70,
   },
 });
-
-export { container, form, text, utils, navbar };
+export { container, styles, utils };

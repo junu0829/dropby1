@@ -26,7 +26,7 @@ import bar from "../../../../assets/bar";
 import addPicture from "../../../../assets/addPicture";
 import LockButtonUnlocked from "../../../../assets/LockButton(Unlocked)";
 
-import { container } from "./styles";
+import { container, styles } from "./writescreen.styles";
 
 export const WriteScreen = ({ navigation, route }) => {
   const [placeName, setPlaceName] = useState("새로운 장소");
@@ -93,72 +93,6 @@ export const WriteScreen = ({ navigation, route }) => {
       });
   };
 
-  const styles = StyleSheet.create({
-    container: {
-      backgroundColor: theme.colors.bg.secondary,
-      flexDirection: "column",
-      flex: 1,
-    },
-    containerTop: {
-      flexDirection: "row",
-      marginTop: 10,
-      backgroundColor: theme.colors.bg.secondary,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    backButton: {
-      marginRight: 80,
-    },
-    addIcon: {
-      justifyContent: "center",
-    },
-    sendingButton: {
-      marginLeft: 65,
-    },
-
-    textContainer: {
-      backgroundColor: theme.colors.bg.secondary,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-
-    place: {
-      marginTop: 20,
-      fontSize: 20,
-      fontWeight: "700",
-      color: "#000",
-      textAlign: "center",
-    },
-    address: {
-      fontSize: 12,
-      fontWeight: "500",
-      color: "#000",
-    },
-    bar: {
-      padding: 15,
-    },
-
-    enter: {
-      fontSize: 20,
-      fontWeight: "500",
-      color: "#9A9A9A",
-      textAlign: "center",
-    },
-
-    containerLow: {
-      backgroundColor: theme.colors.bg.secondary,
-      flexDirection: "row",
-      marginBottom: 5,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    addPicture: {
-      marginRight: 70,
-    },
-    LockButtonUnlocked: {
-      marginLeft: 70,
-    },
-  });
   return (
     <SafeArea style={styles.container}>
       <View style={styles.container}>

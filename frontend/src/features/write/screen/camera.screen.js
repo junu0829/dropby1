@@ -17,7 +17,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { container, utils } from "./styles";
+import { container, utils } from "./writescreen.styles";
 
 const WINDOW_HEIGHT = Dimensions.get("window").height;
 const WINDOW_WIDTH = Dimensions.get("window").width;

@@ -9,6 +9,7 @@ import { MapScreen } from "../../features/map/screen/map.screen";
 import { WriteScreen } from "../../features/write/screen/write.screen";
 import { EmojiSelectScreen } from "../../features/write/screen/emojiSelect.screen";
 import { CameraScreen } from "../../features/write/screen/camera.screen";
+
 const MainStack = createStackNavigator();
 
 export const MainNavigator = () => {

@@ -1,6 +1,6 @@
 import React from "react";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
-import { Dimensions, Image, View } from "react-native";
+import { Dimensions, Image, View, TouchableOpacity } from "react-native";
 
 import { Text } from "../../../components/typography/text.component";
 
@@ -27,9 +27,12 @@ import {
   BackButtonContainer,
   WriteButton,
   CurrentLocationButton,
+  PlaceNameContainer2,
+  ContainerEnd2,
 } from "./map.screen.styles";
 
 //assets
+import Drops from "../../../../assets/Drops";
 import { APIKey, PlAPIKey } from "../../../../APIkeys";
 import DropDefault from "../../../../assets/DropDefault";
 import cloud from "../../../../assets/cloud.png";
@@ -345,10 +348,21 @@ export const MapScreen = ({ navigation, route }) => {
                   <SvgXml xml={backButton} width={50} height={50} />
                 </BackButtonContainer>
                 <PlaceNameContainer>
-                  <Text variant="label">{pressedAddressName}</Text>
-                  <Text variant="caption">{pressedAddress}</Text>
+                  <PlaceNameContainer2>
+                    <Text style={styles.placename}>{pressedAddressName}</Text>
+                  </PlaceNameContainer2>
+
+                  <Text style={styles.placeaddress}>{pressedAddress}</Text>
                 </PlaceNameContainer>
+
+                <ContainerEnd2>
+                  <TouchableOpacity style={styles.Drops}>
+                    <SvgXml xml={Drops} width={38} height={42} />
+                  </TouchableOpacity>
+                  <Text style={styles.drop}>23개</Text>
+                </ContainerEnd2>
               </PlaceContainer2>
+
               <PlaceContainer3>
                 <SelectButtonContainer
                   onPress={() => {
@@ -369,3 +383,34 @@ export const MapScreen = ({ navigation, route }) => {
     );
   }
 };
+
+// <>
+//   <PlaceContainer>
+//     <PlaceContainer2>
+//       <BackButtonContainer
+//         onPress={() => {
+//           setWriteMode(false);
+//         }}
+//       >
+//         <SvgXml xml={backButton} width={50} height={50} />
+//       </BackButtonContainer>
+//       <PlaceNameContainer>
+//         <Text variant="label">{pressedAddressName}</Text>
+//         <Text variant="caption">{pressedAddress}</Text>
+//       </PlaceNameContainer>
+//     </PlaceContainer2>
+//     <PlaceContainer3>
+//       <SelectButtonContainer
+//         onPress={() => {
+//           navigation.navigate("WriteScreen", [
+//             { pressedAddress },
+//             { pressedAddressName },
+//             { pressedLocation },
+//           ]);
+//         }}
+//       >
+//         <SvgXml xml={selectButton} width={170} height={32} />
+//       </SelectButtonContainer>
+//     </PlaceContainer3>
+//   </PlaceContainer>
+// </>
