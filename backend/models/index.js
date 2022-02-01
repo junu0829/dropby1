@@ -1,5 +1,6 @@
 const db = require('../config/db');
 db.Drop = require('./drop');
+db.User = require('./user');
 // const Sequelize = require('sequelize');
 
 // const env = process.env.NODE_ENV || 'development';
