@@ -2,7 +2,7 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const {sequelize} = require('./models/index'); 
+const sequelize = require('./models/index'); 
 const router = require('./routes/index');
 const db = require('./config/db');
 //DB, 서버 등 보안 관련
@@ -11,13 +11,23 @@ const cors = require('cors');
 
 dotenv.config(); 
 
+const ConnectDB = async () => {
+    try {
+        await sequelize.authenticate();
+        console.log("Connection established!"); 
+    } catch (error) {
+        console.error('Unable to connect to the database', error);
+    }
+}
+
+ConnectDB();
 // DB와 동기화하기
-db.authenticate().then((result) => {
-    console.log("Connection established!");
-}).catch((error) => {
-    console.log("unable to connect to db: ", error)
-})
-db.sync({force:false});
+// db.authenticate().then((result) => {
+//     console.log("Connection established!");
+// }).catch((error) => {
+//     console.log("unable to connect to db: ", error)
+// })
+// db.sync({force:false});
 // sequelize.sync().then( 
 //     () => console.log('connected to database')
 // ).catch(err => console.error('occured error in database connecting', err))

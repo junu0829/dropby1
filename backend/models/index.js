@@ -4,7 +4,8 @@ const Sequelize = require('sequelize');
 const sequelize = new Sequelize({
     dialect:'sqlite',
     storage:'../dropby_db.db'
-})
+});
+module.exports = sequelize;
 // const db = require('../config/db');
 // const config = require('../config/db.js');
 // const sequelize = new Sequelize(config.storage, config);
@@ -37,4 +38,4 @@ const sequelize = new Sequelize({
 //   onDelete:"CASCADE"
 // })
 
-module.exports = db;
+// module.exports = db;
