@@ -1,6 +1,11 @@
 const db = require('../config/db');
 db.Drop = require('./drop');
 db.User = require('./user');
+
+db.User.hasMany(db.Drop, {
+    foreignKey:{name:'authorPk', allowNull:false},
+    onDelete:"CASCADE"
+});
 // const Sequelize = require('sequelize');
 
 // const env = process.env.NODE_ENV || 'development';
@@ -14,10 +19,7 @@ db.User = require('./user');
 // db.Drop = require('./drop')(sequelize, Sequelize);
 // db.Place = require('./place')(sequelize, Sequelize);
 
-// db.User.hasMany(db.Drop, {
-//   foreignKey:{name:'authorPk', allowNull:false,},
-//   onDelete:"CASCADE",
-// });
+
 
 // db.Place.hasMany(db.Drop, {
 //   foreignKey:{name:'writtenPlace', allowNull:false},
