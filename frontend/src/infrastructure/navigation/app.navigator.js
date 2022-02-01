@@ -19,9 +19,10 @@ export const MainNavigator = () => {
         <MainStack.Screen name="Loading" component={Loading} />
         <MainStack.Screen name="MapScreen" component={MapScreen} />
         <MainStack.Screen name="WriteScreen" component={WriteScreen} />
-
-        <MainStack.Screen name="Emoji" component={EmojiSelectScreen} />
-        <MainStack.Screen name="CameraScreen" component={CameraScreen} />
+        <MainStack.Group screenOptions={{ presentation: "modal" }}>
+          <MainStack.Screen name="Emoji" component={EmojiSelectScreen} />
+          <MainStack.Screen name="CameraScreen" component={CameraScreen} />
+        </MainStack.Group>
       </MainStack.Navigator>
     </NavigationContainer> // DropsOnMap은 MapScreen과 사실상 동일. 기능 구분을 용이하게 하기 위해 임시 분리.
   );

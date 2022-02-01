@@ -30,6 +30,7 @@ import {
 } from "./map.screen.styles";
 
 //assets
+import { APIKey, PlAPIKey } from "../../../../APIkeys";
 import DropDefault from "../../../../assets/DropDefault";
 import cloud from "../../../../assets/cloud.png";
 import write from "../../../../assets/write";
@@ -38,7 +39,6 @@ import currentLocation from "../../../../assets/currentLocation";
 
 import selectButton from "../../../../assets/selectButton";
 import backButton from "../../../../assets/backButton";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
 export const MapScreen = ({ navigation, route }) => {
   const axios = require("axios");
@@ -54,8 +54,6 @@ export const MapScreen = ({ navigation, route }) => {
   const { location, isLoading } = useContext(LocationContext);
 
   const [isAddressLoading, SetIsAddressLoading] = useState(true);
-
-  const [isDropViewMode, setIsDropViewMode] = useState(false);
 
   const [writeMode, setWriteMode] = useState(false);
   const [pressedLocation, setPressedLocation] = useState({
@@ -97,7 +95,7 @@ export const MapScreen = ({ navigation, route }) => {
           pressedLocation.latitude +
           "," +
           pressedLocation.longitude +
-          "&key=AIzaSyDQqeh7m2DxLefbyzLfl4DK96j0-2NZASY"
+          `&key=${APIKey}`
       )
         .then((response) => response.json())
         .then((responseJson) => {
@@ -113,7 +111,7 @@ export const MapScreen = ({ navigation, route }) => {
 
     const getPlaceDetail = () => {
       fetch(
-        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${pressedAddressID}&key=AIzaSyBYyWlYdAIT4Ur2d2QsPfD_OcZKutxOl0c`
+        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${pressedAddressID}&key=${PlAPIKey}`
       )
         .then((response) => response.json())
         .then(async (responseJson) => {
@@ -144,7 +142,7 @@ export const MapScreen = ({ navigation, route }) => {
     const LoadDrop = async () => {
       await axios({
         method: "get",
-        url: "http://192.168.35.8:3000/drops",
+        url: "http://localhost:3000/drops",
       }).then((res) => {
         setDrops(res.data.data);
         console.log(res.data.data);
@@ -192,7 +190,7 @@ export const MapScreen = ({ navigation, route }) => {
           definedLocation.latitude +
           "," +
           definedLocation.longitude +
-          "&key=AIzaSyDQqeh7m2DxLefbyzLfl4DK96j0-2NZASY"
+          `&key=${APIKey}`
       )
         .then((response) => response.json())
         .then((responseJson) => {
@@ -204,7 +202,7 @@ export const MapScreen = ({ navigation, route }) => {
 
     const getDefinedPlaceDetail = () => {
       fetch(
-        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${definedAddressID}&key=AIzaSyBYyWlYdAIT4Ur2d2QsPfD_OcZKutxOl0c`
+        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${definedAddressID}&key=${PlAPIKey}`
       )
         .then((response) => response.json())
         .then(async (responseJson) => {

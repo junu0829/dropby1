@@ -82,7 +82,7 @@ export const WriteScreen = ({ navigation, route }) => {
 
   const PostWrite = async () => {
     axios
-      .post("http://192.168.35.8:3000/drops", {
+      .post("http://localhost:3000/drops", {
         pk: 0,
         content: content,
         latitude: latitude,
