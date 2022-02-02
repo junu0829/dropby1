@@ -1,10 +1,8 @@
 // 중앙 통제실 같은 파일??
 const express = require('express');
 const app = express();
-const bodyParser = require('body-parser');
 const sequelize = require('./models/index'); 
 const router = require('./routes/index');
-const db = require('./config/db');
 //DB, 서버 등 보안 관련
 const dotenv = require('dotenv');
 const cors = require('cors');
@@ -13,24 +11,18 @@ dotenv.config();
 
 const ConnectDB = async () => {
     try {
-        await sequelize.authenticate();
-        console.log("Connection established!"); 
+        await sequelize.authenticate().then( 
+            () => console.log('데이터베이스 연결 성공!')
+        );
+        await sequelize.sync().then(
+            () => console.log('동기화 완료!')
+        );
     } catch (error) {
-        console.error('Unable to connect to the database', error);
+        console.error('DB 연결 및 동기화 실패', error);
     }
 }
-
+// DB와 연결 및 동기화
 ConnectDB();
-// DB와 동기화하기
-// db.authenticate().then((result) => {
-//     console.log("Connection established!");
-// }).catch((error) => {
-//     console.log("unable to connect to db: ", error)
-// })
-// db.sync({force:false});
-// sequelize.sync().then( 
-//     () => console.log('connected to database')
-// ).catch(err => console.error('occured error in database connecting', err))
 
 // request body 안의 데이터를 json 형식으로 변환
 app.use(express.json());
