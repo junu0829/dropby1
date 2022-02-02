@@ -32,6 +32,7 @@ export const WriteScreen = ({ navigation, route }) => {
   const [placeName, setPlaceName] = useState("새로운 장소");
   const [placeAddress, setPlaceAddress] = useState("새로운 장소-주소");
   const [placeLatlng, setPlaceLatlng] = useState([0, 0]);
+  const [selectedEmoji, setSelectedEmoji] = useState("");
 
   /////////////////////로컬 이미지 여기에 담김
   const [image, setImage] = useState(null);
@@ -46,8 +47,17 @@ export const WriteScreen = ({ navigation, route }) => {
     handleLongitude(placeLatlng.longitude);
     handlePk(user_idx);
     setImage(route.params.source);
+    setSelectedEmoji(route.params.emoji);
     console.log(image);
-  }, [route, placeLatlng.latitude, placeLatlng.longitude, user_idx, image]);
+    console.log(selectedEmoji);
+  }, [
+    route,
+    placeLatlng.latitude,
+    placeLatlng.longitude,
+    user_idx,
+    image,
+    selectedEmoji,
+  ]);
   ////////////////////
 
   const [pk, setPk] = useState("");
