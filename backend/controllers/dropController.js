@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const dropServices = require('../../services/drop');
+const dropServices = require('../../services/dropServices');
 
 exports.newDrop = async(req, res, next) => {
     try {
