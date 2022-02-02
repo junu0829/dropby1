@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define("user",
+    return sequelize.define("User",
     {
         pk: {
             type:DataTypes.INTEGER,
@@ -21,6 +21,8 @@ module.exports = (sequelize, DataTypes) => {
             type:DataTypes.STRING,
             allowNull:false,
         }
+    }, {
+        freezeTableName:true
     }
     )
 }

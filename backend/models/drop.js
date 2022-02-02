@@ -1,7 +1,7 @@
 const sequelize = require('../config/db');
 const {DataTypes} = require('sequelize');
 
-const Drop = sequelize.define("drop", {
+const Drop = sequelize.define("Drop", {
                 pk: {
                     type:DataTypes.INTEGER,
                     allowNull:false,
@@ -20,6 +20,8 @@ const Drop = sequelize.define("drop", {
                     type:DataTypes.FLOAT,
                     allowNull:false,
                 }
+            }, {
+                freezeTableName:true
             }
         );
 
