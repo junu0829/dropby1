@@ -4,10 +4,12 @@ const app = express();
 const {sequelize} = require('./models/index'); 
 const router = require('./routes/index');
 //DB, 서버 등 보안 관련
-
 const cors = require('cors');
 const dotenv = require('dotenv');
 dotenv.config(); 
+// passport 
+const passport = require('passport');
+const passportConfig = require('./passport/passport');
 
 const ConnectDB = async () => {
     try {
@@ -35,6 +37,9 @@ app.use(cors());
 app.use((req, res) => {
     res.header("Access-Control-Allow-Origin", '*');
 })
+//passport middleware 사용
+app.use(passport.initialize());
+passportConfig();
 
 // 서버 포트랑 연결하기
 app.listen(process.env.SERVER_PORT, () => {
