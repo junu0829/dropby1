@@ -28,10 +28,13 @@ ConnectDB();
 app.use(express.json());
 // router는 routes 디렉토리로 분리해 보기
 app.use('/', router);
+
+// 다른 도메인에서 온 요청도 허용함.
 app.use(cors());
 app.use((req, res) => {
     res.header("Access-Control-Allow-Origin", '*');
 })
+
 // 서버 포트랑 연결하기
 app.listen(process.env.SERVER_PORT, () => {
     console.log('Example app listening on port' + process.env.SERVER_PORT);
