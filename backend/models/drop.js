@@ -21,7 +21,8 @@ const Drop = sequelize.define("Drop", {
                     allowNull:false,
                 }
             }, {
-                freezeTableName:true
+                freezeTableName:true,
+                timestamps:false
             }
         );
 
