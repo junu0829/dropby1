@@ -1,12 +1,12 @@
 // 중앙 통제실 같은 파일??
 const express = require('express');
 const app = express();
-const sequelize = require('./models/index'); 
+const {sequelize} = require('./models/index'); 
 const router = require('./routes/index');
 //DB, 서버 등 보안 관련
-const dotenv = require('dotenv');
-const cors = require('cors');
 
+const cors = require('cors');
+const dotenv = require('dotenv');
 dotenv.config(); 
 
 const ConnectDB = async () => {
@@ -14,7 +14,7 @@ const ConnectDB = async () => {
         await sequelize.authenticate().then( 
             () => console.log('데이터베이스 연결 성공!')
         );
-        await sequelize.sync().then(
+        await sequelize.sync({force:true}).then(
             () => console.log('동기화 완료!')
         );
     } catch (error) {
