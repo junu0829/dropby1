@@ -1,26 +1,27 @@
-const db = require('../config/db');
+const Sequelize = require('sequelize')
+const sequelize = require('../config/db')
+const db = {};
+
 db.Drop = require('./drop');
-// const Sequelize = require('sequelize');
+db.User = require('./user');
 
-// const env = process.env.NODE_ENV || 'development';
-// const config = require('../config/config.js')[env];
-// const sequelize = new Sequelize(config.database, config.username, config.password, config);
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
+// 한 사용자는 여러 개의 드롭을 가질(만들) 수 있음.
+db.User.hasMany(db.Drop, {
+    foreignKey:{
+        name:'creatorPk',
+        allowNull:false
+    },
+    onDelete:'SET NULL'
+});
 
-// db.sequelize = sequelize;
-// db.Sequelize = Sequelize;
-
-// db.User = require('./user')(sequelize, Sequelize);
-// db.Drop = require('./drop')(sequelize, Sequelize);
-// db.Place = require('./place')(sequelize, Sequelize);
-
-// db.User.hasMany(db.Drop, {
-//   foreignKey:{name:'authorPk', allowNull:false,},
-//   onDelete:"CASCADE",
-// });
-
-// db.Place.hasMany(db.Drop, {
-//   foreignKey:{name:'writtenPlace', allowNull:false},
-//   onDelete:"CASCADE"
-// })
+db.Drop.belongsTo(db.User, {
+    foreignKey:{
+        name:'creatorPk',
+        allowNull:false
+    },
+    onDelete:'CASCADE'
+});
 
 module.exports = db;
