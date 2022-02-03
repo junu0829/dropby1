@@ -11,7 +11,8 @@ const loginVerify = async (email, password, done) => {
     if (!user) {
         return done(null, false, {message:'존재하지 않는 사용자입니다.'})
     }
-    if (!(bcrypt.compare(password, user.password))) {
+    isAuth = await bcrypt.compare(password, user.password)
+    if (!isAuth) {
         return done(null, false, {message:'잘못된 비밀번호입니다.'})
     };
     return done(null, user);
