@@ -4,6 +4,7 @@ const {ExtractJwt, Strategy:JWTStrategy} = require('passport-jwt');
 const {User} = require('../models/index')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const blacklist = require('jwt-blacklist');
 require('dotenv').config();
 
 const loginVerify = async (email, password, done) => {

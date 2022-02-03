@@ -3,7 +3,7 @@ const passport = require('passport');
 const router = express.Router();
 const userServices = require('../services/userServices');
 const jwt = require('jsonwebtoken');
-
+const {createBlackList} = require('jwt-blacklist');
 exports.signUp = async(req, res, next) => {
         const newUser = await userServices.signUp(req.body);
         if (newUser) {
@@ -53,4 +53,22 @@ exports.tokenRefresh = async(req, res, next) => {
         console.log(error);
         next(error);
     }
+}
+
+exports.TokenBlacklist = async(req, res, next) => {
+    try {
+
+        const blacklisted = await userServices.TokenBlacklist(req.body.refresh);
+        res.status(200).json({
+            msg:blacklisted.msg,
+            success:blacklisted.success
+        })
+    } catch(error) {
+        res.status(400).json({
+            msg:error.message,
+            success:false
+        })
+
+    }
+
 }
