@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   View,
   TouchableWithoutFeedback,
+  Image,
+  Video,
 } from "react-native";
 import { useEffect, useState } from "react";
 
@@ -14,21 +16,27 @@ import { SafeArea } from "../../../components/utility/safe-area.component";
 import { TextInput } from "react-native-gesture-handler";
 import { theme } from "../../../infrastructure/theme";
 import { SvgXml } from "react-native-svg";
-import sendButton from "../../../../assets/sendingButton";
+
 import Constants from "expo-constants";
 
 import addIcon from "../../../../assets/addIcon";
-import backButton2 from "../../../../assets/backButton";
+import backButton2 from "../../../../assets/backButton2";
 import sendingButton from "../../../../assets/sendingButton";
 import bar from "../../../../assets/bar";
 import addPicture from "../../../../assets/addPicture";
 import LockButtonUnlocked from "../../../../assets/LockButton(Unlocked)";
 
+import { container, styles } from "./writescreen.styles";
+
 export const WriteScreen = ({ navigation, route }) => {
   const [placeName, setPlaceName] = useState("새로운 장소");
   const [placeAddress, setPlaceAddress] = useState("새로운 장소-주소");
   const [placeLatlng, setPlaceLatlng] = useState([0, 0]);
+  const [selectedEmoji, setSelectedEmoji] = useState("");
 
+  /////////////////////로컬 이미지 여기에 담김
+  const [image, setImage] = useState(null);
+  //////////////////////
   let user_idx = Constants.installationId;
 
   useEffect(() => {
@@ -38,7 +46,18 @@ export const WriteScreen = ({ navigation, route }) => {
     handleLatitude(placeLatlng.latitude);
     handleLongitude(placeLatlng.longitude);
     handlePk(user_idx);
-  }, [route, placeLatlng.latitude, placeLatlng.longitude, user_idx]);
+    setImage(route.params.source);
+    setSelectedEmoji(route.params.emoji);
+    console.log(image);
+    console.log(selectedEmoji);
+  }, [
+    route,
+    placeLatlng.latitude,
+    placeLatlng.longitude,
+    user_idx,
+    image,
+    selectedEmoji,
+  ]);
   ////////////////////
 
   const [pk, setPk] = useState("");
@@ -73,7 +92,7 @@ export const WriteScreen = ({ navigation, route }) => {
 
   const PostWrite = async () => {
     axios
-      .post("http://192.168.35.8:3000/drops", {
+      .post("http://localhost:3000/drops", {
         pk: 0,
         content: content,
         latitude: latitude,
@@ -84,72 +103,6 @@ export const WriteScreen = ({ navigation, route }) => {
       });
   };
 
-  const styles = StyleSheet.create({
-    container: {
-      backgroundColor: theme.colors.bg.secondary,
-      flexDirection: "column",
-      flex: 1,
-    },
-    containerTop: {
-      flexDirection: "row",
-      marginTop: 10,
-      backgroundColor: theme.colors.bg.secondary,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    backButton: {
-      marginRight: 80,
-    },
-    addIcon: {
-      justifyContent: "center",
-    },
-    sendingButton: {
-      marginLeft: 65,
-    },
-
-    textContainer: {
-      backgroundColor: theme.colors.bg.secondary,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-
-    place: {
-      marginTop: 20,
-      fontSize: 20,
-      fontWeight: "700",
-      color: "#000",
-      textAlign: "center",
-    },
-    address: {
-      fontSize: 12,
-      fontWeight: "500",
-      color: "#000",
-    },
-    bar: {
-      padding: 15,
-    },
-
-    enter: {
-      fontSize: 20,
-      fontWeight: "500",
-      color: "#9A9A9A",
-      textAlign: "center",
-    },
-
-    containerLow: {
-      backgroundColor: theme.colors.bg.secondary,
-      flexDirection: "row",
-      marginBottom: 5,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    addPicture: {
-      marginRight: 70,
-    },
-    LockButtonUnlocked: {
-      marginLeft: 70,
-    },
-  });
   return (
     <SafeArea style={styles.container}>
       <View style={styles.container}>
@@ -166,7 +119,11 @@ export const WriteScreen = ({ navigation, route }) => {
               style={styles.backButton}
             ></SvgXml>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("Emoji");
+            }}
+          >
             <SvgXml
               xml={addIcon}
               width={65}
@@ -207,8 +164,34 @@ export const WriteScreen = ({ navigation, route }) => {
           </View>
         </TouchableWithoutFeedback>
       </View>
+      {/* ---------------------------------------------------이미지 불러와서 미리보기--------------------------------------------------- */}
+      {route.params.type === 1 ? (
+        <View>
+          <Image
+            style={container.image}
+            source={{ uri: route.params.source }}
+            // eslint-disable-next-line react/jsx-no-duplicate-props
+            style={{ aspectRatio: 1 / 1, backgroundColor: "black" }}
+          />
+        </View>
+      ) : route.params.type === 0 ? (
+        <View>
+          <Video
+            source={{ uri: route.params.source }}
+            shouldPlay={true}
+            isLooping={true}
+            resizeMode="cover"
+            style={{ aspectRatio: 1 / 1, backgroundColor: "black" }}
+          />
+        </View>
+      ) : null}
       <View style={styles.containerLow}>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            PostWrite();
+            navigation.navigate("CameraScreen", route);
+          }}
+        >
           <SvgXml
             xml={addPicture}
             width={90}

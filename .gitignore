@@ -3,4 +3,5 @@ node_modules
 config/
 models
 dropby_db.db
+APIKeys.js
 memo

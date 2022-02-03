@@ -1,14 +1,7 @@
 import * as React from "react";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 
-import {
-  StyleSheet,
-  View,
-  Dimensions,
-  Image,
-  Text,
-  TouchableOpacity,
-} from "react-native";
+import { Dimensions, Image, Text, TouchableOpacity } from "react-native";
 import { useEffect, useContext, useState } from "react";
 import { LocationContext } from "../../../services/location/location.context";
 
@@ -68,7 +61,7 @@ export default DropsOnMap = ({ navigation, route }) => {
       setLoading(true);
       await axios({
         method: "GET",
-        url: "http://172.30.121.94:3000/drops/",
+        url: "http://localhost:3000/drops/",
       })
         .then((res) => {
           setDrops(res.data.data);
