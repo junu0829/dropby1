@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const {User} = require('../models');
 require('dotenv').config();
+const {verifyAccess, verifyRefresh} = require('../middlewares/auth');
 
 exports.signUp = async ({nickname, email, password}) => {
     console.log(email);
@@ -55,10 +56,56 @@ exports.logIn = async({email, password}) => {
 }
 
 exports.tokenRefresh = async (accessToken, refreshToken) => {
-        const newAccess = jwt.sign
-        const verified = jwt.verify(token, process.env.JWT_SECRET_REFRESH_KEY);
-        console.log('verified', verified);
+    const authResult = verifyAccess(accessToken);
+    console.log('authResult', authResult);
+    const verified = jwt.verify(accessToken, process.env.JWT_SECRET_ACCESS_KEY);
+    console.log('verified', verified)
 
+    if (verified === null) {
+        return {
+            'success':false,
+            'token':null
+        };
+    } else {
+        const refreshResult = verifyRefresh(refreshToken)
 
+        if (authResult.success === false && authResult.message === 'jwt expired') {
+            if (refreshResult === false) { //accessToken과 refreshToken이 모두 유효하지 않음.
+                return {
+                    'success':false,
+                    'token':null
+                }
 
+            } else { //accessToken은 유효하지 않으나 refreshToken이 유효함. == 새 access 발급.
+                payload = {
+                    pk:authResult.pk,
+                    email:authResult.email
+                };
+                const newAccess = jwt.sign(
+                        payload, 
+                        process.env.JWT_SECRET_ACCESS_KEY, 
+                        {
+                            algorithm:process.env.JWT_ALGORITHM,
+                            expiresIn:process.env.JWT_ACCESS_EXPIRE
+                })
+                return {
+                    'success':true,
+                    'status':'Access Token granted',
+                    'token':{
+                        'access':newAccess,
+                        'refresh':refreshToken
+                    }
+                }
+            }
+        } else { //accessToken이 만료되지 않음
+            return {
+                'success':false,
+                'status':'Access Token not expired',
+                'token':{
+                    'access':accessToken,
+                    'refresh':refreshToken
+                }
+            }
+        }
+    }
 }
