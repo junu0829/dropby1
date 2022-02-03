@@ -30,6 +30,35 @@ exports.logIn = async({email, password}) => {
         pk:userData.pk,
         email:userData.email
     }
-    const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
-    return {user, token};
+    const accessToken = jwt.sign(
+        payload,
+        process.env.JWT_SECRET_ACCESS_KEY,
+        {
+            algorithm:process.env.JWT_ALGORITHM,
+            expiresIn:process.env.JWT_ACCESS_EXPIRE
+        }
+    );
+    const refreshToken = jwt.sign(
+        {},
+        process.env.JWT_SECRET_REFRESH_KEY,
+        {
+            algorithm:process.env.JWT_ALGORITHM,
+            expiresIn:process.env.JWT_REFRESH_EXPIRE,
+        }
+    );
+
+    const tokens = {
+        'access':accessToken,
+        'refresh':refreshToken,
+    }
+    return {user, tokens};
+}
+
+exports.tokenRefresh = async (accessToken, refreshToken) => {
+        const newAccess = jwt.sign
+        const verified = jwt.verify(token, process.env.JWT_SECRET_REFRESH_KEY);
+        console.log('verified', verified);
+
+
+
 }

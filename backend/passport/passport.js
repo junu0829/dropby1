@@ -3,6 +3,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const {ExtractJwt, Strategy:JWTStrategy} = require('passport-jwt');
 const {User} = require('../models/index')
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const loginVerify = async (email, password, done) => {
@@ -19,7 +20,9 @@ const loginVerify = async (email, password, done) => {
 }
 
 const JWTVerify = async (jwtpayload, done) => {
-    const user = User.findOne({id:jwtpayload.sub})
+    console.log('jwtpayload', jwtpayload);
+    console.log('jwtpayloadsub', jwtpayload.pk);
+    const user = User.findOne({where:{pk:jwtpayload.pk}})
                 .then(user => {
                     return done(null, user);
                 })
@@ -28,6 +31,18 @@ const JWTVerify = async (jwtpayload, done) => {
                 })
 }
 
+const JWTRefreshVerify = async (jwtrefresh, done) => {
+    console.log(jwtrefresh);
+    if (jwtrefresh) {
+        return done(null, jwtrefresh);
+    } else {
+        return done(null, false);
+    }
+    // console.log('jwtrefresh', jwtrefresh);
+    // const verified = jwt.verify(jwtrefresh, process.env.JWT_SECRET_REFRESH_KEY);
+    // console.log('jwtverified', verified);
+    // return done(null, verified);            
+}
 module.exports = () => {
     //Local Strategy
     passport.use('local',
@@ -38,32 +53,18 @@ module.exports = () => {
         }, loginVerify)
     );
 
-    //JWT Strategy
-    passport.use('jwt',
+    //JWT Access Strategy
+    passport.use('jwtAccess',
         new JWTStrategy({
             jwtFromRequest:ExtractJwt.fromAuthHeaderAsBearerToken(),
-            secretOrKey:process.env.JWT_SECRET_KEY
+            secretOrKey:process.env.JWT_SECRET_ACCESS_KEY
         }, JWTVerify)
-    )
+    );
+    //JWT Refresh Strategy
+    passport.use('jwtRefresh',
+        new JWTStrategy({
+            jwtFromRequest:ExtractJwt.fromBodyField('refresh'),
+            secretOrKey:process.env.JWT_SECRET_REFRESH_KEY
+        }, JWTRefreshVerify)
+    );
 };
-// const localPassportConfig = () => {
-//     passport.use('local',
-//         new LocalStrategy({
-//             usernameField:'email',
-//             passwordField:'password',
-//             passReqToCallback:true
-//         }, loginVerify)
-//     )
-// };
-
-// const jwtPassportConfig = () => {
-//     passport.use('jwt',
-//         new JWTStrategy({
-//             jwtFromRequest:ExtractJwt.fromAuthHeaderAsBearerToken(),
-//             secretOrKey:process.env.JWT_SECRET_KEY
-//         }, JWTVerify)
-//     )
-// };
-
-// module.exports = localPassportConfig;
-// module.exports = jwtPassportConfig;
