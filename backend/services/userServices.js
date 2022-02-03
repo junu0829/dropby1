@@ -15,8 +15,27 @@ exports.signUp = async ({nickname, email, password}) => {
     return user;
 };
 
-exports.logIn = async(user) => {
-    const token = jwt.sign(user.toJSON(), process.env.JWT_SECRET_KEY);
+exports.logIn = async({email, password}) => {
+    const user = await User.findOne({where:{email}})
+    userData = user.dataValues;
+    console.log(user.dataValues);
+    payload = {
+        pk:userData.pk,
+        email:userData.email
+    }
+    const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
     return {user, token};
-
 }
+
+// const user = await userServices.login()
+//     passport.authenticate('local', {session:false}, (error, user) => {
+//         if (error || !user) {
+//             return res.status(400).json({
+//                 message:'로그인 실패',
+//                 user:user
+//             })
+//         }
+//         const authUser = userServices.logIn(user);
+//         return res.json({
+//             msg:'로그인 성공',
+//             data:authUser
