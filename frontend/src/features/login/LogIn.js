@@ -6,6 +6,7 @@ import LoadIcon from "../../../assets/LoadIcon";
 import { SvgXml } from "react-native-svg";
 
 import LetsDrop from "../../../assets/LetsDrop";
+import { FadeInView } from "../../components/animations/fade.animation";
 
 export const LogIn = ({ navigation }) => {
   return (
@@ -22,15 +23,17 @@ export const LogIn = ({ navigation }) => {
         end={{ x: 0.01, y: 0.99 }}
         locations={[0.0, 0.5, 0.8, 1.0]}
       >
-        <View style={styles.container2}>
-          <SvgXml xml={LoadIcon} width={72} height={123} />
-        </View>
-        <View style={styles.container3}>
-          <TouchableOpacity onPress={() => navigation.navigate("MapScreen")}>
-            <SvgXml xml={LetsDrop} width={231} height={47} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.container4} />
+        <FadeInView>
+          <View style={styles.container2}>
+            <SvgXml xml={LoadIcon} width={72} height={123} />
+          </View>
+          <View style={styles.container3}>
+            <TouchableOpacity onPress={() => navigation.navigate("MapScreen")}>
+              <SvgXml xml={LetsDrop} width={231} height={47} />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.container4} />
+        </FadeInView>
       </LinearGradient>
     </>
   );

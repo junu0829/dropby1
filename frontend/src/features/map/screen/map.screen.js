@@ -42,9 +42,16 @@ import currentLocation from "../../../../assets/currentLocation";
 
 import selectButton from "../../../../assets/selectButton";
 import backButton from "../../../../assets/backButton";
+import { FadeInView } from "../../../components/animations/fade.animation";
+import { ExpandView } from "../../../components/animations/expand.animation";
+import { FadeInViewFaster } from "../../../components/animations/fadeFaster.animation.";
 
 export const MapScreen = ({ navigation, route }) => {
+  ////////////////////////////처음 state들//////////////////////////////////////
+  ///axios는 서버로부터 data json불러와주는 도구
   const axios = require("axios");
+
+  /////지도를 지도 바깥에서 부를 수 있도록 정의
   const mapRef = React.createRef();
   // 화면비율 조정하는 것
 
@@ -53,7 +60,7 @@ export const MapScreen = ({ navigation, route }) => {
   const LATITUDE_DELTA = 0.008; //Very high zoom level
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
-  ///////처음 데이터셋팅
+  ///////처음 데이터셋팅(현위치, 누른 위치-주소-장소명, 선택장소 마커위치, 데이터베이스에 저장된 마커들)
   const { location, isLoading } = useContext(LocationContext);
 
   const [isAddressLoading, SetIsAddressLoading] = useState(true);
@@ -85,13 +92,51 @@ export const MapScreen = ({ navigation, route }) => {
     latitude: 37.58646601781994,
     longitude: 127.02913699768948,
   });
+  const [calibratedLocation, setCalibratedLocation] = useState({
+    latitude: 37.58646601781994,
+    longitude: 127.02913699768948,
+  });
   const [definedAddressID, setDefinedAddressID] = useState(null);
   const [pressedAddressID, setPressedAddressID] = useState(null);
   const [pressedAddress, setPressedAddress] = useState(null);
   const [pressedAddressName, setPressedAddressName] = useState("새로운 장소");
 
+  ////////////////////////////여기서부터 useEffect 정의하기 시작//////////////////////////////////////////////////////
+
+  //////////드롭불러오기
+
   useEffect(() => {
-    /////정보가져오는 함수 정의
+    const LoadDrop = async () => {
+      await axios({
+        method: "get",
+        url: "http://localhost:3000/drops",
+      }).then((res) => {
+        setDrops(res.data.data);
+        console.log(res.data.data);
+      });
+    };
+    LoadDrop();
+  }, [axios, pressedAddress]);
+
+  const dropsList = (drops) => {
+    return drops.map((drop) => {
+      return (
+        <MapView.Marker
+          key={drop.pk}
+          title={drop.content}
+          coordinate={{
+            latitude: drop.latitude,
+            longitude: drop.longitude,
+          }}
+          onPress={() => {}}
+        >
+          <SvgXml xml={DropDefault} width={40} height={36}></SvgXml>
+        </MapView.Marker>
+      );
+    });
+  };
+  ///////길게 눌렀을 시 장소정보 가져오는 함수
+  useEffect(() => {
     const getAddress = () => {
       fetch(
         "https://maps.googleapis.com/maps/api/geocode/json?address=" +
@@ -126,67 +171,16 @@ export const MapScreen = ({ navigation, route }) => {
     getAddress();
     getPlaceDetail();
 
-    setMarkers([
-      {
-        latitude: pressedLocation.latitude,
-        longitude: pressedLocation.longitude,
-      },
-    ]);
     console.log("longclicked");
-  }, [pressedAddress, pressedAddressName, pressedAddressID, pressedLocation]);
+  }, [pressedAddressID, pressedLocation]);
 
   useEffect(() => {
     setWriteMode(false);
   }, [route.params]);
 
-  /////드롭불러오기
+  //////////가볍게 눌렀을 시 장소정보 가져오는 함수
 
   useEffect(() => {
-    const LoadDrop = async () => {
-      await axios({
-        method: "get",
-        url: "http://localhost:3000/drops",
-      }).then((res) => {
-        setDrops(res.data.data);
-        console.log(res.data.data);
-      });
-    };
-    LoadDrop();
-  }, [axios, pressedAddress]);
-
-  const dropsList = (drops) => {
-    return drops.map((drop) => {
-      return (
-        <MapView.Marker
-          key={drop.pk}
-          title={drop.content}
-          coordinate={{
-            latitude: drop.latitude,
-            longitude: drop.longitude,
-          }}
-          onPress={() => {}}
-        >
-          <SvgXml xml={DropDefault} width={40} height={36}></SvgXml>
-        </MapView.Marker>
-      );
-    });
-  };
-
-  useEffect(() => {
-    const DefinedPlaceLoad = (responseJson) => {
-      for (let i = 0; i < 10; i++) {
-        //  if (responseJson.results[i].geomtry.location_type == "GEOMETRIC_CENTER") {}
-        if (
-          responseJson.results[i].geometry.location_type === "GEOMETRIC_CENTER"
-        ) {
-          setDefinedAddressID(responseJson.results[i].place_id);
-          setDefinedLocation(responseJson.results[i].geometry.location);
-
-          break;
-        }
-      }
-    };
-
     const getDefinedAddress = () => {
       fetch(
         "https://maps.googleapis.com/maps/api/geocode/json?address=" +
@@ -197,9 +191,18 @@ export const MapScreen = ({ navigation, route }) => {
       )
         .then((response) => response.json())
         .then((responseJson) => {
-          // DefinedPlaceLoad(responseJson);
+          for (let i = 0; i < 15; i++) {
+            if (
+              responseJson.results[i].geometry.location_type ===
+              "GEOMETRIC_CENTER"
+            ) {
+              setDefinedAddressID(responseJson.results[i].place_id);
+              setCalibratedLocation(responseJson.results[i].geometry.location);
+              break;
+            }
 
-          DefinedPlaceLoad();
+            console.log(i);
+          }
         });
     };
 
@@ -218,6 +221,25 @@ export const MapScreen = ({ navigation, route }) => {
 
     console.log("lightclicked");
   }, [definedLocation, definedAddressID]);
+
+  useEffect(() => {
+    console.log(calibratedLocation);
+    setMarkers([
+      {
+        latitude: calibratedLocation.lat,
+        longitude: calibratedLocation.lng,
+      },
+    ]);
+  }, [calibratedLocation]);
+
+  useEffect(() => {
+    setMarkers([
+      {
+        latitude: pressedLocation.latitude,
+        longitude: pressedLocation.longitude,
+      },
+    ]);
+  }, [pressedLocation]);
 
   ///////////////////////////////////////////////////////////////////////////////////
   //////////////////////////맵그리는 것 여기서부터 시작//////////////////////////////
@@ -254,25 +276,20 @@ export const MapScreen = ({ navigation, route }) => {
         </SearchContainer>
 
         <Map
-          onLongPress={async (event) => {
-            await setPressedLocation(event.nativeEvent.coordinate);
+          onPress={(event) => {
+            setDefinedLocation(event.nativeEvent.coordinate);
             SetIsAddressLoading(false);
-
-            setMarkers([
-              {
-                latitude: definedLocation.latitude,
-                longitude: definedLocation.longitude,
-              },
-            ]);
+            setMarkers([]);
+          }}
+          onLongPress={(event) => {
+            setPressedLocation(event.nativeEvent.coordinate);
+            SetIsAddressLoading(false);
+            setMarkers([]);
           }}
           ref={mapRef}
           showsUserLocation={true}
           showsCompass={true}
           provider={PROVIDER_GOOGLE}
-          onPress={async (event) => {
-            await setDefinedLocation(event.nativeEvent.coordinate);
-            setMarkers([]);
-          }}
           initialRegion={{
             // 지도의 센터값 위도 경도
             latitude: location[0],
@@ -292,7 +309,15 @@ export const MapScreen = ({ navigation, route }) => {
 
                     coordinate={Markers[0]}
                   >
-                    <SvgXml xml={LocationSelected} width={33.5} height={45} />
+                    <FadeInViewFaster>
+                      <ExpandView>
+                        <SvgXml
+                          xml={LocationSelected}
+                          width={33.5}
+                          height={45}
+                        />
+                      </ExpandView>
+                    </FadeInViewFaster>
                   </MapView.Marker>
                 );
               })

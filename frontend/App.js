@@ -17,8 +17,6 @@ import {
   Dongle_400Regular,
 } from "@expo-google-fonts/dongle";
 
-import { Loading } from "./src/components/Loading";
-
 import { LocationContextProvider } from "./src/services/location/location.context";
 
 //NanumGothic_400Regular
@@ -44,6 +42,6 @@ export default function App() {
       </>
     );
   } else {
-    return <Loading />;
+    return null;
   }
 }
