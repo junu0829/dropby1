@@ -13,10 +13,10 @@ const body = (theme) => `
     font-size: ${theme.fontSizes.body};
 `;
 const bold = (theme) => `
-font-size: ${theme.fontSizes.body};
+font-size: ${theme.fontSizes.h5};
 font-family: ${theme.fonts.bold};
 font-weight: ${theme.fontWeights.bold};
-color: #FAFAFA;
+color: ${theme.colors.bg.b}
 flex-wrap: wrap;
 margin-top: 0px;
 margin-bottom: 0px;

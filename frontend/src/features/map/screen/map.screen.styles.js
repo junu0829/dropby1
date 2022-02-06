@@ -79,6 +79,28 @@ export const ContainerEnd2 = styled.View`
   flex: 1;
   width: 100%;
 `;
+export const ContainerEnd3 = styled.View`
+  justify-content: flex-end;
+  flex-direction: row;
+  z-index: 995;
+  bottom: -8px
+  left: 5px;
+  flex: 1;
+  width: 100%;
+`;
+
+export const ContainerEnd4 = styled.View`
+  justify-content: flex-end;
+  flex-direction: row;
+  z-index: 995;
+  right: 20px;
+`;
+export const ContainerStart = styled.View`
+  justify-content: flex-start;
+  flex-direction: row;
+  z-index: 995;
+  left: 20px;
+`;
 
 export const TextContainer = styled.View`
 flex:3
@@ -142,6 +164,18 @@ export const styles = StyleSheet.create({
     fontWeight: "700",
     marginTop: 4,
     marginLeft: 7,
+  },
+  placeaddress2: {
+    fontSize: 9,
+    fontWeight: "700",
+    marginTop: 11,
+    marginLeft: 7,
+  },
+  Timing: {
+    fontSize: 10,
+    fontWeight: "700",
+    marginTop: 1,
+    marginRight: 7,
   },
 
   place: {

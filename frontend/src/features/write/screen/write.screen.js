@@ -2,7 +2,6 @@ import React from "react";
 
 import {
   Keyboard,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -14,7 +13,7 @@ import { useEffect, useState } from "react";
 
 import { SafeArea } from "../../../components/utility/safe-area.component";
 import { TextInput } from "react-native-gesture-handler";
-import { theme } from "../../../infrastructure/theme";
+
 import { SvgXml } from "react-native-svg";
 
 import Constants from "expo-constants";
@@ -32,7 +31,7 @@ export const WriteScreen = ({ navigation, route }) => {
   const [placeName, setPlaceName] = useState("새로운 장소");
   const [placeAddress, setPlaceAddress] = useState("새로운 장소-주소");
   const [placeLatlng, setPlaceLatlng] = useState([0, 0]);
-  const [selectedEmoji, setSelectedEmoji] = useState("");
+  const [selectedEmoji, setSelectedEmoji] = useState("😀");
 
   /////////////////////로컬 이미지 여기에 담김
   const [image, setImage] = useState(null);
@@ -47,9 +46,7 @@ export const WriteScreen = ({ navigation, route }) => {
     handleLongitude(placeLatlng.longitude);
     handlePk(user_idx);
     setImage(route.params.source);
-    setSelectedEmoji(route.params.emoji);
-    console.log(image);
-    console.log(selectedEmoji);
+    setSelectedEmoji(route.params.selectedEmoji);
   }, [
     route,
     placeLatlng.latitude,
@@ -92,8 +89,8 @@ export const WriteScreen = ({ navigation, route }) => {
 
   const PostWrite = async () => {
     axios
-      .post("http://localhost:3000/drops", {
-        pk: 0,
+      .post("http://192.168.20.16:3000/drops", {
+        pk: Constants.deviceName,
         content: content,
         latitude: latitude,
         longitude: longitude,
@@ -124,12 +121,23 @@ export const WriteScreen = ({ navigation, route }) => {
               navigation.navigate("Emoji");
             }}
           >
-            <SvgXml
-              xml={addIcon}
-              width={65}
-              height={50}
-              style={styles.addIcon}
-            ></SvgXml>
+            {selectedEmoji != null ? (
+              <Text
+                style={{
+                  height: 70,
+                  fontSize: 60,
+                }}
+              >
+                {selectedEmoji}
+              </Text>
+            ) : (
+              <SvgXml
+                xml={addIcon}
+                width={65}
+                height={50}
+                style={styles.addIcon}
+              ></SvgXml>
+            )}
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {

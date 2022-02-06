@@ -1,6 +1,14 @@
 import React from "react";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
-import { Dimensions, Image, View, TouchableOpacity } from "react-native";
+import {
+  Dimensions,
+  Image,
+  View,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  Modal,
+  ImageBackground,
+} from "react-native";
 
 import { Text } from "../../../components/typography/text.component";
 
@@ -9,9 +17,11 @@ import { useEffect, useContext, useState } from "react";
 import { LocationContext } from "../../../services/location/location.context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Loading } from "../../../components/Loading";
+import Supercluster from "supercluster";
 
 import { SvgXml } from "react-native-svg";
 import ExpoStatusBar from "expo-status-bar/build/ExpoStatusBar";
+import { DropPreview } from "./component/dropPreview";
 import {
   Map,
   SearchContainer,
@@ -31,20 +41,24 @@ import {
   ContainerEnd2,
 } from "./map.screen.styles";
 
+import { getCluster } from "./component/getCluster";
+import ClusterMarker from "./component/ClusterMarker";
+
 //assets
 import Drops from "../../../../assets/Drops";
 import { APIKey, PlAPIKey } from "../../../../APIkeys";
 import DropDefault from "../../../../assets/DropDefault";
-import cloud from "../../../../assets/cloud.png";
+
 import write from "../../../../assets/write";
 import LocationSelected from "../../../../assets/LocationSelected";
 import currentLocation from "../../../../assets/currentLocation";
 
 import selectButton from "../../../../assets/selectButton";
 import backButton from "../../../../assets/backButton";
-import { FadeInView } from "../../../components/animations/fade.animation";
+
 import { ExpandView } from "../../../components/animations/expand.animation";
 import { FadeInViewFaster } from "../../../components/animations/fadeFaster.animation.";
+import { Cloud } from "./component/cloud";
 
 export const MapScreen = ({ navigation, route }) => {
   ////////////////////////////처음 state들//////////////////////////////////////
@@ -65,6 +79,11 @@ export const MapScreen = ({ navigation, route }) => {
 
   const [isAddressLoading, SetIsAddressLoading] = useState(true);
 
+  const [dropViewMode, setDropViewMode] = useState(false);
+  const showModal = () => {
+    setDropViewMode(true);
+  };
+
   const [writeMode, setWriteMode] = useState(false);
   const [pressedLocation, setPressedLocation] = useState({
     latitude: 37.58646601781994,
@@ -77,6 +96,7 @@ export const MapScreen = ({ navigation, route }) => {
     },
   ]);
 
+  const [dropContent, setDropContent] = useState(null);
   const [drops, setDrops] = useState([
     {
       content: "드롭바이짱",
@@ -84,6 +104,32 @@ export const MapScreen = ({ navigation, route }) => {
       latitude: 37.398811798656766,
       longitude: 126.6377265751362,
       pk: 22,
+      updatedAt: "2022-01-29T04:55:47.472Z",
+    },
+    {
+      content: "드롭바이짱2",
+      createdAt: "2022-01-29T04:55:47.000Z",
+      latitude: 37.397841735093614,
+      longitude: 126.6367502933775,
+      pk: 23,
+      updatedAt: "2022-01-29T04:55:47.472Z",
+    },
+
+    // 126.67815894345523
+    {
+      content: "드롭바이짱3",
+      createdAt: "2022-01-29T04:55:47.000Z",
+      latitude: 37.397686933515644,
+      longitude: 126.63464320297088,
+      pk: 2,
+      updatedAt: "2022-01-29T04:55:47.472Z",
+    },
+    {
+      content: "드롭바이짱4",
+      createdAt: "2022-01-29T04:55:47.000Z",
+      latitude: 37.39791239133797,
+      longitude: 126.67815894345523,
+      pk: 5,
       updatedAt: "2022-01-29T04:55:47.472Z",
     },
   ]);
@@ -109,13 +155,13 @@ export const MapScreen = ({ navigation, route }) => {
     const LoadDrop = async () => {
       await axios({
         method: "get",
-        url: "http://localhost:3000/drops",
+        url: "http://192.168.20.16:3000/drops",
       }).then((res) => {
         setDrops(res.data.data);
-        console.log(res.data.data);
       });
     };
     LoadDrop();
+    // const cluster = getCluster(allCoords, region);
   }, [axios, pressedAddress]);
 
   const dropsList = (drops) => {
@@ -123,12 +169,19 @@ export const MapScreen = ({ navigation, route }) => {
       return (
         <MapView.Marker
           key={drop.pk}
-          title={drop.content}
           coordinate={{
             latitude: drop.latitude,
             longitude: drop.longitude,
           }}
-          onPress={() => {}}
+          onPress={() => {
+            showModal();
+            setWriteMode(false);
+            setPressedLocation({
+              latitude: drop.latitude,
+              longitude: drop.longitude,
+            });
+            setDropContent(drop.content);
+          }}
         >
           <SvgXml xml={DropDefault} width={40} height={36}></SvgXml>
         </MapView.Marker>
@@ -136,6 +189,7 @@ export const MapScreen = ({ navigation, route }) => {
     });
   };
   ///////길게 눌렀을 시 장소정보 가져오는 함수
+
   useEffect(() => {
     const getAddress = () => {
       fetch(
@@ -164,7 +218,10 @@ export const MapScreen = ({ navigation, route }) => {
         .then((response) => response.json())
         .then(async (responseJson) => {
           await setPressedAddress(responseJson.result.formatted_address);
-          await setPressedAddressName(responseJson.result.name);
+          await setPressedAddressName(
+            `${responseJson.result.name}는 새로운 장소입니다!`
+          );
+          console.log("a");
         });
     };
 
@@ -200,8 +257,6 @@ export const MapScreen = ({ navigation, route }) => {
               setCalibratedLocation(responseJson.results[i].geometry.location);
               break;
             }
-
-            console.log(i);
           }
         });
     };
@@ -214,6 +269,7 @@ export const MapScreen = ({ navigation, route }) => {
         .then(async (responseJson) => {
           await setPressedAddress(responseJson.result.formatted_address);
           await setPressedAddressName(responseJson.result.name);
+          console.log("b");
         });
     };
     getDefinedAddress();
@@ -223,7 +279,6 @@ export const MapScreen = ({ navigation, route }) => {
   }, [definedLocation, definedAddressID]);
 
   useEffect(() => {
-    console.log(calibratedLocation);
     setMarkers([
       {
         latitude: calibratedLocation.lat,
@@ -241,6 +296,47 @@ export const MapScreen = ({ navigation, route }) => {
     ]);
   }, [pressedLocation]);
 
+  const [region, setRegion] = useState({
+    // 지도의 센터값 위도 경도
+    latitude: location[0],
+    longitude: location[1],
+    //ZoomLevel 아래에 있는 것은 건드리지 않아도 됨
+    latitudeDelta: LATITUDE_DELTA,
+    longitudeDelta: LONGITUDE_DELTA,
+  });
+
+  const allCoords = drops.map((i) => ({
+    geometry: {
+      coordinates: [i.latitude, i.longitude],
+    },
+  }));
+
+  const renderMarker = (marker, index) => {
+    const key = index + marker.geometry.coordinates[0];
+    // if (marker.properties) {
+    //   return (
+    //     <MapView.Marker
+    //       key={key}
+    //       coordinate={{
+    //         latitude: marker.geometry.coordinates[1],
+    //         longitude: marker.geometry.coordinates[0],
+    //       }}
+    //     >
+    //       <ClusterMarker count={marker.properties.point_count} />
+    //     </MapView.Marker>
+    //   );
+    // }
+    return (
+      <MapView.Marker
+        key={key}
+        coordinate={{
+          latitude: marker.geometry.coordinates[1],
+          longitude: marker.geometry.coordinates[0],
+        }}
+      />
+    );
+  };
+
   ///////////////////////////////////////////////////////////////////////////////////
   //////////////////////////맵그리는 것 여기서부터 시작//////////////////////////////
   //////////////////////////////////////////////////////////////////////////////////////
@@ -248,8 +344,47 @@ export const MapScreen = ({ navigation, route }) => {
   if (isLoading) {
     return <Loading />;
   } else {
+    function getZoomLevel(longitudeDelta) {
+      const angle = longitudeDelta;
+      return Math.round(Math.log(360 / angle) / Math.LN2);
+    }
+
+    const getCluster = (places, range) => {
+      const cluster = new Supercluster({
+        radius: 40,
+        maxZoom: 16,
+      });
+
+      let markers = [];
+
+      try {
+        const padding = 0;
+
+        cluster.load(places);
+
+        markers = cluster.getClusters(
+          [
+            range.longitude - range.longitudeDelta * (0.5 + padding),
+            range.latitude - range.latitudeDelta * (0.5 + padding),
+            range.longitude + range.longitudeDelta * (0.5 + padding),
+            range.latitude + range.latitudeDelta * (0.5 + padding),
+          ],
+          getZoomLevel(range.longitudeDelta)
+        );
+      } catch (e) {
+        console.debug("failed to create cluster", e);
+      }
+
+      return {
+        markers,
+        cluster,
+      };
+    };
+
+    const cluster = getCluster(allCoords, region);
+    // getCluster(allCoords, region);
     return (
-      <View onStartShouldSetResponder={() => {}}>
+      <View>
         <ExpoStatusBar style="auto" />
         <SearchContainer>
           <LinearGradient
@@ -263,9 +398,7 @@ export const MapScreen = ({ navigation, route }) => {
             locations={[0.1, 0.45, 0.77, 1.0]}
           >
             {/* writeMode이지 않을 경우에 cloud */}
-            {!writeMode ? (
-              <Image source={cloud} height={542} width={158} />
-            ) : null}
+            {!writeMode ? <Cloud></Cloud> : null}
           </LinearGradient>
 
           {writeMode && (
@@ -275,56 +408,63 @@ export const MapScreen = ({ navigation, route }) => {
           )}
         </SearchContainer>
 
-        <Map
-          onPress={(event) => {
-            setDefinedLocation(event.nativeEvent.coordinate);
-            SetIsAddressLoading(false);
-            setMarkers([]);
-          }}
-          onLongPress={(event) => {
-            setPressedLocation(event.nativeEvent.coordinate);
-            SetIsAddressLoading(false);
-            setMarkers([]);
-          }}
-          ref={mapRef}
-          showsUserLocation={true}
-          showsCompass={true}
-          provider={PROVIDER_GOOGLE}
-          initialRegion={{
-            // 지도의 센터값 위도 경도
-            latitude: location[0],
-            longitude: location[1],
-            //ZoomLevel 아래에 있는 것은 건드리지 않아도 됨
-            latitudeDelta: LATITUDE_DELTA,
-            longitudeDelta: LONGITUDE_DELTA,
+        <View
+          onStartShouldSetResponder={() => {
+            setDropViewMode(false);
           }}
         >
-          {dropsList(drops)}
-          {writeMode && !isAddressLoading
-            ? Markers.map((Marker, i) => {
-                return (
-                  <MapView.Marker
-                    styles={{ zIndex: 999 }}
-                    //장소선택 마커의 위치
+          <Map
+            onPress={(event) => {
+              setDefinedLocation(event.nativeEvent.coordinate);
+              SetIsAddressLoading(false);
+              setMarkers([]);
+            }}
+            onLongPress={(event) => {
+              setPressedLocation(event.nativeEvent.coordinate);
+              SetIsAddressLoading(false);
+              setMarkers([]);
+            }}
+            ref={mapRef}
+            showsUserLocation={true}
+            showsCompass={true}
+            provider={PROVIDER_GOOGLE}
+            initialRegion={{
+              // 지도의 센터값 위도 경도
+              latitude: location[0],
+              longitude: location[1],
+              //ZoomLevel 아래에 있는 것은 건드리지 않아도 됨
+              latitudeDelta: LATITUDE_DELTA,
+              longitudeDelta: LONGITUDE_DELTA,
+            }}
+            onRegionChangeComplete={(regionn) => setRegion(regionn)}
+          >
+            {dropsList(drops)}
+            {writeMode && !isAddressLoading
+              ? Markers.map((Marker, i) => {
+                  return (
+                    <MapView.Marker
+                      styles={{ zIndex: 999 }}
+                      //장소선택 마커의 위치
 
-                    coordinate={Markers[0]}
-                  >
-                    <FadeInViewFaster>
-                      <ExpandView>
-                        <SvgXml
-                          xml={LocationSelected}
-                          width={33.5}
-                          height={45}
-                        />
-                      </ExpandView>
-                    </FadeInViewFaster>
-                  </MapView.Marker>
-                );
-              })
-            : null}
-        </Map>
+                      coordinate={Markers[0]}
+                    >
+                      <FadeInViewFaster>
+                        <ExpandView>
+                          <SvgXml
+                            xml={LocationSelected}
+                            width={33.5}
+                            height={45}
+                          />
+                        </ExpandView>
+                      </FadeInViewFaster>
+                    </MapView.Marker>
+                  );
+                })
+              : null}
+          </Map>
+        </View>
 
-        {!writeMode ? (
+        {!writeMode && !dropViewMode ? (
           <>
             <Container>
               <WriteButton
@@ -361,7 +501,7 @@ export const MapScreen = ({ navigation, route }) => {
               </ContainerEnd>
             </Container>
           </>
-        ) : (
+        ) : writeMode ? (
           <>
             <PlaceContainer>
               <PlaceContainer2>
@@ -403,39 +543,20 @@ export const MapScreen = ({ navigation, route }) => {
               </PlaceContainer3>
             </PlaceContainer>
           </>
-        )}
+        ) : dropViewMode ? (
+          <>
+            <TouchableWithoutFeedback onPress={() => {}}>
+              <DropPreview
+                pressedAddress={pressedAddress}
+                pressedAddressName={pressedAddressName}
+                dropContent={dropContent}
+                pressedLocation={pressedLocation}
+                navigation={navigation}
+              ></DropPreview>
+            </TouchableWithoutFeedback>
+          </>
+        ) : null}
       </View>
     );
   }
 };
-
-// <>
-//   <PlaceContainer>
-//     <PlaceContainer2>
-//       <BackButtonContainer
-//         onPress={() => {
-//           setWriteMode(false);
-//         }}
-//       >
-//         <SvgXml xml={backButton} width={50} height={50} />
-//       </BackButtonContainer>
-//       <PlaceNameContainer>
-//         <Text variant="label">{pressedAddressName}</Text>
-//         <Text variant="caption">{pressedAddress}</Text>
-//       </PlaceNameContainer>
-//     </PlaceContainer2>
-//     <PlaceContainer3>
-//       <SelectButtonContainer
-//         onPress={() => {
-//           navigation.navigate("WriteScreen", [
-//             { pressedAddress },
-//             { pressedAddressName },
-//             { pressedLocation },
-//           ]);
-//         }}
-//       >
-//         <SvgXml xml={selectButton} width={170} height={32} />
-//       </SelectButtonContainer>
-//     </PlaceContainer3>
-//   </PlaceContainer>
-// </>
