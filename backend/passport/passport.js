@@ -8,16 +8,21 @@ const blacklist = require('jwt-blacklist');
 require('dotenv').config();
 
 const loginVerify = async (email, password, done) => {
-    const user = await User.findOne({where:{email:email}});
+    try {
+        const user = await User.findOne({where:{email:email}});
 
-    if (!user) {
-        return done(null, false, {message:'존재하지 않는 사용자입니다.'})
+        if (!user) {
+            return done(null, false, {message:'존재하지 않는 사용자입니다.'})
+        }
+        isAuth = await bcrypt.compare(password, user.password)
+        if (!isAuth) {
+            return done(null, false, {message:'잘못된 비밀번호입니다.'})
+        };
+        return done(null, user);
+    } catch(error) {
+        console.log(error);
     }
-    isAuth = await bcrypt.compare(password, user.password)
-    if (!isAuth) {
-        return done(null, false, {message:'잘못된 비밀번호입니다.'})
-    };
-    return done(null, user);
+
 }
 
 const JWTVerify = async (jwtpayload, done) => {
@@ -64,7 +69,7 @@ module.exports = () => {
     //JWT Refresh Strategy
     passport.use('jwtRefresh',
         new JWTStrategy({
-            jwtFromRequest:ExtractJwt.fromBodyField('refresh'),
+            jwtFromRequest:ExtractJwt.fromAuthHeaderAsBearerToken('Refresh'),
             secretOrKey:process.env.JWT_SECRET_REFRESH_KEY
         }, JWTRefreshVerify)
     );
