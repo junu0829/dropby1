@@ -34,7 +34,9 @@ exports.logIn = async({email, password}) => {
     const tokens = {
         'access':accessToken,
         'refresh':refreshToken,
-    }
+    };
+    user.Refresh = refreshToken;
+    user.save();
     return {userData, tokens};
 }
 
