@@ -114,7 +114,7 @@ export const WriteScreen = ({ navigation, route }) => {
               width={50}
               height={50}
               style={styles.backButton}
-            ></SvgXml>
+            />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
@@ -136,7 +136,7 @@ export const WriteScreen = ({ navigation, route }) => {
                 width={65}
                 height={50}
                 style={styles.addIcon}
-              ></SvgXml>
+              />
             )}
           </TouchableOpacity>
           <TouchableOpacity
@@ -150,19 +150,14 @@ export const WriteScreen = ({ navigation, route }) => {
               width={67}
               height={40}
               style={styles.sendingButton}
-            ></SvgXml>
+            />
           </TouchableOpacity>
         </View>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.textContainer}>
             <Text style={styles.place}>{placeName}</Text>
             <Text style={styles.address}>{placeAddress}</Text>
-            <SvgXml
-              xml={bar}
-              width={280}
-              height={2}
-              style={styles.bar}
-            ></SvgXml>
+            <SvgXml xml={bar} width={280} height={2} style={styles.bar} />
             <TextInput
               style={styles.enter}
               placeholder="텍스트를 입력하세요"
@@ -205,7 +200,7 @@ export const WriteScreen = ({ navigation, route }) => {
             width={90}
             height={90}
             style={styles.addPicture}
-          ></SvgXml>
+          />
         </TouchableOpacity>
         <TouchableOpacity>
           <SvgXml
@@ -213,7 +208,7 @@ export const WriteScreen = ({ navigation, route }) => {
             width={41}
             height={55}
             style={styles.LockButtonUnlocked}
-          ></SvgXml>
+          />
         </TouchableOpacity>
       </View>
     </SafeArea>

@@ -3,5 +3,8 @@
   "rules": {
     "quotes": [2, "double", { "avoidEscape": true }],
     "prettier/prettier": ["error", { "endOfLine": "auto" }]
+  },
+  "globals": {
+    "JSX": true
   }
 }

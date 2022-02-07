@@ -21,7 +21,7 @@ export const EmojiSelectScreen = ({ navigation }) => {
   const [emojis, setEmojis] = useState(emojiss);
 
   useEffect(() => {
-    const filteredEmojis = emojiss["EmojiKorean"].filter((emoji) => {
+    const filteredEmojis = emojiss.EmojiKorean.filter((emoji) => {
       return emoji.name.toString().includes(searchfield);
     });
     setEmojis(filteredEmojis);
@@ -73,7 +73,7 @@ export const EmojiSelectScreen = ({ navigation }) => {
             onChangeText={(text) => {
               setSearchfield(text);
             }}
-          ></TextInput>
+          />
         </View>
         <View
           style={{
@@ -145,7 +145,7 @@ export const EmojiSelectScreen = ({ navigation }) => {
         data={emojis}
         renderItem={renderItem}
         keyExtractor={(item) => item.emoji}
-      ></FlatList>
+      />
     </SafeAreaView>
   );
 };

@@ -1,18 +1,15 @@
 import React from "react";
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import MapView from "react-native-maps";
 import {
   Dimensions,
-  Image,
   View,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  Modal,
-  ImageBackground,
 } from "react-native";
 
 import { Text } from "../../../components/typography/text.component";
 
-import { useEffect, useContext, useState } from "react";
+import { useEffect, useContext, useState, useRef } from "react";
 
 import { LocationContext } from "../../../services/location/location.context";
 import { LinearGradient } from "expo-linear-gradient";
@@ -23,7 +20,6 @@ import { SvgXml } from "react-native-svg";
 import ExpoStatusBar from "expo-status-bar/build/ExpoStatusBar";
 import { DropPreview } from "./component/dropPreview";
 import {
-  Map,
   SearchContainer,
   Container,
   PlaceContainer,
@@ -41,23 +37,19 @@ import {
   ContainerEnd2,
 } from "./map.screen.styles";
 
-import { getCluster } from "./component/getCluster";
-import ClusterMarker from "./component/ClusterMarker";
-
+import { ClusteredMap } from "./component/ClusteredMap";
 //assets
 import Drops from "../../../../assets/Drops";
 import { APIKey, PlAPIKey } from "../../../../APIkeys";
 import DropDefault from "../../../../assets/DropDefault";
 
 import write from "../../../../assets/write";
-import LocationSelected from "../../../../assets/LocationSelected";
+
 import currentLocation from "../../../../assets/currentLocation";
 
 import selectButton from "../../../../assets/selectButton";
 import backButton from "../../../../assets/backButton";
 
-import { ExpandView } from "../../../components/animations/expand.animation";
-import { FadeInViewFaster } from "../../../components/animations/fadeFaster.animation.";
 import { Cloud } from "./component/cloud";
 
 export const MapScreen = ({ navigation, route }) => {
@@ -66,7 +58,8 @@ export const MapScreen = ({ navigation, route }) => {
   const axios = require("axios");
 
   /////지도를 지도 바깥에서 부를 수 있도록 정의
-  const mapRef = React.createRef();
+  const map = useRef(null);
+
   // 화면비율 조정하는 것
 
   let { width, height } = Dimensions.get("window");
@@ -78,17 +71,18 @@ export const MapScreen = ({ navigation, route }) => {
   const { location, isLoading } = useContext(LocationContext);
 
   const [isAddressLoading, SetIsAddressLoading] = useState(true);
-
+  const [clusteringEnabled, setClusteringEnabled] = useState(true);
   const [dropViewMode, setDropViewMode] = useState(false);
   const showModal = () => {
     setDropViewMode(true);
   };
-
+  const [superCluster, setSuperCluster] = useState(null);
   const [writeMode, setWriteMode] = useState(false);
   const [pressedLocation, setPressedLocation] = useState({
     latitude: 37.58646601781994,
     longitude: 127.02913699768948,
   });
+  const [markers, updateMarkers] = useState([]);
   const [Markers, setMarkers] = useState([
     {
       latitude: location[0],
@@ -146,6 +140,14 @@ export const MapScreen = ({ navigation, route }) => {
   const [pressedAddressID, setPressedAddressID] = useState(null);
   const [pressedAddress, setPressedAddress] = useState(null);
   const [pressedAddressName, setPressedAddressName] = useState("새로운 장소");
+  const [region, setRegion] = useState({
+    // 지도의 센터값 위도 경도
+    latitude: location[0],
+    longitude: location[1],
+    //ZoomLevel 아래에 있는 것은 건드리지 않아도 됨
+    latitudeDelta: LATITUDE_DELTA,
+    longitudeDelta: LONGITUDE_DELTA,
+  });
 
   ////////////////////////////여기서부터 useEffect 정의하기 시작//////////////////////////////////////////////////////
 
@@ -161,7 +163,6 @@ export const MapScreen = ({ navigation, route }) => {
       });
     };
     LoadDrop();
-    // const cluster = getCluster(allCoords, region);
   }, [axios, pressedAddress]);
 
   const dropsList = (drops) => {
@@ -183,7 +184,7 @@ export const MapScreen = ({ navigation, route }) => {
             setDropContent(drop.content);
           }}
         >
-          <SvgXml xml={DropDefault} width={40} height={36}></SvgXml>
+          <SvgXml xml={DropDefault} width={40} height={36} />
         </MapView.Marker>
       );
     });
@@ -296,46 +297,11 @@ export const MapScreen = ({ navigation, route }) => {
     ]);
   }, [pressedLocation]);
 
-  const [region, setRegion] = useState({
-    // 지도의 센터값 위도 경도
-    latitude: location[0],
-    longitude: location[1],
-    //ZoomLevel 아래에 있는 것은 건드리지 않아도 됨
-    latitudeDelta: LATITUDE_DELTA,
-    longitudeDelta: LONGITUDE_DELTA,
-  });
-
   const allCoords = drops.map((i) => ({
     geometry: {
       coordinates: [i.latitude, i.longitude],
     },
   }));
-
-  const renderMarker = (marker, index) => {
-    const key = index + marker.geometry.coordinates[0];
-    // if (marker.properties) {
-    //   return (
-    //     <MapView.Marker
-    //       key={key}
-    //       coordinate={{
-    //         latitude: marker.geometry.coordinates[1],
-    //         longitude: marker.geometry.coordinates[0],
-    //       }}
-    //     >
-    //       <ClusterMarker count={marker.properties.point_count} />
-    //     </MapView.Marker>
-    //   );
-    // }
-    return (
-      <MapView.Marker
-        key={key}
-        coordinate={{
-          latitude: marker.geometry.coordinates[1],
-          longitude: marker.geometry.coordinates[0],
-        }}
-      />
-    );
-  };
 
   ///////////////////////////////////////////////////////////////////////////////////
   //////////////////////////맵그리는 것 여기서부터 시작//////////////////////////////
@@ -344,44 +310,6 @@ export const MapScreen = ({ navigation, route }) => {
   if (isLoading) {
     return <Loading />;
   } else {
-    function getZoomLevel(longitudeDelta) {
-      const angle = longitudeDelta;
-      return Math.round(Math.log(360 / angle) / Math.LN2);
-    }
-
-    const getCluster = (places, range) => {
-      const cluster = new Supercluster({
-        radius: 40,
-        maxZoom: 16,
-      });
-
-      let markers = [];
-
-      try {
-        const padding = 0;
-
-        cluster.load(places);
-
-        markers = cluster.getClusters(
-          [
-            range.longitude - range.longitudeDelta * (0.5 + padding),
-            range.latitude - range.latitudeDelta * (0.5 + padding),
-            range.longitude + range.longitudeDelta * (0.5 + padding),
-            range.latitude + range.latitudeDelta * (0.5 + padding),
-          ],
-          getZoomLevel(range.longitudeDelta)
-        );
-      } catch (e) {
-        console.debug("failed to create cluster", e);
-      }
-
-      return {
-        markers,
-        cluster,
-      };
-    };
-
-    const cluster = getCluster(allCoords, region);
     // getCluster(allCoords, region);
     return (
       <View>
@@ -398,7 +326,7 @@ export const MapScreen = ({ navigation, route }) => {
             locations={[0.1, 0.45, 0.77, 1.0]}
           >
             {/* writeMode이지 않을 경우에 cloud */}
-            {!writeMode ? <Cloud></Cloud> : null}
+            {!writeMode ? <Cloud /> : null}
           </LinearGradient>
 
           {writeMode && (
@@ -413,55 +341,24 @@ export const MapScreen = ({ navigation, route }) => {
             setDropViewMode(false);
           }}
         >
-          <Map
-            onPress={(event) => {
-              setDefinedLocation(event.nativeEvent.coordinate);
-              SetIsAddressLoading(false);
-              setMarkers([]);
-            }}
-            onLongPress={(event) => {
-              setPressedLocation(event.nativeEvent.coordinate);
-              SetIsAddressLoading(false);
-              setMarkers([]);
-            }}
-            ref={mapRef}
-            showsUserLocation={true}
-            showsCompass={true}
-            provider={PROVIDER_GOOGLE}
-            initialRegion={{
-              // 지도의 센터값 위도 경도
-              latitude: location[0],
-              longitude: location[1],
-              //ZoomLevel 아래에 있는 것은 건드리지 않아도 됨
-              latitudeDelta: LATITUDE_DELTA,
-              longitudeDelta: LONGITUDE_DELTA,
-            }}
-            onRegionChangeComplete={(regionn) => setRegion(regionn)}
+          <ClusteredMap
+            ref={map}
+            setRegion={setRegion}
+            setDefinedLocation={setDefinedLocation}
+            setMarkers={setMarkers}
+            setPressedLocation={setPressedLocation}
+            location={location}
+            LATITUDE_DELTA={LATITUDE_DELTA}
+            LONGITUDE_DELTA={LONGITUDE_DELTA}
+            setRegion={setRegion}
+            writeMode={writeMode}
+            isAddressLoading={isAddressLoading}
+            Markers={Markers}
+            allCoords={allCoords}
+            region={region}
           >
             {dropsList(drops)}
-            {writeMode && !isAddressLoading
-              ? Markers.map((Marker, i) => {
-                  return (
-                    <MapView.Marker
-                      styles={{ zIndex: 999 }}
-                      //장소선택 마커의 위치
-
-                      coordinate={Markers[0]}
-                    >
-                      <FadeInViewFaster>
-                        <ExpandView>
-                          <SvgXml
-                            xml={LocationSelected}
-                            width={33.5}
-                            height={45}
-                          />
-                        </ExpandView>
-                      </FadeInViewFaster>
-                    </MapView.Marker>
-                  );
-                })
-              : null}
-          </Map>
+          </ClusteredMap>
         </View>
 
         {!writeMode && !dropViewMode ? (
@@ -552,7 +449,7 @@ export const MapScreen = ({ navigation, route }) => {
                 dropContent={dropContent}
                 pressedLocation={pressedLocation}
                 navigation={navigation}
-              ></DropPreview>
+              />
             </TouchableWithoutFeedback>
           </>
         ) : null}

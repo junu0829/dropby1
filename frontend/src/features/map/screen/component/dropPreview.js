@@ -35,8 +35,8 @@ export const DropPreview = ({
           </ContainerEnd3>
         </PlaceContainer2>
         {/* <View style={{ flexDirection: "row" }}>
-       
-         
+
+
         </View> */}
         <View style={{ flex: 1 }}>
           <Text style={{ marginTop: 10, marginLeft: 80, fontSize: 18 }}>
