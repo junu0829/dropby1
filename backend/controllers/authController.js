@@ -35,25 +35,35 @@ exports.tokenRefresh = async(req, res, next) => {
     //     "Refresh":"refresh-token"
     // } // 아마 이런 형식 - Body 말고 Header에 담아 보내는 걸로 통일
     try {
-        const accessToken = req.body.access
-        const refreshToken = req.body.refresh;
-        console.log('accessToken', accessToken);
-        console.log('refreshToken', refreshToken);
+        if (req.headers.authorization && req.headers.Refresh) {
+
+            const accessToken = req.headers.authorization.split('Bearer ')[1];
+            const refreshToken = req.headers.refresh;
     
-        const refreshResult = await authServices.tokenRefresh(accessToken, refreshToken);
-        if (refreshResult.success) {
-            res.status(200).json({
-                msg:'Access Token 신규 발급 성공',
-                status:refreshResult.status,
-                token:refreshResult.token
-            })
+            const refreshResult = await authServices.tokenRefresh(accessToken, refreshToken); //success, status, token을 받아 옴.
+    
+            if (refreshResult.success) {
+                res.status(200).json({
+                    message:'Access Token 신규 발급 성공',
+                    status:refreshResult.status,
+                    tokens:refreshResult.token
+                })
+            } else {
+                res.status(400).json({
+                    msg:'Access Token 신규 발급 실패',
+                    status:refreshResult.status,
+                    tokens:refreshResult.token
+                })
+            }
+    
+    
         } else {
             res.status(400).json({
                 msg:'Access Token 신규 발급 실패',
-                status:refreshResult.status,
-                token:refreshResult.token
+                status:'Refresh Token과 Access Token이 요청에 포함되지 않았습니다.'
             })
         }
+
     } catch(error) {
         console.log(error);
         next(error);
@@ -77,3 +87,29 @@ exports.TokenBlacklist = async(req, res, next) => {
     }
 
 }
+
+
+// try {
+//     const accessToken = req.body.access
+//     const refreshToken = req.body.refresh;
+//     console.log('accessToken', accessToken);
+//     console.log('refreshToken', refreshToken);
+
+//     const refreshResult = await authServices.tokenRefresh(accessToken, refreshToken);
+//     if (refreshResult.success) {
+//         res.status(200).json({
+//             msg:'Access Token 신규 발급 성공',
+//             status:refreshResult.status,
+//             token:refreshResult.token
+//         })
+//     } else {
+//         res.status(400).json({
+//             msg:'Access Token 신규 발급 실패',
+//             status:refreshResult.status,
+//             token:refreshResult.token
+//         })
+//     }
+// } catch(error) {
+//     console.log(error);
+//     next(error);
+// }
