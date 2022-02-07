@@ -1,11 +1,11 @@
 const express = require('express');
 const passport = require('passport');
 const router = express.Router();
-const userServices = require('../services/userServices');
+const authServices = require('../services/authServices');
 const jwt = require('jsonwebtoken');
 const {createBlackList} = require('jwt-blacklist');
 exports.signUp = async(req, res, next) => {
-        const newUser = await userServices.signUp(req.body);
+        const newUser = await authServices.signUp(req.body);
         if (newUser) {
             next();
         } else {
@@ -17,7 +17,7 @@ exports.signUp = async(req, res, next) => {
 
 exports.logIn = async(req, res, next) => {
     try {
-        const authUser = await userServices.logIn(req.body);
+        const authUser = await authServices.logIn(req.body);
         res.status(200).json({
             msg:'로그인 성공',
             data:authUser
@@ -35,7 +35,7 @@ exports.tokenRefresh = async(req, res, next) => {
         console.log('accessToken', accessToken);
         console.log('refreshToken', refreshToken);
     
-        const refreshResult = await userServices.tokenRefresh(accessToken, refreshToken);
+        const refreshResult = await authServices.tokenRefresh(accessToken, refreshToken);
         if (refreshResult.success) {
             res.status(200).json({
                 msg:'Access Token 신규 발급 성공',
@@ -58,7 +58,7 @@ exports.tokenRefresh = async(req, res, next) => {
 exports.TokenBlacklist = async(req, res, next) => {
     try {
 
-        const blacklisted = await userServices.TokenBlacklist(req.body.refresh);
+        const blacklisted = await authServices.TokenBlacklist(req.body.refresh);
         res.status(200).json({
             msg:blacklisted.msg,
             success:blacklisted.success
