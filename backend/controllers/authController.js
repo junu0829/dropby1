@@ -30,6 +30,10 @@ exports.logIn = async(req, res, next) => {
 };
 
 exports.tokenRefresh = async(req, res, next) => {
+    // {
+    //     "Authorization":'bearer access-token',
+    //     "Refresh":"refresh-token"
+    // } // 아마 이런 형식 - Body 말고 Header에 담아 보내는 걸로 통일
     try {
         const accessToken = req.body.access
         const refreshToken = req.body.refresh;
