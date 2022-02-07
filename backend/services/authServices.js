@@ -92,19 +92,53 @@ exports.tokenRefresh = async (accessToken, refreshToken) => {
     }
 }
 
-exports.TokenBlacklist = async(refreshToken) => {
-    const blacklist = await createBlackList();
-    console.log(blacklist);
-    const blacklisted= await blacklist.add(refreshToken);
-    if (blacklisted) {
-        return {
-            'success':true,
-            'msg':'Token blacklisted'}
-    } else {
+exports.logOut = async({authorization, refresh}) => {
+    const accessToken = authorization.split('Bearer ')[1];
+    const authResult = verifyAccess(accessToken);
+    try {
+        console.log(authResult);
+        const user = await User.findOne({where:{email:authResult.userData.email}});
+        console.log(user);
+        if (user) {
+            user.Refresh = null;
+            user.save()
+    
+            return {
+                'success':true,
+                'userData':user,
+                'message':'Refresh Token removed'
+            }
+
+        } else {
+            return {
+                'success':false,
+                'userData':null,
+                'message':'User not found'
+            }
+        }
+
+    } catch(error) {
+        console.log(error);
         return {
             'success':false,
-            'msg':'Token blacklist failed'
+            'userData':null,
+            'message':error.message
         }
+
     }
 
 }
+
+// const blacklist = await createBlackList();
+// console.log(blacklist);
+// const blacklisted= await blacklist.add(refreshToken);
+// if (blacklisted) {
+//     return {
+//         'success':true,
+//         'msg':'Token blacklisted'}
+// } else {
+//     return {
+//         'success':false,
+//         'msg':'Token blacklist failed'
+//     }
+// }

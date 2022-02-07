@@ -82,22 +82,28 @@ exports.tokenRefresh = async(req, res, next) => {
     }
 }
 
-exports.TokenBlacklist = async(req, res, next) => {
+exports.logOut = async(req, res, next) => {
     try {
+        res.clearCookie();
+    
+        const refreshRemoved = await authServices.logOut(req.headers);
+        if (refreshRemoved.success) {
+            res.status(200).json({
+                message:'로그아웃 성공',
+                leftUser:refreshRemoved.userData,
+                status:refreshRemoved.message
+            })
+        } else {
+            res.status(400).json({
+                message:'로그아웃 실패',
+                leftUser:refreshRemoved.userData,
+                status:refreshRemoved.message
+            })
+        }
 
-        const blacklisted = await authServices.TokenBlacklist(req.body.refresh);
-        res.status(200).json({
-            msg:blacklisted.msg,
-            success:blacklisted.success
-        })
     } catch(error) {
-        res.status(400).json({
-            msg:error.message,
-            success:false
-        })
-
+        console.log(error);
     }
-
 }
 
 
@@ -124,4 +130,21 @@ exports.TokenBlacklist = async(req, res, next) => {
 // } catch(error) {
 //     console.log(error);
 //     next(error);
+// }
+
+//logout temp
+
+// try {
+
+//     const blacklisted = await authServices.logOut(req.body.refresh);
+//     res.status(200).json({
+//         msg:blacklisted.msg,
+//         success:blacklisted.success
+//     })
+// } catch(error) {
+//     res.status(400).json({
+//         msg:error.message,
+//         success:false
+//     })
+
 // }
