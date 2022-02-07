@@ -34,13 +34,17 @@ exports.verifyAccess = (accessToken) => { //AccessToken 검증
         verified = jwt.verify(accessToken, process.env.JWT_SECRET_ACCESS_KEY)
         return {
             success:true,
-            pk:verified.pk,
-            email:verified.email
+            message:'Token Verified',
+            userData: {
+                pk:verified.pk,
+                email:verified.email
+            }
         }
     } catch(error) {
         return {
             success:false,
-            message:error.message
+            message:error.message,
+            userData:{}
         }
     }
 }
