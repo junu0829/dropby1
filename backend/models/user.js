@@ -31,6 +31,10 @@ const User = sequelize.define("User", {
     createdAt:{
         type:DataTypes.DATE,
         defaultValue:DataTypes.NOW
+    },
+    Refresh:{
+        type:DataTypes.TEXT,
+        allowNull:true,
     }
 }, {
     freezeTableName:true,
