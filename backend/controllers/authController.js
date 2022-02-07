@@ -6,7 +6,9 @@ const jwt = require('jsonwebtoken');
 const {createBlackList} = require('jwt-blacklist');
 
 exports.signUp = async(req, res, next) => {
+    try {
         const newUser = await authServices.signUp(req.body);
+        console.log('back to controller', newUser);
         if (newUser) {
             next(); //router에서 다음 -> 로그인 로직으로.
         } else {
@@ -14,6 +16,13 @@ exports.signUp = async(req, res, next) => {
                 msg:'이미 존재하는 이메일입니다.'
             })
         }
+    } catch (error) {
+        console.log(error);
+        res.status(400).json({
+            msg: '회원가입 실패'
+        })
+    }
+
 };
 
 exports.logIn = async(req, res, next) => {
@@ -35,7 +44,10 @@ exports.tokenRefresh = async(req, res, next) => {
     //     "Refresh":"refresh-token"
     // } // 아마 이런 형식 - Body 말고 Header에 담아 보내는 걸로 통일
     try {
-        if (req.headers.authorization && req.headers.Refresh) {
+        console.log(req.headers);
+        console.log('authorization', req.headers.authorization);
+        console.log('refresh', req.headers.refresh)
+        if (req.headers.authorization && req.headers.refresh) {
 
             const accessToken = req.headers.authorization.split('Bearer ')[1];
             const refreshToken = req.headers.refresh;

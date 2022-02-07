@@ -4,24 +4,31 @@ const passport = require('passport');
 const {User} = require('../models');
 const {createBlackList} = require('jwt-blacklist')
 require('dotenv').config();
-const {verifyAccess, verifyRefresh} = require('../middlewares/auth');
+const {signAccess, signRefresh, verifyAccess, verifyRefresh} = require('../middlewares/auth');
 
 exports.signUp = async ({nickname, email, password}) => {
-
-    const userExists = await User.findOne({where:{email}})
-
-    if (userExists) {
-        console.log('이미 사용 중인 이메일입니다!');
-        return false;
-    }
-    const salt = await bcrypt.genSalt(10);
-    const hashed_pw = await bcrypt.hash(password, salt);
-    const user = await User.create({
-        nickname,
-        email,
-        password:hashed_pw
+    try {
+        const userExists = await User.findOne({where:{email}})
+        console.log(userExists)
+        if (userExists) {
+            console.log('이미 사용 중인 이메일입니다!');
+            return false;
+        } else {
+            const salt = await bcrypt.genSalt(10);
+            const hashed_pw = await bcrypt.hash(password, salt);
+            const user = await User.create({
+                nickname,
+                email,
+                password:hashed_pw
     });
-    return user;
+        return user;
+        }
+
+    } catch(error) {
+        console.log(error);
+        return error;
+        
+    }
 };
 
 exports.logIn = async({email, password}) => {

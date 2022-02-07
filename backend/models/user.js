@@ -13,7 +13,7 @@ const User = sequelize.define("User", {
         allowNull:false,
         unique:true,
         validate:{
-            len:[2, 10]
+            len:[2, 20]
         }
     },
     email: {
