@@ -1,8 +1,8 @@
 const router = require('express').Router()
 
 const drop = require('./dropRouter');
-const user = require('./userRouter'); 
+const auth = require('./authRouter'); 
 
 router.use('/drops', drop);
-router.use('/users', user);
+router.use('/auth', auth);
 module.exports = router;
