@@ -32,28 +32,14 @@ exports.logIn = async({email, password}) => {
         pk:userData.pk,
         email:userData.email
     }
-    const accessToken = jwt.sign(
-        payload,
-        process.env.JWT_SECRET_ACCESS_KEY,
-        {
-            algorithm:process.env.JWT_ALGORITHM,
-            expiresIn:process.env.JWT_ACCESS_EXPIRE
-        }
-    );
-    const refreshToken = jwt.sign(
-        {},
-        process.env.JWT_SECRET_REFRESH_KEY,
-        {
-            algorithm:process.env.JWT_ALGORITHM,
-            expiresIn:process.env.JWT_REFRESH_EXPIRE,
-        }
-    );
+    const accessToken = signAccess(userData);
+    const refreshToken = signRefresh();
 
     const tokens = {
         'access':accessToken,
         'refresh':refreshToken,
     }
-    return {user, tokens};
+    return {userData, tokens};
 }
 
 exports.tokenRefresh = async (accessToken, refreshToken) => {

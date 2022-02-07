@@ -4,10 +4,11 @@ const router = express.Router();
 const authServices = require('../services/authServices');
 const jwt = require('jsonwebtoken');
 const {createBlackList} = require('jwt-blacklist');
+
 exports.signUp = async(req, res, next) => {
         const newUser = await authServices.signUp(req.body);
         if (newUser) {
-            next();
+            next(); //router에서 다음 -> 로그인 로직으로.
         } else {
             res.status(409).json({
                 msg:'이미 존재하는 이메일입니다.'
