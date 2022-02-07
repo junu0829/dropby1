@@ -44,7 +44,7 @@ exports.verifyAccess = (accessToken) => { //AccessToken 검증
         return {
             success:false,
             message:error.message,
-            userData:{}
+            userData:null
         }
     }
 }

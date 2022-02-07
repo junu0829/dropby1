@@ -7,7 +7,7 @@ require('dotenv').config();
 const {verifyAccess, verifyRefresh} = require('../middlewares/auth');
 
 exports.signUp = async ({nickname, email, password}) => {
-    console.log(email);
+
     const userExists = await User.findOne({where:{email}})
 
     if (userExists) {
@@ -27,11 +27,7 @@ exports.signUp = async ({nickname, email, password}) => {
 exports.logIn = async({email, password}) => {
     const user = await User.findOne({where:{email}})
     userData = user.dataValues;
-    console.log(user.dataValues);
-    payload = {
-        pk:userData.pk,
-        email:userData.email
-    }
+
     const accessToken = signAccess(userData);
     const refreshToken = signRefresh();
 
@@ -44,37 +40,27 @@ exports.logIn = async({email, password}) => {
 
 exports.tokenRefresh = async (accessToken, refreshToken) => {
     const authResult = verifyAccess(accessToken);
-    console.log('authResult', authResult);
-    const verified = jwt.verify(accessToken, process.env.JWT_SECRET_ACCESS_KEY);
-    console.log('verified', verified)
 
-    if (verified === null) {
+    if (authResult.userData === null) { //verify된 데이터가 없음.
         return {
             'success':false,
+            'status':'no verified data',
             'token':null
         };
     } else {
         const refreshResult = verifyRefresh(refreshToken)
 
         if (authResult.success === false && authResult.message === 'jwt expired') {
-            if (refreshResult === false) { //accessToken과 refreshToken이 모두 유효하지 않음.
+            if (refreshResult === false) { //accessToken과 refreshToken이 모두 유효하지 않음 -> 재로그인해야 함.
                 return {
                     'success':false,
+                    'status':'no token valid. re-login required',
                     'token':null
                 }
 
             } else { //accessToken은 유효하지 않으나 refreshToken이 유효함. == 새 access 발급.
-                payload = {
-                    pk:authResult.pk,
-                    email:authResult.email
-                };
-                const newAccess = jwt.sign(
-                        payload, 
-                        process.env.JWT_SECRET_ACCESS_KEY, 
-                        {
-                            algorithm:process.env.JWT_ALGORITHM,
-                            expiresIn:process.env.JWT_ACCESS_EXPIRE
-                })
+
+                const newAccess = signAccess(authResult);
                 return {
                     'success':true,
                     'status':'Access Token granted',
