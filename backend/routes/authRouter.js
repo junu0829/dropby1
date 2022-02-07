@@ -11,10 +11,14 @@ router.post('/token/refresh', RefreshJwtAuth, controller.tokenRefresh) //AccessT
 router.post('/token/blacklist', controller.TokenBlacklist) //로그아웃
 module.exports = router;
 
-// 프런트엔드에서는 localStorage, 혹은 Cookie에 Token을 담아 저장하고, api에 요청을 보낼 때는 Headers에 담아 보낸다.
-// 백엔드에서는 redis나 자체 DB에 refreshToken을 저장하고, 요청이 오면 비교하여 응답한다. (그냥 DB에다가 할까)
-// 로그아웃은 clearCookie 사용?
+//일단 사용 가능한 상태로 만들기
+//백엔드에서 자체 DB에 refreshToken을 저장하고, 요청이 오면 확인하여 응답
+// 프런트엔드에서는 cookie에 Token을 담아 저장하고, api에 요청을 보낼 때는 Headers에 Authorization, Refresh라는 키로 보낸다.
+// 로그아웃은 따라서, clearCookie로 쿠키를 지우고, DB에서 refreshToken을 삭제하는 것으로.
 
-// 구현할 것
-//백엔드에서 토큰 관리하는 로직 - access는 반환, Refresh는 Redis(혹은 DB)에 저장 후 반환 - 로그아웃하면 res.clearCookie?
-//프론트엔드에서 구현 및 테스트 - 응답받은 토큰을 쿠키에 저장하기 - 요청 보낼 때는 axios에서 Headers에 담아서 보내기 - 
+//구현할 것
+//1. 백엔드에서 토큰 관리하는 로직 수정
+//2. 프런트엔드에서 쿠키 관리, axios로 요청 보낼 때 Headers에 토큰 담아 보내기
+
+// 추후 할 것?
+// refreshToken을 redis라는 서비스에 저장하는 경우도 있는 듯. 왜 쓰는지 알아보고 괜찮으면 추후 적용.
