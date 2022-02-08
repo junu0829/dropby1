@@ -54,7 +54,7 @@ const ClusteredMarker = ({
               styles.text,
               {
                 fontSize: 15,
-                fontFamily: clusterFontFamily,
+
                 color: "FAFAFA",
               },
             ]}

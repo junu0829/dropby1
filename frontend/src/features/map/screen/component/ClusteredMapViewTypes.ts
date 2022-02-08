@@ -18,12 +18,7 @@ export interface MapClusteringProps {
   nodeSize?: number;
   minPoints?: number;
   edgePadding?: { top: number; left: number; right: number; bottom: number };
-  clusterColor?: string;
-  clusterTextColor?: string;
-  clusterFontFamily?: string;
-  selectedClusterId?: string;
-  selectedClusterColor?: string;
-  spiderLineColor?: string;
+
   superClusterRef?: React.MutableRefObject<any>;
   mapRef?: (ref: React.Ref<Map>) => void;
   onClusterPress?: (cluster: Marker, markers?: Marker[]) => void;

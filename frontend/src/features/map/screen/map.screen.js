@@ -252,7 +252,16 @@ export const MapScreen = ({ navigation, route }) => {
           for (let i = 0; i < 15; i++) {
             if (
               responseJson.results[i].geometry.location_type ===
-              "GEOMETRIC_CENTER"
+                "GEOMETRIC_CENTER" ||
+              responseJson.results[i].address_components[0].types.includes(
+                "point_of_interest"
+              ) ||
+              responseJson.results[i].address_components[0].types.includes(
+                "establishment"
+              ) ||
+              responseJson.results[i].address_components[0].types.includes(
+                "landmark"
+              )
             ) {
               setDefinedAddressID(responseJson.results[i].place_id);
               setCalibratedLocation(responseJson.results[i].geometry.location);
@@ -342,15 +351,20 @@ export const MapScreen = ({ navigation, route }) => {
           }}
         >
           <ClusteredMap
+            onPress={(event) => {
+              setDefinedLocation(event.nativeEvent.coordinate);
+
+              setMarkers([]);
+            }}
+            onLongPress={(event) => {
+              setPressedLocation(event.nativeEvent.coordinate);
+
+              setMarkers([]);
+            }}
             ref={map}
-            setRegion={setRegion}
-            setDefinedLocation={setDefinedLocation}
-            setMarkers={setMarkers}
-            setPressedLocation={setPressedLocation}
             location={location}
             LATITUDE_DELTA={LATITUDE_DELTA}
             LONGITUDE_DELTA={LONGITUDE_DELTA}
-            setRegion={setRegion}
             writeMode={writeMode}
             isAddressLoading={isAddressLoading}
             Markers={Markers}
@@ -380,7 +394,7 @@ export const MapScreen = ({ navigation, route }) => {
               <ContainerEnd>
                 <CurrentLocationButton
                   onPress={() => {
-                    mapRef.current.animateToRegion({
+                    map.current.animateToRegion({
                       // 현재위치 버튼
                       latitude: location[0],
                       longitude: location[1],
