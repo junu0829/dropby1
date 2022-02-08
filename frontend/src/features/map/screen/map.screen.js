@@ -5,11 +5,12 @@ import {
   View,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  ImageBackground,
 } from "react-native";
 
 import { Text } from "../../../components/typography/text.component";
 
-import { useEffect, useContext, useState, useRef } from "react";
+import { useEffect, useContext, useState, useRef, useMemo } from "react";
 
 import { LocationContext } from "../../../services/location/location.context";
 import { LinearGradient } from "expo-linear-gradient";
@@ -44,6 +45,7 @@ import { APIKey, PlAPIKey } from "../../../../APIkeys";
 import DropDefault from "../../../../assets/DropDefault";
 
 import write from "../../../../assets/write";
+import PurpleDrop from "../../../../assets/images/PurpleDrop.png";
 
 import currentLocation from "../../../../assets/currentLocation";
 
@@ -90,9 +92,19 @@ export const MapScreen = ({ navigation, route }) => {
     },
   ]);
 
+  const [currentRegion, updateRegion] = useState({
+    // 지도의 센터값 위도 경도
+    latitude: location[0],
+    longitude: location[1],
+    //ZoomLevel 아래에 있는 것은 건드리지 않아도 됨
+    latitudeDelta: LATITUDE_DELTA,
+    longitudeDelta: LONGITUDE_DELTA,
+  });
+  const [drop, setDrop] = useState(null);
   const [dropContent, setDropContent] = useState(null);
   const [drops, setDrops] = useState([
     {
+      emoji: "😀",
       content: "드롭바이짱",
       createdAt: "2022-01-29T04:55:47.000Z",
       latitude: 37.398811798656766,
@@ -101,6 +113,7 @@ export const MapScreen = ({ navigation, route }) => {
       updatedAt: "2022-01-29T04:55:47.472Z",
     },
     {
+      emoji: "🥰",
       content: "드롭바이짱2",
       createdAt: "2022-01-29T04:55:47.000Z",
       latitude: 37.397841735093614,
@@ -111,6 +124,7 @@ export const MapScreen = ({ navigation, route }) => {
 
     // 126.67815894345523
     {
+      emoji: "🐵",
       content: "드롭바이짱3",
       createdAt: "2022-01-29T04:55:47.000Z",
       latitude: 37.397686933515644,
@@ -119,6 +133,7 @@ export const MapScreen = ({ navigation, route }) => {
       updatedAt: "2022-01-29T04:55:47.472Z",
     },
     {
+      emoji: "🍇",
       content: "드롭바이짱4",
       createdAt: "2022-01-29T04:55:47.000Z",
       latitude: 37.39791239133797,
@@ -140,14 +155,6 @@ export const MapScreen = ({ navigation, route }) => {
   const [pressedAddressID, setPressedAddressID] = useState(null);
   const [pressedAddress, setPressedAddress] = useState(null);
   const [pressedAddressName, setPressedAddressName] = useState("새로운 장소");
-  const [region, setRegion] = useState({
-    // 지도의 센터값 위도 경도
-    latitude: location[0],
-    longitude: location[1],
-    //ZoomLevel 아래에 있는 것은 건드리지 않아도 됨
-    latitudeDelta: LATITUDE_DELTA,
-    longitudeDelta: LONGITUDE_DELTA,
-  });
 
   ////////////////////////////여기서부터 useEffect 정의하기 시작//////////////////////////////////////////////////////
 
@@ -157,7 +164,7 @@ export const MapScreen = ({ navigation, route }) => {
     const LoadDrop = async () => {
       await axios({
         method: "get",
-        url: "http://192.168.20.16:3000/drops",
+        url: "http://localhost:3000/drops",
       }).then((res) => {
         setDrops(res.data.data);
       });
@@ -169,6 +176,7 @@ export const MapScreen = ({ navigation, route }) => {
     return drops.map((drop) => {
       return (
         <MapView.Marker
+          style={{ opacity: 0.85 }}
           key={drop.pk}
           coordinate={{
             latitude: drop.latitude,
@@ -182,9 +190,28 @@ export const MapScreen = ({ navigation, route }) => {
               longitude: drop.longitude,
             });
             setDropContent(drop.content);
+            setDrop(drop.pk);
           }}
         >
-          <SvgXml xml={DropDefault} width={40} height={36} />
+          <ImageBackground
+            source={PurpleDrop}
+            style={{
+              width: 34,
+              height: 44,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 25,
+                left: 1,
+                top: 1,
+              }}
+            >
+              {drop.emoji}
+            </Text>
+          </ImageBackground>
         </MapView.Marker>
       );
     });
@@ -213,17 +240,17 @@ export const MapScreen = ({ navigation, route }) => {
     };
 
     const getPlaceDetail = () => {
-      fetch(
-        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${pressedAddressID}&key=${PlAPIKey}`
-      )
-        .then((response) => response.json())
-        .then(async (responseJson) => {
-          await setPressedAddress(responseJson.result.formatted_address);
-          await setPressedAddressName(
-            `${responseJson.result.name}는 새로운 장소입니다!`
-          );
-          console.log("a");
-        });
+      // fetch(
+      //   `https://maps.googleapis.com/maps/api/place/details/json?place_id=${pressedAddressID}&key=${PlAPIKey}`
+      // )
+      //   .then((response) => response.json())
+      //   .then(async (responseJson) => {
+      //     await setPressedAddress(responseJson.result.formatted_address);
+      //     await setPressedAddressName(
+      //       `새로운 장소!`
+      //     );
+      //     console.log("a");
+      //   });
     };
 
     getAddress();
@@ -272,15 +299,15 @@ export const MapScreen = ({ navigation, route }) => {
     };
 
     const getDefinedPlaceDetail = () => {
-      fetch(
-        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${definedAddressID}&key=${PlAPIKey}`
-      )
-        .then((response) => response.json())
-        .then(async (responseJson) => {
-          await setPressedAddress(responseJson.result.formatted_address);
-          await setPressedAddressName(responseJson.result.name);
-          console.log("b");
-        });
+      // fetch(
+      //   `https://maps.googleapis.com/maps/api/place/details/json?place_id=${definedAddressID}&key=${PlAPIKe}`
+      // )
+      //   .then((response) => response.json())
+      //   .then(async (responseJson) => {
+      //     await setPressedAddress(responseJson.result.formatted_address);
+      //     await setPressedAddressName(responseJson.result.name);
+      //     console.log("b");
+      //   });
     };
     getDefinedAddress();
     getDefinedPlaceDetail();
@@ -335,7 +362,9 @@ export const MapScreen = ({ navigation, route }) => {
             locations={[0.1, 0.45, 0.77, 1.0]}
           >
             {/* writeMode이지 않을 경우에 cloud */}
-            {!writeMode ? <Cloud /> : null}
+            {!writeMode ? (
+              <Cloud navigation={navigation} region={currentRegion} />
+            ) : null}
           </LinearGradient>
 
           {writeMode && (
@@ -369,7 +398,8 @@ export const MapScreen = ({ navigation, route }) => {
             isAddressLoading={isAddressLoading}
             Markers={Markers}
             allCoords={allCoords}
-            region={region}
+            region={currentRegion}
+            updateRegion={updateRegion}
           >
             {dropsList(drops)}
           </ClusteredMap>
@@ -379,6 +409,7 @@ export const MapScreen = ({ navigation, route }) => {
           <>
             <Container>
               <WriteButton
+                style={{ opacity: 0.95 }}
                 onPress={() => {
                   setWriteMode(true);
                   setPressedLocation({
@@ -393,6 +424,7 @@ export const MapScreen = ({ navigation, route }) => {
 
               <ContainerEnd>
                 <CurrentLocationButton
+                  style={{ opacity: 0.95 }}
                   onPress={() => {
                     map.current.animateToRegion({
                       // 현재위치 버튼
@@ -463,6 +495,7 @@ export const MapScreen = ({ navigation, route }) => {
                 dropContent={dropContent}
                 pressedLocation={pressedLocation}
                 navigation={navigation}
+                drop={drop}
               />
             </TouchableWithoutFeedback>
           </>

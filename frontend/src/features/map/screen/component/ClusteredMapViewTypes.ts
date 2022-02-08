@@ -7,10 +7,9 @@ export type Cluster = {};
 export interface MapClusteringProps {
   clusteringEnabled?: boolean;
   spiralEnabled?: boolean;
-  animationEnabled?: boolean;
+
   preserveClusterPressBehavior?: boolean;
   tracksViewChanges?: boolean;
-  layoutAnimationConf?: LayoutAnimationConfig;
   radius?: number;
   maxZoom?: number;
   minZoom?: number;

@@ -1,22 +1,29 @@
 import React, { memo } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ImageBackground,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
+} from "react-native";
 import { Marker } from "react-native-maps";
-import { SvgXml } from "react-native-svg";
-import Adrop from "../../../../../assets/Adrop";
 
+import { SvgXml } from "react-native-svg";
 import { returnMarkerStyle } from "./helpers";
+import Adrop from "../../../../../assets/Adrop";
 
 const ClusteredMarker = ({
   geometry,
   properties,
   onPress,
-  clusterColor,
 
-  clusterFontFamily,
   tracksViewChanges,
 }) => {
   const points = properties.point_count;
-  const { width, height, fontSize, size } = returnMarkerStyle(points);
+  const { width, height, size, fontSize, emojiSize } =
+    returnMarkerStyle(points);
+  const emoji = "😀";
 
   return (
     <Marker
@@ -37,25 +44,42 @@ const ClusteredMarker = ({
           style={[
             styles.wrapper,
             {
-              backgroundColor: clusterColor,
+              backgroundColor: "transparent",
               width,
               height,
-              borderRadius: width / 2,
             },
           ]}
         >
           <SvgXml
             xml={Adrop}
-            style={[styles.cluster, { width: size, height: size }]}
+            width={size}
+            height={size}
+            style={{ opacity: 0.85, zIndex: 500 }}
           />
+          {/* <Image
+            source={PDrop}
+            style={[styles.cluster, { width: 50, height: 50 }]}
+            
+          /> */}
+          <Text
+            style={[
+              styles.emoji,
+              {
+                fontSize: emojiSize,
+
+                color: "grey",
+              },
+            ]}
+          >
+            {emoji}
+          </Text>
 
           <Text
             style={[
               styles.text,
               {
-                fontSize: 15,
-
-                color: "FAFAFA",
+                fontSize: fontSize,
+                color: "grey",
               },
             ]}
           >
@@ -75,21 +99,21 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     position: "absolute",
-    opacity: 0.5,
+
     zIndex: 0,
     flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
   },
-  cluster: {
-    flex: 1,
 
-    zIndex: 1,
-  },
   text: {
-    flex: 1,
-    zIndex: 3,
-
+    zIndex: 998,
+    left: -45,
+    top: 30,
+    fontWeight: "bold",
+  },
+  emoji: {
+    zIndex: 999,
+    left: -40,
+    top: 15,
     fontWeight: "bold",
   },
 });

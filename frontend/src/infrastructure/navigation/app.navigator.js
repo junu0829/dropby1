@@ -9,6 +9,7 @@ import { MapScreen } from "../../features/map/screen/map.screen";
 import { WriteScreen } from "../../features/write/screen/write.screen";
 import { EmojiSelectScreen } from "../../features/write/screen/emojiSelect.screen";
 import { CameraScreen } from "../../features/write/screen/camera.screen";
+import { FeedScreen } from "../../features/Feed/feed.screen";
 
 const MainStack = createStackNavigator();
 
@@ -19,6 +20,7 @@ export const MainNavigator = () => {
         <MainStack.Screen name="LogIn" component={LogIn} />
         <MainStack.Screen name="Loading" component={Loading} />
         <MainStack.Screen name="MapScreen" component={MapScreen} />
+        <MainStack.Screen name="FeedScreen" component={FeedScreen} />
         <MainStack.Screen name="WriteScreen" component={WriteScreen} />
         <MainStack.Group screenOptions={{ presentation: "modal" }}>
           <MainStack.Screen name="Emoji" component={EmojiSelectScreen} />

@@ -18,6 +18,7 @@ import {
 } from "@expo-google-fonts/dongle";
 
 import { LocationContextProvider } from "./src/services/location/location.context";
+import { FavouritesContextProvider } from "./src/services/favourites/favourites.context";
 
 //NanumGothic_400Regular
 export default function App() {
@@ -34,9 +35,11 @@ export default function App() {
     return (
       <>
         <ThemeProvider theme={theme}>
-          <LocationContextProvider>
-            <Navigation />
-          </LocationContextProvider>
+          <FavouritesContextProvider>
+            <LocationContextProvider>
+              <Navigation />
+            </LocationContextProvider>
+          </FavouritesContextProvider>
         </ThemeProvider>
         <ExpoStatusBar style="light" />
       </>

@@ -5,6 +5,7 @@ export const returnMarkerStyle = (points) => {
       height: 84,
       size: 64,
       fontSize: 20,
+      emojiSize: 30,
     };
   }
 
@@ -14,6 +15,7 @@ export const returnMarkerStyle = (points) => {
       height: 78,
       size: 58,
       fontSize: 19,
+      emojiSize: 30,
     };
   }
 
@@ -23,40 +25,17 @@ export const returnMarkerStyle = (points) => {
       height: 72,
       size: 54,
       fontSize: 18,
+      emojiSize: 30,
     };
   }
 
-  if (points >= 10) {
+  if (points >= 2) {
     return {
-      width: 66,
-      height: 66,
+      width: 50,
+      height: 50,
       size: 50,
       fontSize: 17,
+      emojiSize: 30,
     };
   }
-
-  if (points >= 8) {
-    return {
-      width: 60,
-      height: 60,
-      size: 46,
-      fontSize: 17,
-    };
-  }
-
-  if (points >= 4) {
-    return {
-      width: 54,
-      height: 54,
-      size: 40,
-      fontSize: 16,
-    };
-  }
-
-  return {
-    width: 48,
-    height: 48,
-    size: 36,
-    fontSize: 15,
-  };
 };

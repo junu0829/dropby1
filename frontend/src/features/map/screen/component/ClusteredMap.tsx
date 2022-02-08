@@ -1,22 +1,23 @@
 import React, { useEffect, useMemo, useState, useRef, forwardRef } from "react";
 import { Map } from "../map.screen.styles";
 import GeoViewport from "@mapbox/geo-viewport";
-import { Dimensions, LayoutAnimation, Platform } from "react-native";
-import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
+import { Dimensions, LayoutAnimation } from "react-native";
+import { PROVIDER_GOOGLE, Marker, MapViewProps } from "react-native-maps";
 import { FadeInViewFaster } from "../../../../components/animations/fadeFaster.animation.";
 import { ExpandView } from "../../../../components/animations/expand.animation";
 import { SvgXml } from "react-native-svg";
 import LocationSelected from "../../../../../assets/LocationSelected";
+import { MapClusteringProps } from "./ClusteredMapViewTypes";
 
 import SuperCluster from "supercluster";
 import ClusterMarker from "./ClusteredMarker";
 
-export const ClusteredMap = forwardRef(
+export const ClusteredMap = forwardRef<MapClusteringProps & MapViewProps, any>(
   (
     {
       children,
       region = {},
-
+      updateRegion,
       location = {},
       LATITUDE_DELTA = {},
       LONGITUDE_DELTA = {},
@@ -37,8 +38,6 @@ export const ClusteredMap = forwardRef(
       preserveClusterPressBehavior,
       clusteringEnabled,
 
-      layoutAnimationConf,
-      animationEnabled,
       renderCluster,
       tracksViewChanges,
       spiralEnabled,
@@ -50,9 +49,9 @@ export const ClusteredMap = forwardRef(
     const [markers, updateMarkers] = useState([]);
 
     const mapRef = useRef();
-    const [currentRegion, updateRegion] = useState(
-      restProps.region || restProps.initialRegion
-    );
+    // const [currentRegion, updateRegion] = useState(
+    //   restProps.region || restProps.initialRegion
+    // );
 
     const [spiderMarkers, updateSpiderMarker] = useState([]);
     const [clusterChildren, updateClusterChildren] = useState(null);
@@ -195,7 +194,7 @@ export const ClusteredMap = forwardRef(
       setSuperCluster(superCluster);
 
       superClusterRef.current = superCluster;
-    }, [propsChildren, clusteringEnabled]);
+    }, [clusteringEnabled]);
 
     const _onClusterPress = (cluster) => () => {
       const children = superCluster.getLeaves(cluster.id, Infinity);
@@ -248,9 +247,7 @@ export const ClusteredMap = forwardRef(
         const bBox = calculateBBox(region);
         const zoom = returnMapZoom(region, bBox, minZoom);
         const markers = superCluster.getClusters(bBox, zoom);
-        if (animationEnabled && Platform.OS === "ios") {
-          LayoutAnimation.configureNext(layoutAnimationConf);
-        }
+
         if (zoom >= 18 && markers.length > 0 && clusterChildren) {
           if (spiralEnabled) {
             updateSpiderfier(true);
@@ -313,8 +310,9 @@ export const ClusteredMap = forwardRef(
             )
           ) : null
         )}
+        {otherChildren}
         {writeMode && !isAddressLoading
-          ? Markers.map((Mker, i) => {
+          ? Markers.map((Mker) => {
               return (
                 <Marker
                   style={{ zIndex: 999 }}

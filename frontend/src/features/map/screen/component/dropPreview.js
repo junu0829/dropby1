@@ -12,12 +12,14 @@ import { Text } from "../../../../components/typography/text.component";
 
 import MenuButton from "../../../../../assets/MenuButton";
 import write from "../../../../../assets/write";
+import { Favourite } from "../../../../components/favorites/favourite.component";
 
 export const DropPreview = ({
   pressedLocation = {},
   pressedAddress = {},
   pressedAddressName = {},
   dropContent = {},
+  drop = {},
   navigation,
 }) => {
   return (
@@ -55,6 +57,7 @@ export const DropPreview = ({
           >
             <SvgXml xml={write} width={56} height={65} />
           </WriteButton>
+          <Favourite drop={drop} />
         </View>
       </PlaceContainer>
     </>

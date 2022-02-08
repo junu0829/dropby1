@@ -9,13 +9,14 @@ import searchButton from "../../../../../assets/searchButton";
 import { SvgXml } from "react-native-svg";
 import { Text } from "../../../../components/typography/text.component";
 
-export const Cloud = () => {
+export const Cloud = ({ navigation, region }) => {
   return (
     <>
       <View>
         <ImageBackground
           source={cloud}
           style={{
+            opacity: 0.8,
             width: "100%",
             height: "93%",
           }}
@@ -32,6 +33,10 @@ export const Cloud = () => {
                 style={{
                   marginTop: 60,
                   marRight: 50,
+                  zIndex: 999,
+                }}
+                onPress={() => {
+                  navigation.navigate("FeedScreen", [{ region }]);
                 }}
               >
                 <SvgXml xml={FeedTransitionButton} height={35} width={35} />
@@ -47,6 +52,7 @@ export const Cloud = () => {
               <TouchableOpacity
                 style={{
                   marginTop: 63,
+                  zIndex: 999,
                 }}
               >
                 <Text variant="bold">탭해서 새로고침</Text>
@@ -56,6 +62,7 @@ export const Cloud = () => {
               <TouchableOpacity
                 style={{
                   marginTop: 64,
+                  zIndex: 999,
                 }}
               >
                 <SvgXml xml={searchButton} height={25} width={25} />
