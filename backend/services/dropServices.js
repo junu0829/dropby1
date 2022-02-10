@@ -2,17 +2,18 @@ const {Drop} = require('../models');
 
 const {getUser} = require('../middlewares/auth');
 
-exports.newDrop = async ({headers, body}) => {
-    const accessToken = headers.authorization;
+exports.newDrop = async (accessToken, body) => {
+    console.log('newdrop', accessToken);
     const user = await getUser(accessToken)
-
+    console.log('services user', user);
     const {content, latitude, longitude} = body;
 
     const drop = await Drop.create({
         content,
         latitude,
         longitude,
-        createdAt:Date()
+        createdAt:Date(),
+        creatorPk:user.pk
     });
     return drop;
 }
