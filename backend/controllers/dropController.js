@@ -5,7 +5,6 @@ const {getAccess} = require('../middlewares/auth');
 
 exports.newDrop = async(req, res, next) => {
     try {
-        console.log('newdrop control', req.headers.authorization);
         const accessToken = getAccess(req.headers);
         const drop = await dropServices.newDrop(accessToken, req.body);
         res.json({
