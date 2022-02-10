@@ -66,3 +66,25 @@ exports.verifyRefresh = async (refreshToken, userData) => { //RefreshToken ê²€ì¦
         return false;
     }
 };
+
+exports.getAccess = ({authorization}) => {
+    try {
+        const accessToken = authorization.split('Bearer ')[1];
+        
+        return accessToken
+    } catch(error) {
+        return error.message;
+    }
+}
+exports.getUser = async (accessToken) => {
+    try {
+        console.log('getUser', accessToken);
+        verified = jwt.verify(accessToken, process.env.JWT_SECRET_ACCESS_KEY)
+        console.log('getuser verified', verified);
+        const user = await User.findOne({where:{pk:verified.pk}})
+
+        return user.dataValues
+    } catch(error) {
+        return error.message;
+    }
+}
