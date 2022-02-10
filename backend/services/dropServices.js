@@ -1,6 +1,13 @@
 const {Drop} = require('../models');
 
-exports.newDrop = async ({content, latitude, longitude}) => {
+const {getUser} = require('../middlewares/auth');
+
+exports.newDrop = async ({headers, body}) => {
+    const accessToken = headers.authorization;
+    const user = await getUser(accessToken)
+
+    const {content, latitude, longitude} = body;
+
     const drop = await Drop.create({
         content,
         latitude,
