@@ -4,7 +4,7 @@ const dropServices = require('../services/dropServices');
 
 exports.newDrop = async(req, res, next) => {
     try {
-        const drop = await dropServices.newDrop(req.body);
+        const drop = await dropServices.newDrop(req);
         res.json({
             msg:'드롭 생성 완료',
             data:drop
