@@ -66,3 +66,15 @@ exports.verifyRefresh = async (refreshToken, userData) => { //RefreshToken ê²€ì¦
         return false;
     }
 };
+
+exports.getUser = async (accessToken) => {
+    try {
+        verified = jwt.verify(accessToken, process.env.JWT_SECRET_ACCESS_KEY)
+        console.log(verified);
+        const user = await User.findOne({where:{pk:verified.pk}})
+
+        return user
+    } catch(error) {
+        return error.message;
+    }
+}
