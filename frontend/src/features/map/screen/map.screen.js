@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createRef } from "react";
 import MapView from "react-native-maps";
 import {
   Dimensions,
@@ -53,6 +53,9 @@ import selectButton from "../../../../assets/selectButton";
 import backButton from "../../../../assets/backButton";
 
 import { Cloud } from "./component/cloud";
+import { SlideView } from "../../../components/animations/slide.animation";
+import { SafeArea } from "../../../components/utility/safe-area.component";
+import { theme } from "../../../infrastructure/theme";
 
 export const MapScreen = ({ navigation, route }) => {
   ////////////////////////////처음 state들//////////////////////////////////////
@@ -61,13 +64,16 @@ export const MapScreen = ({ navigation, route }) => {
 
   /////지도를 지도 바깥에서 부를 수 있도록 정의
   const map = useRef(null);
+  const prev = createRef();
 
   // 화면비율 조정하는 것
 
   let { width, height } = Dimensions.get("window");
+  const [touchY, setTouchY] = useState(null);
   const ASPECT_RATIO = width / height;
   const LATITUDE_DELTA = 0.008; //Very high zoom level
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+  const [isDetail, setIsDetail] = useState(false);
 
   ///////처음 데이터셋팅(현위치, 누른 위치-주소-장소명, 선택장소 마커위치, 데이터베이스에 저장된 마커들)
   const { location, isLoading } = useContext(LocationContext);
@@ -351,21 +357,23 @@ export const MapScreen = ({ navigation, route }) => {
       <View>
         <ExpoStatusBar style="auto" />
         <SearchContainer>
-          <LinearGradient
-            colors={[
-              "rgba(166, 110, 159, 0.9)",
-              "rgba(166, 110, 159, 0.65)",
-              "rgba(166, 110, 159, 0.15)",
-              "rgba(166, 110, 159, 0.0)",
-            ]}
-            style={styles.background}
-            locations={[0.1, 0.45, 0.77, 1.0]}
-          >
-            {/* writeMode이지 않을 경우에 cloud */}
-            {!writeMode ? (
-              <Cloud navigation={navigation} region={currentRegion} />
-            ) : null}
-          </LinearGradient>
+          {!isDetail ? (
+            <LinearGradient
+              colors={[
+                "rgba(166, 110, 159, 0.9)",
+                "rgba(166, 110, 159, 0.65)",
+                "rgba(166, 110, 159, 0.15)",
+                "rgba(166, 110, 159, 0.0)",
+              ]}
+              style={styles.background}
+              locations={[0.1, 0.45, 0.77, 1.0]}
+            >
+              {/* writeMode이지 않을 경우에 cloud */}
+              {!writeMode ? (
+                <Cloud navigation={navigation} region={currentRegion} />
+              ) : null}
+            </LinearGradient>
+          ) : null}
 
           {writeMode && (
             <TextContainer>
@@ -489,14 +497,19 @@ export const MapScreen = ({ navigation, route }) => {
         ) : dropViewMode ? (
           <>
             <TouchableWithoutFeedback onPress={() => {}}>
-              <DropPreview
-                pressedAddress={pressedAddress}
-                pressedAddressName={pressedAddressName}
-                dropContent={dropContent}
-                pressedLocation={pressedLocation}
-                navigation={navigation}
-                drop={drop}
-              />
+              <SlideView isDetail={isDetail}>
+                <DropPreview
+                  ref={prev}
+                  pressedAddress={pressedAddress}
+                  pressedAddressName={pressedAddressName}
+                  dropContent={dropContent}
+                  pressedLocation={pressedLocation}
+                  navigation={navigation}
+                  drop={drop}
+                  isDetail={isDetail}
+                  setIsDetail={setIsDetail}
+                />
+              </SlideView>
             </TouchableWithoutFeedback>
           </>
         ) : null}

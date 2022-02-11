@@ -3,7 +3,7 @@ import { Map } from "../map.screen.styles";
 import GeoViewport from "@mapbox/geo-viewport";
 import { Dimensions, LayoutAnimation } from "react-native";
 import { PROVIDER_GOOGLE, Marker, MapViewProps } from "react-native-maps";
-import { FadeInViewFaster } from "../../../../components/animations/fadeFaster.animation.";
+import { FadeInViewFaster } from "../../../../components/animations/fadeFaster.animation";
 import { ExpandView } from "../../../../components/animations/expand.animation";
 import { SvgXml } from "react-native-svg";
 import LocationSelected from "../../../../../assets/LocationSelected";
