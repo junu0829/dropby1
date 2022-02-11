@@ -5,7 +5,7 @@ import { ThemeProvider } from "styled-components";
 import { theme } from "./src/infrastructure/theme";
 
 import { Navigation } from "./src/infrastructure/navigation";
-
+import {CookiesProvider} from 'react-cookie';
 import {
   useFonts as useNanum,
   NanumGothic_400Regular,
@@ -35,7 +35,9 @@ export default function App() {
       <>
         <ThemeProvider theme={theme}>
           <LocationContextProvider>
+            <CookiesProvider>
             <Navigation />
+            </CookiesProvider>
           </LocationContextProvider>
         </ThemeProvider>
         <ExpoStatusBar style="light" />
