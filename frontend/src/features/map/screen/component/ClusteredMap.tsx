@@ -6,7 +6,7 @@ import { PROVIDER_GOOGLE, Marker, MapViewProps } from "react-native-maps";
 import { FadeInViewFaster } from "../../../../components/animations/fadeFaster.animation";
 import { ExpandView } from "../../../../components/animations/expand.animation";
 import { SvgXml } from "react-native-svg";
-import LocationSelected from "../../../../../assets/LocationSelected";
+import LocationSelected from "../../../../../assets/images/LocationSelected";
 import { MapClusteringProps } from "./ClusteredMapViewTypes";
 
 import SuperCluster from "supercluster";

@@ -11,7 +11,7 @@ import { Marker } from "react-native-maps";
 
 import { SvgXml } from "react-native-svg";
 import { returnMarkerStyle } from "./helpers";
-import Adrop from "../../../../../assets/Adrop";
+import Adrop from "../../../../../assets/images/Adrop";
 
 const ClusteredMarker = ({
   geometry,

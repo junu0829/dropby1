@@ -18,12 +18,12 @@ import { SvgXml } from "react-native-svg";
 
 import Constants from "expo-constants";
 
-import addIcon from "../../../../assets/addIcon";
-import backButton2 from "../../../../assets/backButton2";
-import sendingButton from "../../../../assets/sendingButton";
-import bar from "../../../../assets/bar";
-import addPicture from "../../../../assets/addPicture";
-import LockButtonUnlocked from "../../../../assets/LockButton(Unlocked)";
+import addIcon from "../../../../assets/Buttons/addIcon";
+import backButton2 from "../../../../assets/Buttons/backButton2";
+import sendingButton from "../../../../assets/Buttons/sendingButton";
+import bar from "../../../../assets/Background/bar";
+import addPicture from "../../../../assets/Buttons/addPicture";
+import LockButtonUnlocked from "../../../../assets/Buttons/LockButton(Unlocked)";
 
 import { container, styles } from "./writescreen.styles";
 

@@ -2,7 +2,7 @@ import React from "react";
 
 import { createStackNavigator } from "@react-navigation/stack";
 
-import { LogIn } from "../../features/login/LogIn";
+import { LogIn } from "../../features/login/Screens/LogIn";
 import { Loading } from "../../components/Loading";
 import { NavigationContainer } from "@react-navigation/native";
 import { MapScreen } from "../../features/map/screen/map.screen";
@@ -10,9 +10,9 @@ import { WriteScreen } from "../../features/write/screen/write.screen";
 import { EmojiSelectScreen } from "../../features/write/screen/emojiSelect.screen";
 import { CameraScreen } from "../../features/write/screen/camera.screen";
 
-import { SignInScreen } from "../../features/login/SignIn";
+import { SignInScreen } from "../../features/login/Screens/SignIn";
 import { FeedScreen } from "../../features/Feed/feed.screen";
-import { SignUpScreen } from "../../features/login/Signup";
+import { SignUpScreen } from "../../features/login/Screens/Signup";
 
 const MainStack = createStackNavigator();
 

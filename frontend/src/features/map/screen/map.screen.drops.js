@@ -8,7 +8,7 @@ import { LocationContext } from "../../../services/location/location.context";
 import styled from "styled-components/native";
 import { SvgXml } from "react-native-svg";
 import cloud from "../../../../assets/cloud.png";
-import write from "../../../../assets/write";
+import write from "../../../../assets/Buttons/write";
 
 import ExpoStatusBar from "expo-status-bar/build/ExpoStatusBar";
 import axios from "axios";

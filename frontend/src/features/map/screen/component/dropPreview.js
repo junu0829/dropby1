@@ -10,8 +10,8 @@ import {
 } from "../map.screen.styles";
 import { Text } from "../../../../components/typography/text.component";
 
-import MenuButton from "../../../../../assets/MenuButton";
-import write from "../../../../../assets/write";
+import MenuButton from "../../../../../assets/Buttons/MenuButton";
+import write from "../../../../../assets/Buttons/write";
 import { Favourite } from "../../../../components/favorites/favourite.component";
 import { useState } from "react";
 import { theme } from "../../../../infrastructure/theme";

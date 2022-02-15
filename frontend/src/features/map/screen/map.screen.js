@@ -40,22 +40,22 @@ import {
 
 import { ClusteredMap } from "./component/ClusteredMap";
 //assets
-import Drops from "../../../../assets/Drops";
+import Drops from "../../../../assets/images/Drops";
 import { APIKey, PlAPIKey } from "../../../../APIkeys";
-import DropDefault from "../../../../assets/DropDefault";
+import DropDefault from "../../../../assets/images/DropDefault";
 
-import write from "../../../../assets/write";
+import write from "../../../../assets/Buttons/write";
 import PurpleDrop from "../../../../assets/images/PurpleDrop.png";
 
-import currentLocation from "../../../../assets/currentLocation";
+import currentLocation from "../../../../assets/Buttons/currentLocation";
 
-import selectButton from "../../../../assets/selectButton";
-import backButton from "../../../../assets/backButton";
+import selectButton from "../../../../assets/Buttons/selectButton";
 
 import { Cloud } from "./component/cloud";
 import { SlideView } from "../../../components/animations/slide.animation";
 import { SafeArea } from "../../../components/utility/safe-area.component";
 import { theme } from "../../../infrastructure/theme";
+import backButton2 from "../../../../assets/Buttons/backButton2";
 
 export const MapScreen = ({ navigation, route }) => {
   ////////////////////////////처음 state들//////////////////////////////////////
@@ -459,7 +459,7 @@ export const MapScreen = ({ navigation, route }) => {
                     setWriteMode(false);
                   }}
                 >
-                  <SvgXml xml={backButton} width={50} height={50} />
+                  <SvgXml xml={backButton2} width={50} height={50} />
                 </BackButtonContainer>
                 <PlaceNameContainer>
                   <PlaceNameContainer2>

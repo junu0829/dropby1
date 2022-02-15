@@ -3,9 +3,9 @@ import { View, ImageBackground, TouchableOpacity } from "react-native";
 
 import { ContainerStart, ContainerEnd4 } from "../map.screen.styles";
 
-import cloud from "../../../../../assets/cloud.png";
-import FeedTransitionButton from "../../../../../assets/FeedTransitionButton";
-import searchButton from "../../../../../assets/searchButton";
+import cloud from "../../../../../assets/Background/cloud.png";
+import FeedTransitionButton from "../../../../../assets/Buttons/FeedTransitionButton";
+import searchButton from "../../../../../assets/Buttons/searchButton";
 import { SvgXml } from "react-native-svg";
 import { Text } from "../../../../components/typography/text.component";
 

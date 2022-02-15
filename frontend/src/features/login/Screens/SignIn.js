@@ -1,18 +1,17 @@
 import React, { useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, TouchableOpacity, View, Text, Alert } from "react-native";
-import { theme } from "../../infrastructure/theme";
-import LoadIcon from "../../../assets/LoadIcon";
+import { theme } from "../../../infrastructure/theme";
+import LoadIcon from "../../../../assets/images/LoadIcon";
 import { SvgXml } from "react-native-svg";
 import Checkbox from "expo-checkbox";
-import googleLogin from "../../../assets/googleLogin";
-import kakaoLogin from "../../../assets/kakaoLogin";
+import googleLogin from "../../../../assets/Buttons/googleLogin";
+import kakaoLogin from "../../../../assets/Buttons/kakaoLogin";
 
-import LetsDrop from "../../../assets/LetsDrop";
 import { TextInput } from "react-native-gesture-handler";
-import SignInButton from "../../../assets/SignInButton";
-import AreYouStartingButton from "../../../assets/Buttons/AreYouStartingButton";
-import FindingPWButton from "../../../assets/Buttons/FindingPWButton";
+import SignInButton from "../../../../assets/Buttons/SignInButton";
+import AreYouStartingButton from "../../../../assets/Buttons/AreYouStartingButton";
+import FindingPWButton from "../../../../assets/Buttons/FindingPWButton";
 
 export const SignInScreen = ({ navigation }) => {
   const [isChecked, setChecked] = useState(false);
@@ -34,51 +33,21 @@ export const SignInScreen = ({ navigation }) => {
           <SvgXml xml={LoadIcon} width={72} height={123} />
         </View>
         <View style={styles.container3}>
-          <View
-            style={{
-              backgroundColor: theme.colors.bg.white,
-              width: 300,
-              height: 38,
-              opacity: 0.9,
-              marginTop: 30,
-              borderRadius: 20,
-              padding: 5,
-            }}
-          >
+          <View style={styles.inputBox}>
             <TextInput
-              style={{
-                fontSize: 16,
-                left: 50,
-                top: 4,
-                fontFamily: theme.fonts.body,
-              }}
+              style={styles.input}
               placeholderTextColor="#02B5AA"
               placeholder="이메일"
-              onChangeText={() => handleContent()}
+              onChangeText={() => {}}
               value={null}
             ></TextInput>
           </View>
-          <View
-            style={{
-              backgroundColor: theme.colors.bg.white,
-              width: 300,
-              height: 38,
-              opacity: 0.9,
-              marginTop: 10,
-              borderRadius: 20,
-              padding: 5,
-            }}
-          >
+          <View style={styles.inputBox2}>
             <TextInput
-              style={{
-                fontSize: 16,
-                left: 50,
-                top: 4,
-                fontFamily: theme.fonts.body,
-              }}
+              style={styles.input}
               placeholderTextColor="#02B5AA"
               placeholder="비밀번호"
-              onChangeText={() => handleContent()}
+              onChangeText={() => {}}
               value={null}
             ></TextInput>
           </View>
@@ -101,10 +70,10 @@ export const SignInScreen = ({ navigation }) => {
             <Text
               style={{
                 color: theme.colors.bg.white,
-                fontSize: 16,
+                fontSize: 14,
                 width: "90%",
                 fontWeight: "700",
-                marginTop: 6,
+                marginTop: 8,
               }}
             >
               로그인 유지
@@ -177,9 +146,37 @@ const styles = StyleSheet.create({
   checkbox: {
     alignSelf: "center",
     margin: 8,
-    width: 19,
-    height: 19,
+    width: 17,
+    height: 17,
     borderColor: "white",
     borderRadius: 5,
+  },
+  inputBox: {
+    backgroundColor: theme.colors.bg.white,
+    width: 300,
+    height: 38,
+    opacity: 0.9,
+    marginTop: 30,
+    borderColor: theme.colors.bg.a,
+    borderWidth: 1,
+    borderRadius: 20,
+    padding: 5,
+  },
+  inputBox2: {
+    backgroundColor: theme.colors.bg.white,
+    width: 300,
+    height: 38,
+    opacity: 0.9,
+    borderColor: theme.colors.bg.a,
+    borderWidth: 1,
+    marginTop: 10,
+    borderRadius: 20,
+    padding: 5,
+  },
+  input: {
+    fontSize: 16,
+    left: 50,
+    top: 4,
+    fontFamily: theme.fonts.body,
   },
 });
