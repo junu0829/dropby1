@@ -15,6 +15,8 @@
     "@expo-google-fonts/nanum-gothic": "^0.2.2",
     "@expo-google-fonts/oswald": "^0.2.2",
     "@expo/vector-icons": "^12.0.5",
+    "@react-native-async-storage/async-storage": "~1.15.0",
+    "@react-native-community/async-storage": "^1.12.1",
     "@react-navigation/native": "^6.0.7",
     "@react-navigation/stack": "^6.0.11",
     "axios": "^0.25.0",
