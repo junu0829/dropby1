@@ -69,7 +69,7 @@ export const MapScreen = ({ navigation, route }) => {
   // 화면비율 조정하는 것
 
   let { width, height } = Dimensions.get("window");
-  const [touchY, setTouchY] = useState(null);
+
   const ASPECT_RATIO = width / height;
   const LATITUDE_DELTA = 0.008; //Very high zoom level
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
@@ -79,18 +79,18 @@ export const MapScreen = ({ navigation, route }) => {
   const { location, isLoading } = useContext(LocationContext);
 
   const [isAddressLoading, SetIsAddressLoading] = useState(true);
-  const [clusteringEnabled, setClusteringEnabled] = useState(true);
+
   const [dropViewMode, setDropViewMode] = useState(false);
   const showModal = () => {
     setDropViewMode(true);
   };
-  const [superCluster, setSuperCluster] = useState(null);
+
   const [writeMode, setWriteMode] = useState(false);
   const [pressedLocation, setPressedLocation] = useState({
     latitude: 37.58646601781994,
     longitude: 127.02913699768948,
   });
-  const [markers, updateMarkers] = useState([]);
+
   const [Markers, setMarkers] = useState([
     {
       latitude: location[0],
@@ -246,17 +246,15 @@ export const MapScreen = ({ navigation, route }) => {
     };
 
     const getPlaceDetail = () => {
-      // fetch(
-      //   `https://maps.googleapis.com/maps/api/place/details/json?place_id=${pressedAddressID}&key=${PlAPIKey}`
-      // )
-      //   .then((response) => response.json())
-      //   .then(async (responseJson) => {
-      //     await setPressedAddress(responseJson.result.formatted_address);
-      //     await setPressedAddressName(
-      //       `새로운 장소!`
-      //     );
-      //     console.log("a");
-      //   });
+      fetch(
+        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${pressedAddressID}&key=${PlAPIKey}`
+      )
+        .then((response) => response.json())
+        .then(async (responseJson) => {
+          await setPressedAddress(responseJson.result.formatted_address);
+          await setPressedAddressName(`새로운 장소!`);
+          console.log("a");
+        });
     };
 
     getAddress();
@@ -305,15 +303,15 @@ export const MapScreen = ({ navigation, route }) => {
     };
 
     const getDefinedPlaceDetail = () => {
-      // fetch(
-      //   `https://maps.googleapis.com/maps/api/place/details/json?place_id=${definedAddressID}&key=${PlAPIKe}`
-      // )
-      //   .then((response) => response.json())
-      //   .then(async (responseJson) => {
-      //     await setPressedAddress(responseJson.result.formatted_address);
-      //     await setPressedAddressName(responseJson.result.name);
-      //     console.log("b");
-      //   });
+      fetch(
+        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${definedAddressID}&key=${PlAPIKey}`
+      )
+        .then((response) => response.json())
+        .then(async (responseJson) => {
+          await setPressedAddress(responseJson.result.formatted_address);
+          await setPressedAddressName(responseJson.result.name);
+          console.log("b");
+        });
     };
     getDefinedAddress();
     getDefinedPlaceDetail();

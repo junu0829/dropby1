@@ -4,7 +4,7 @@ import { Dimensions } from "react-native";
 
 export const SlideView = ({ duration = 500, isDetail = {}, ...props }) => {
   const SlideAnim = useRef(
-    new Animated.Value(isDetail == true ? 0 : 1)
+    new Animated.Value(isDetail == true ? 0 : 0)
   ).current;
   const height = Dimensions.get("window").height;
   const endValue = Math.abs(height) * -1 + 165;

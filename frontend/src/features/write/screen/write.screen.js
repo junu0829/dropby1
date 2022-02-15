@@ -89,15 +89,16 @@ export const WriteScreen = ({ navigation, route }) => {
 
   const PostWrite = async () => {
     axios
-      .post("http://192.168.35.44:3000/drops", {
-        pk: Constants.deviceName,
+      .post("http://localhost:3000/drops", {
+        // pk: 1,
         content: content,
         latitude: latitude,
         longitude: longitude,
       })
       .then(() => {
         console.log("드롭 등록 완료");
-      });
+      })
+      .catch((e) => console.log(e));
   };
 
   return (

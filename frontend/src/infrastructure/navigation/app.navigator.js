@@ -9,62 +9,25 @@ import { MapScreen } from "../../features/map/screen/map.screen";
 import { WriteScreen } from "../../features/write/screen/write.screen";
 import { EmojiSelectScreen } from "../../features/write/screen/emojiSelect.screen";
 import { CameraScreen } from "../../features/write/screen/camera.screen";
-import { CardStyleInterpolators } from "@react-navigation/stack";
+
+import { SignInScreen } from "../../features/login/SignIn";
 import { FeedScreen } from "../../features/Feed/feed.screen";
-import { DetailScreen } from "../../features/map/screen/DetailScreen";
-import { Platform } from "react-native";
+import { SignUpScreen } from "../../features/login/Signup";
 
 const MainStack = createStackNavigator();
-const PopupNavigationStack = createStackNavigator();
-
-const PopupStackScreen = () => {
-  return (
-    <PopupNavigationStack.Navigator
-      screenOptions={
-        Platform.OS === "ios"
-          ? {
-              cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
-            }
-          : {
-              cardStyleInterpolator:
-                CardStyleInterpolators.forRevealFromBottomAndroid,
-            }
-      }
-    >
-      <MainStack.Screen
-        name="DetailScreen"
-        component={DetailScreen}
-        options={{ gestureDirection: "vertical-inverted" }}
-      />
-    </PopupNavigationStack.Navigator>
-  );
-};
 
 export const MainNavigator = () => {
   return (
     <NavigationContainer>
       <MainStack.Navigator headerMode="none">
+        <MainStack.Screen name="SignIn" component={SignInScreen} />
+        <MainStack.Screen name="SignUp" component={SignUpScreen} />
         <MainStack.Screen name="LogIn" component={LogIn} />
         <MainStack.Screen name="Loading" component={Loading} />
         <MainStack.Screen name="MapScreen" component={MapScreen} />
         <MainStack.Screen name="FeedScreen" component={FeedScreen} />
         <MainStack.Screen name="WriteScreen" component={WriteScreen} />
-        <MainStack.Screen
-          name="Popup"
-          component={PopupStackScreen}
-          options={({ route, navigation }) =>
-            //...OTHER OPTIONS
 
-            Platform.OS === "ios"
-              ? {
-                  cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
-                }
-              : {
-                  cardStyleInterpolator:
-                    CardStyleInterpolators.forRevealFromBottomAndroid,
-                }
-          }
-        />
         <MainStack.Group screenOptions={{ presentation: "modal" }}>
           <MainStack.Screen name="Emoji" component={EmojiSelectScreen} />
           <MainStack.Screen name="CameraScreen" component={CameraScreen} />
