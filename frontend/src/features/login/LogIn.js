@@ -1,14 +1,40 @@
-import React from "react";
+import React, { useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import { StyleSheet, Text, TouchableOpacity, View, Image } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View, Image, TextInput } from "react-native";
 import { theme } from "../../infrastructure/theme";
 import LoadIcon from "../../../assets/LoadIcon";
 import { SvgXml } from "react-native-svg";
-
 import LetsDrop from "../../../assets/LetsDrop";
 import { FadeInView } from "../../components/animations/fade.animation";
-
+import axios from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage'
 export const LogIn = ({ navigation }) => {
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("")
+  const [email, setEmail] = useState("");
+
+  const signup = async (userData) => {
+    const response = await axios({
+      method:"post",
+      url:"http://172.30.3.88:3000/auth/signup",
+      data:userData,
+      withCredentials:true,
+    })
+    .then((res) => {
+      console.log(res);
+      const accessToken = res.data.access;
+      const refreshToken = res.data.refresh;
+      AsyncStorage.setItem('accessToken', accessToken);
+      AsyncStorage.setItem('refreshToken', refreshToken);
+      console.log('token saved in asyncstorage');
+    }).catch((error) => {
+      console.log(error.message);
+    });
+    
+    return response;
+
+    }
   return (
     <>
       <LinearGradient
@@ -27,12 +53,21 @@ export const LogIn = ({ navigation }) => {
           <View style={styles.container2}>
             <SvgXml xml={LoadIcon} width={72} height={123} />
           </View>
+          <View style={styles.container4}>
+            <TextInput onChangeText={username => setUsername(username)} style={styles.input} placeholder="username" />
+          </View>
+          <View style={styles.container4}>
+            <TextInput onChangeText={email => setEmail(email)} style={styles.input} placeholder="email" />
+          </View>
+          <View style={styles.container4}>
+            <TextInput onChangeText={password => setPassword(password)} style={styles.input} placeholder="password" />
+          </View>
+
           <View style={styles.container3}>
-            <TouchableOpacity onPress={() => navigation.navigate("MapScreen")}>
+            <TouchableOpacity onPress={() => signup({username, email, password})}>
               <SvgXml xml={LetsDrop} width={231} height={47} />
             </TouchableOpacity>
           </View>
-          <View style={styles.container4} />
         </FadeInView>
       </LinearGradient>
     </>
@@ -55,6 +90,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   container4: {
-    flex: 3,
+    flex: 5,
   },
+  input: {
+    backgroundColor:'white',
+    flex:9,
+  }
 });
