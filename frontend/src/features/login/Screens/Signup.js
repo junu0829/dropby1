@@ -22,6 +22,8 @@ import backButtonWhite from "../../../../assets/Buttons/backButtonWhite";
 import { FadeInView } from "../../../components/animations/fade.animation";
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios';
+
+import LOCAL_HOST from '../../local.js'
 export const SignUpScreen = ({ navigation }) => {
   const [isChecked, setChecked] = useState(false);
 
@@ -43,7 +45,7 @@ export const SignUpScreen = ({ navigation }) => {
 
   const signup = async() => {
     console.log('signup clicked');
-    const response = await axios('http://192.168.0.18:3000/auth/signup', {
+    const response = await axios(`http://${LOCAL_HOST}:3000/auth/signup`, {
       method:"POST",
       headers:{
         'Accept':'application/json',

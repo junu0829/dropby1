@@ -14,6 +14,9 @@ import AreYouStartingButton from "../../../../assets/Buttons/AreYouStartingButto
 import FindingPWButton from "../../../../assets/Buttons/FindingPWButton";
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+
+import LOCAL_HOST from '../../local.js'
+
 export const SignInScreen = ({ navigation }) => {
   const [isChecked, setChecked] = useState(false);
 
@@ -30,7 +33,7 @@ export const SignInScreen = ({ navigation }) => {
 
   const signIn = async() => {
     console.log('signIn clicked');
-    const response = await axios('http://192.168.0.18:3000/auth/login', {
+    const response = await axios(`http://${LOCAL_HOST}:3000/auth/login`, {
       method:"POST",
       headers:{
         'Accept':'application/json',
