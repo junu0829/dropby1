@@ -2,7 +2,11 @@ import React from "react";
 import { StyleSheet, View, Image, Text, ImageBackground } from "react-native";
 
 import { SvgXml } from "react-native-svg";
+<<<<<<< HEAD
+import GradationGuide from "../../assets/GradationGuide";
+=======
 import GradationGuide from "../../assets/Background/GradationGuide";
+>>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
 
 export const Loading2 = () => {
   return (

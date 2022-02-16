@@ -13,7 +13,6 @@ import { useEffect, useState } from "react";
 
 import { SafeArea } from "../../../components/utility/safe-area.component";
 import { TextInput } from "react-native-gesture-handler";
-
 import { SvgXml } from "react-native-svg";
 
 import Constants from "expo-constants";

@@ -12,9 +12,6 @@ const User = sequelize.define("User", {
         type:DataTypes.STRING(20),
         allowNull:false,
         unique:true,
-        validate:{
-            len:[2, 20]
-        }
     },
     email: {
         type:DataTypes.STRING(20),
