@@ -56,6 +56,8 @@ import { SlideView } from "../../../components/animations/slide.animation";
 import { SafeArea } from "../../../components/utility/safe-area.component";
 import { theme } from "../../../infrastructure/theme";
 import backButton2 from "../../../../assets/Buttons/backButton2";
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import LOCAL_HOST from '../../local.js'
 
 export const MapScreen = ({ navigation, route }) => {
   ////////////////////////////처음 state들//////////////////////////////////////
@@ -169,7 +171,10 @@ export const MapScreen = ({ navigation, route }) => {
     const LoadDrop = async () => {
       await axios({
         method: "get",
-        url: "http://localhost:3000/drops",
+        headers:{
+          access:AsyncStorage.getItem('accessToken')
+        },
+        url: `http://${LOCAL_HOST}:3000/drops`,
       }).then((res) => {
         setDrops(res.data.data);
       });

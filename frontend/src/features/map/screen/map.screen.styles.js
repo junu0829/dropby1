@@ -79,8 +79,6 @@ export const ContainerEnd2 = styled.View`
   flex: 1;
   width: 100%;
 `;
-<<<<<<< HEAD
-=======
 export const ContainerEnd3 = styled.View`
   justify-content: flex-end;
   flex-direction: row;
@@ -103,7 +101,6 @@ export const ContainerStart = styled.View`
   z-index: 995;
   left: 20px;
 `;
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
 
 export const TextContainer = styled.View`
 flex:3
@@ -168,8 +165,6 @@ export const styles = StyleSheet.create({
     marginTop: 4,
     marginLeft: 7,
   },
-<<<<<<< HEAD
-=======
   placeaddress2: {
     fontSize: 9,
     fontWeight: "700",
@@ -182,7 +177,6 @@ export const styles = StyleSheet.create({
     marginTop: 1,
     marginRight: 7,
   },
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
 
   place: {
     fontSize: 9,
