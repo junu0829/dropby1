@@ -57,9 +57,7 @@ import { SafeArea } from "../../../components/utility/safe-area.component";
 import { theme } from "../../../infrastructure/theme";
 import backButton2 from "../../../../assets/Buttons/backButton2";
 
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import LOCAL_HOST from '../../local.js'
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const MapScreen = ({ navigation, route }) => {
   ////////////////////////////처음 state들//////////////////////////////////////
@@ -191,29 +189,26 @@ export const MapScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-<<<<<<< HEAD
-=======
     const LoadDrop = async () => {
-
-      console.log('loadDrops request sent');
-      const accessToken = await AsyncStorage.getItem('accessToken');
+      console.log("loadDrops request sent");
+      const accessToken = await AsyncStorage.getItem("accessToken");
       console.log(accessToken);
-      console.log(`http://${LOCAL_HOST}:3000/drops`)
+      console.log(`http://${LOCAL_HOST}:3000/drops`);
       await axios({
         method: "get",
-        headers:{
-          Authorization: `Bearer ${accessToken}`
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
         },
         url: `http://${LOCAL_HOST}:3000/drops`,
-      }).then((res) => {
-        console.log('response got');
-        setDrops(res.data.data);
-      }).catch((error) => {
-        console.log('error message: ', error.message);
-      });
-
+      })
+        .then((res) => {
+          console.log("response got");
+          setDrops(res.data.data);
+        })
+        .catch((error) => {
+          console.log("error message: ", error.message);
+        });
     };
->>>>>>> ae7624beda68ef4b4daeb372324e77ba53b1ad23
     LoadDrop();
   }, [currentRegion]);
 

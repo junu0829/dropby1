@@ -14,7 +14,7 @@ import { useEffect, useState, useContext } from "react";
 import { SafeArea } from "../../../components/utility/safe-area.component";
 import { TextInput } from "react-native-gesture-handler";
 import { SvgXml } from "react-native-svg";
-import LOCAL_HOST from "../../local.js";
+
 import Constants from "expo-constants";
 
 import addIcon from "../../../../assets/Buttons/addIcon";
@@ -25,10 +25,8 @@ import addPicture from "../../../../assets/Buttons/addPicture";
 import LockButtonUnlocked from "../../../../assets/Buttons/LockButton(Unlocked)";
 
 import { container, styles } from "./writescreen.styles";
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import LOCAL_HOST from '../../local.js'
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import LOCAL_HOST from "../../local.js";
 
 export const WriteScreen = ({ navigation, route }) => {
   const getToken = async () => AsyncStorage.getItem("accessToken");
@@ -93,24 +91,23 @@ export const WriteScreen = ({ navigation, route }) => {
   };
 
   const PostWrite = async () => {
-
-    console.log('Postwrite request sent');
-    const accessToken = await AsyncStorage.getItem('accessToken');
+    console.log("Postwrite request sent");
+    const accessToken = await AsyncStorage.getItem("accessToken");
     await axios(`http://${LOCAL_HOST}:3000/drops`, {
-      method:"POST",
-      headers:{
-        Authorization: `Bearer ${accessToken}`
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
       },
-      data:{
+      data: {
         content,
         latitude,
-        longitude
-      }
-    }).then((res) => {
+        longitude,
+      },
+    })
+      .then((res) => {
         console.log(`${res.data.data.content} 내용으로 ${res.data.msg}!`);
       })
-      .catch((e) => console.log(e))
-
+      .catch((e) => console.log(e));
   };
 
   return (
