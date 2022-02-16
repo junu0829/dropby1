@@ -169,14 +169,21 @@ export const MapScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     const LoadDrop = async () => {
+      console.log('loadDrops request sent');
+      const accessToken = await AsyncStorage.getItem('accessToken');
+      console.log(accessToken);
+      console.log(`http://${LOCAL_HOST}:3000/drops`)
       await axios({
         method: "get",
         headers:{
-          access:AsyncStorage.getItem('accessToken')
+          Authorization: `Bearer ${accessToken}`
         },
         url: `http://${LOCAL_HOST}:3000/drops`,
       }).then((res) => {
+        console.log('response got');
         setDrops(res.data.data);
+      }).catch((error) => {
+        console.log('error message: ', error.message);
       });
     };
     LoadDrop();
