@@ -8,4 +8,4 @@ export default `<svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmln
 </clipPath>
 </defs>
 </svg>
-`
+`;

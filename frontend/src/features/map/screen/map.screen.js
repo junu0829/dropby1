@@ -16,7 +16,7 @@ import { LocationContext } from "../../../services/location/location.context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Loading } from "../../../components/Loading";
 import Supercluster from "supercluster";
-
+import LOCAL_HOST from "../../local.js";
 import { SvgXml } from "react-native-svg";
 import ExpoStatusBar from "expo-status-bar/build/ExpoStatusBar";
 import { DropPreview } from "./component/dropPreview";
@@ -56,12 +56,15 @@ import { SlideView } from "../../../components/animations/slide.animation";
 import { SafeArea } from "../../../components/utility/safe-area.component";
 import { theme } from "../../../infrastructure/theme";
 import backButton2 from "../../../../assets/Buttons/backButton2";
+
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import LOCAL_HOST from '../../local.js'
+
 
 export const MapScreen = ({ navigation, route }) => {
   ////////////////////////////처음 state들//////////////////////////////////////
   ///axios는 서버로부터 data json불러와주는 도구
+  const getToken = async () => AsyncStorage.getItem("accessToken");
   const axios = require("axios");
 
   /////지도를 지도 바깥에서 부를 수 있도록 정의
@@ -167,8 +170,31 @@ export const MapScreen = ({ navigation, route }) => {
 
   //////////드롭불러오기
 
+  // const PostWrite = async () => {
+  //   var token = await getToken();
+  //   console.log(token);
+  //   console.log("write tried");
+  //   const response = await axios(`http://${LOCAL_HOST}:3000/drops`, {
+  //     method: "POST",
+  //     data: { content: content, latitude: latitude, longitude: longitude },
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //     withCredentials: true,
+  //   })
+  //     .then((res) => {
+  //       console.log(res.data.data);
+  //       console.log("데이터 보냄");
+  //     })
+  //     .catch((error) => {
+  //       console.log(error.message);
+  //     });
+  //   return response;
+  // }
+
   useEffect(() => {
     const LoadDrop = async () => {
+
       console.log('loadDrops request sent');
       const accessToken = await AsyncStorage.getItem('accessToken');
       console.log(accessToken);
@@ -185,6 +211,7 @@ export const MapScreen = ({ navigation, route }) => {
       }).catch((error) => {
         console.log('error message: ', error.message);
       });
+
     };
     LoadDrop();
   }, [axios, pressedAddress]);

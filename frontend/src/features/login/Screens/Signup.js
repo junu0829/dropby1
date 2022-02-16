@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import {
   StyleSheet,
@@ -14,21 +14,23 @@ import { SvgXml } from "react-native-svg";
 import Checkbox from "expo-checkbox";
 
 import SignUpCloud from "../../../../assets/Background/SignUpCloud.png";
+import { cookieContext, setCookieContext } from "../../../../App";
 
 import SignUpButton from "../../../../assets/Buttons/SignUpButton";
 
 import { TextInput } from "react-native-gesture-handler";
 import backButtonWhite from "../../../../assets/Buttons/backButtonWhite";
 import { FadeInView } from "../../../components/animations/fade.animation";
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import axios from 'axios';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
-import LOCAL_HOST from '../../local.js'
+import LOCAL_HOST from "../../local.js";
 export const SignUpScreen = ({ navigation }) => {
   const [isChecked, setChecked] = useState(false);
+  const setCookie = useContext(setCookieContext);
 
   const [nickname, setNickname] = useState("");
-  const [password, setPassword] = useState("")
+  const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
 
   const handleNickname = (e) => {
@@ -43,34 +45,38 @@ export const SignUpScreen = ({ navigation }) => {
     setEmail(e);
   };
 
-  const signup = async() => {
-    console.log('signup clicked');
+  const signup = async () => {
+    console.log("signup clicked");
     const response = await axios(`http://${LOCAL_HOST}:3000/auth/signup`, {
-      method:"POST",
-      headers:{
-        'Accept':'application/json',
-        "Content-Type":"application/json"
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
-      data:{
+      data: {
         nickname,
         email,
-        password
-      }
-    }).then((res) => {
-      console.log(res.data.data);
-      const accessToken = res.data.data.tokens.access;
-      const refreshToken = res.data.data.tokens.refresh;
-      const nickname = res.data.data.userData.nickname;
-      AsyncStorage.setItem('accessToken', accessToken);
-      AsyncStorage.setItem('refreshToken', refreshToken);
-      AsyncStorage.setItem('nickname', nickname);
-      console.log('tokens saved in asyncstorage')
-    }).catch((error) => {
-      console.log(error.message)
-    });
+        password,
+      },
+    })
+      .then((res) => {
+        console.log(res.data.data);
+        const accessToken = res.data.data.tokens.access;
+        const refreshToken = res.data.data.tokens.refresh;
+        const nickname = res.data.data.userData.nickname;
+        AsyncStorage.setItem("accessToken", accessToken);
+        AsyncStorage.setItem("refreshToken", refreshToken);
+        AsyncStorage.setItem("nickname", nickname);
+
+        console.log("tokens saved in asyncstorage");
+      })
+      .catch((error) => {
+        alert("회원가입 오류입니다");
+        console.log(error.message);
+      });
 
     return response;
-  }
+  };
 
   return (
     <>
@@ -112,7 +118,7 @@ export const SignUpScreen = ({ navigation }) => {
                   style={styles.inputStyle}
                   placeholderTextColor="#02B5AA"
                   placeholder="닉네임"
-                  onChangeText={nickname => handleNickname(nickname)}
+                  onChangeText={(nickname) => handleNickname(nickname)}
                   value={null}
                 ></TextInput>
               </View>
@@ -121,7 +127,7 @@ export const SignUpScreen = ({ navigation }) => {
                   style={styles.inputStyle}
                   placeholderTextColor="#02B5AA"
                   placeholder="이메일"
-                  onChangeText={email => handleEmail(email)}
+                  onChangeText={(email) => handleEmail(email)}
                   value={null}
                 ></TextInput>
               </View>
@@ -135,7 +141,7 @@ export const SignUpScreen = ({ navigation }) => {
                   style={styles.inputStyle}
                   placeholderTextColor="#02B5AA"
                   placeholder="비밀번호"
-                  onChangeText={password => handlePassword(password)}
+                  onChangeText={(password) => handlePassword(password)}
                   value={null}
                 ></TextInput>
               </View>

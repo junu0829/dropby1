@@ -12,15 +12,15 @@ import { TextInput } from "react-native-gesture-handler";
 import SignInButton from "../../../../assets/Buttons/SignInButton";
 import AreYouStartingButton from "../../../../assets/Buttons/AreYouStartingButton";
 import FindingPWButton from "../../../../assets/Buttons/FindingPWButton";
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import LOCAL_HOST from '../../local.js'
+import LOCAL_HOST from "../../local.js";
 
 export const SignInScreen = ({ navigation }) => {
   const [isChecked, setChecked] = useState(false);
 
-  const [password, setPassword] = useState("")
+  const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
 
   const handlePassword = (e) => {
@@ -31,32 +31,35 @@ export const SignInScreen = ({ navigation }) => {
     setEmail(e);
   };
 
-  const signIn = async() => {
-    console.log('request sent to :', `http://${LOCAL_HOST}:3000/auth/login`)
+
+  const signIn = async () => {
+
     const response = await axios(`http://${LOCAL_HOST}:3000/auth/login`, {
-      method:"POST",
-      headers:{
-        'Accept':'application/json',
-        "Content-Type":"application/json"
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
-      data:{
+      data: {
         email,
-        password
-      }
-    }).then((res) => {
-      const accessToken = res.data.data.tokens.access;
-      const refreshToken = res.data.data.tokens.refresh;
-      const nickname = res.data.data.userData.nickname;
-      AsyncStorage.setItem('accessToken', accessToken);
-      AsyncStorage.setItem('refreshToken', refreshToken);
-      AsyncStorage.setItem('nickname', nickname);
-      console.log('tokens saved in asyncstorage')
-    }).catch((error) => {
-      console.log(error.message)
-    });
+        password,
+      },
+    })
+      .then((res) => {
+        const accessToken = res.data.data.tokens.access;
+        const refreshToken = res.data.data.tokens.refresh;
+        const nickname = res.data.data.userData.nickname;
+        AsyncStorage.setItem("accessToken", accessToken);
+        AsyncStorage.setItem("refreshToken", refreshToken);
+        AsyncStorage.setItem("nickname", nickname);
+        console.log("tokens saved in asyncstorage");
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
 
     return response;
-  }
+  };
   return (
     <>
       <LinearGradient
@@ -80,7 +83,7 @@ export const SignInScreen = ({ navigation }) => {
               style={styles.input}
               placeholderTextColor="#02B5AA"
               placeholder="이메일"
-              onChangeText={email => handleEmail(email)}
+              onChangeText={(email) => handleEmail(email)}
               value={null}
             ></TextInput>
           </View>
@@ -89,7 +92,7 @@ export const SignInScreen = ({ navigation }) => {
               style={styles.input}
               placeholderTextColor="#02B5AA"
               placeholder="비밀번호"
-              onChangeText={password => handlePassword(password)}
+              onChangeText={(password) => handlePassword(password)}
               value={null}
             ></TextInput>
           </View>
@@ -126,7 +129,7 @@ export const SignInScreen = ({ navigation }) => {
             style={{ marginTop: 50 }}
             onPress={() => {
               signIn();
-              navigation.navigate("MapScreen")
+              navigation.navigate("MapScreen");
             }}
           >
             <SvgXml xml={SignInButton} width={320} height={43} />

@@ -165,6 +165,7 @@ export const styles = StyleSheet.create({
     marginTop: 4,
     marginLeft: 7,
   },
+
   placeaddress2: {
     fontSize: 9,
     fontWeight: "700",

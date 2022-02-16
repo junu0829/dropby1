@@ -16,6 +16,7 @@ import { Favourite } from "../../../../components/favorites/favourite.component"
 import { useState } from "react";
 import { theme } from "../../../../infrastructure/theme";
 import { FlatList } from "react-native-gesture-handler";
+import { DetailScreen } from "../DetailScreen";
 
 export const DropPreview = ({
   pressedLocation = {},
@@ -104,7 +105,9 @@ export const DropPreview = ({
             backgroundColor: theme.colors.bg.white,
           }}
         >
-          <FlatList></FlatList>
+          <View>
+            <DetailScreen></DetailScreen>
+          </View>
         </View>
       </View>
     </>

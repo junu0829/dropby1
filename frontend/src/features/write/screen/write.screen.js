@@ -9,12 +9,12 @@ import {
   Image,
   Video,
 } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 
 import { SafeArea } from "../../../components/utility/safe-area.component";
 import { TextInput } from "react-native-gesture-handler";
 import { SvgXml } from "react-native-svg";
-
+import LOCAL_HOST from "../../local.js";
 import Constants from "expo-constants";
 
 import addIcon from "../../../../assets/Buttons/addIcon";
@@ -28,7 +28,11 @@ import { container, styles } from "./writescreen.styles";
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import LOCAL_HOST from '../../local.js'
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 export const WriteScreen = ({ navigation, route }) => {
+  const getToken = async () => AsyncStorage.getItem("accessToken");
+
   const [placeName, setPlaceName] = useState("새로운 장소");
   const [placeAddress, setPlaceAddress] = useState("새로운 장소-주소");
   const [placeLatlng, setPlaceLatlng] = useState([0, 0]);
@@ -89,6 +93,7 @@ export const WriteScreen = ({ navigation, route }) => {
   };
 
   const PostWrite = async () => {
+
     console.log('Postwrite request sent');
     const accessToken = await AsyncStorage.getItem('accessToken');
     await axios(`http://${LOCAL_HOST}:3000/drops`, {
@@ -105,6 +110,7 @@ export const WriteScreen = ({ navigation, route }) => {
         console.log(`${res.data.data.content} 내용으로 ${res.data.msg}!`);
       })
       .catch((e) => console.log(e))
+
   };
 
   return (

@@ -9,9 +9,8 @@ import LetsDrop from "../../../../assets/Buttons/LetsDrop";
 import { FadeInView } from "../../../components/animations/fade.animation";
 
 export const LogIn = ({ navigation }) => {
-
   const [nickname, setNickname] = useState("");
-  const [password, setPassword] = useState("")
+  const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
 
   const handleNickname = (e) => {
@@ -27,32 +26,34 @@ export const LogIn = ({ navigation }) => {
   };
 
   const signup = async (userData) => {
-    console.log('signup clicked');
-    const response = await axios('http://192.168.0.18:3000/auth/signup', {
-      method:"POST",
-      headers:{
-        'Accept':'application/json',
-        "Content-Type":"application/json"},
-      data:{
+    console.log("signup clicked");
+    const response = await axios("http://192.168.0.18:3000/auth/signup", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      data: {
         nickname,
         email,
-        password
-      }
-    }).then((res) => {
-      console.log(res.data);
-      console.log(res.data.data.tokens);
-      const accessToken = res.data.data.tokens.access;
-      const refreshToken = res.data.data.tokens.refresh;
-      AsyncStorage.setItem('accessToken', accessToken);
-      AsyncStorage.setItem('refreshToken', refreshToken);
-      console.log('token saved in asyncstorage');
-    }).catch((error) => {
-      console.log(error.message);
-    });
-    
-    return response;
+        password,
+      },
+    })
+      .then((res) => {
+        console.log(res.data);
+        console.log(res.data.data.tokens);
+        const accessToken = res.data.data.tokens.access;
+        const refreshToken = res.data.data.tokens.refresh;
+        AsyncStorage.setItem("accessToken", accessToken);
+        AsyncStorage.setItem("refreshToken", refreshToken);
+        console.log("token saved in asyncstorage");
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
 
-    }
+    return response;
+  };
   return (
     <>
       <LinearGradient
@@ -72,20 +73,34 @@ export const LogIn = ({ navigation }) => {
             <SvgXml xml={LoadIcon} width={72} height={123} />
           </View>
           <View style={styles.container4}>
-            <TextInput onChangeText={nickname => handleNickname(nickname)} style={styles.input} placeholder="username" />
+            <TextInput
+              onChangeText={(nickname) => handleNickname(nickname)}
+              style={styles.input}
+              placeholder="username"
+            />
           </View>
           <View style={styles.container4}>
-            <TextInput onChangeText={email => handleEmail(email)} style={styles.input} placeholder="email" />
+            <TextInput
+              onChangeText={(email) => handleEmail(email)}
+              style={styles.input}
+              placeholder="email"
+            />
           </View>
           <View style={styles.container4}>
-            <TextInput onChangeText={password => handlePassword(password)} style={styles.input} placeholder="password" />
+            <TextInput
+              onChangeText={(password) => handlePassword(password)}
+              style={styles.input}
+              placeholder="password"
+            />
           </View>
 
           <View style={styles.container3}>
-            <TouchableOpacity onPress={() =>{
-              signup();
-              navigation.navigate("MapScreen")
-              }}>
+            <TouchableOpacity
+              onPress={() => {
+                signup();
+                navigation.navigate("MapScreen");
+              }}
+            >
               <SvgXml xml={LetsDrop} width={231} height={47} />
             </TouchableOpacity>
           </View>
@@ -94,7 +109,7 @@ export const LogIn = ({ navigation }) => {
     </>
   );
 };
- //handleEvent 참고. + 인자 없이 
+//handleEvent 참고. + 인자 없이
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "black",
@@ -114,7 +129,7 @@ const styles = StyleSheet.create({
     flex: 5,
   },
   input: {
-    backgroundColor:'white',
-    flex:9,
-  }
+    backgroundColor: "white",
+    flex: 9,
+  },
 });

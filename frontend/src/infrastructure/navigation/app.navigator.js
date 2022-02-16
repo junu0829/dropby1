@@ -13,6 +13,7 @@ import { CameraScreen } from "../../features/write/screen/camera.screen";
 import { SignInScreen } from "../../features/login/Screens/SignIn";
 import { FeedScreen } from "../../features/Feed/feed.screen";
 import { SignUpScreen } from "../../features/login/Screens/Signup";
+import { DetailScreen } from "../../features/map/screen/DetailScreen";
 
 const MainStack = createStackNavigator();
 
