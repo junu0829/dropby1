@@ -32,6 +32,7 @@ export const SignInScreen = ({ navigation }) => {
   };
 
   const signIn = async() => {
+    console.log('request sent to :', `http://${LOCAL_HOST}:3000/auth/login`)
     const response = await axios(`http://${LOCAL_HOST}:3000/auth/login`, {
       method:"POST",
       headers:{

@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-import React from "react";
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
-import { Dimensions, Image, View, TouchableOpacity } from "react-native";
-
-import { Text } from "../../../components/typography/text.component";
-
-import { useEffect, useContext, useState } from "react";
-=======
 import React, { createRef } from "react";
 import MapView from "react-native-maps";
 import {
@@ -20,25 +11,16 @@ import {
 import { Text } from "../../../components/typography/text.component";
 
 import { useEffect, useContext, useState, useRef, useMemo } from "react";
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
 
 import { LocationContext } from "../../../services/location/location.context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Loading } from "../../../components/Loading";
-<<<<<<< HEAD
-
-import { SvgXml } from "react-native-svg";
-import ExpoStatusBar from "expo-status-bar/build/ExpoStatusBar";
-import {
-  Map,
-=======
 import Supercluster from "supercluster";
 
 import { SvgXml } from "react-native-svg";
 import ExpoStatusBar from "expo-status-bar/build/ExpoStatusBar";
 import { DropPreview } from "./component/dropPreview";
 import {
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
   SearchContainer,
   Container,
   PlaceContainer,
@@ -56,22 +38,6 @@ import {
   ContainerEnd2,
 } from "./map.screen.styles";
 
-<<<<<<< HEAD
-//assets
-import Drops from "../../../../assets/Drops";
-import { APIKey, PlAPIKey } from "../../../../APIkeys";
-import DropDefault from "../../../../assets/DropDefault";
-import cloud from "../../../../assets/cloud.png";
-import write from "../../../../assets/write";
-import LocationSelected from "../../../../assets/LocationSelected";
-import currentLocation from "../../../../assets/currentLocation";
-
-import selectButton from "../../../../assets/selectButton";
-import backButton from "../../../../assets/backButton";
-import { FadeInView } from "../../../components/animations/fade.animation";
-import { ExpandView } from "../../../components/animations/expand.animation";
-import { FadeInViewFaster } from "../../../components/animations/fadeFaster.animation.";
-=======
 import { ClusteredMap } from "./component/ClusteredMap";
 //assets
 import Drops from "../../../../assets/images/Drops";
@@ -90,7 +56,8 @@ import { SlideView } from "../../../components/animations/slide.animation";
 import { SafeArea } from "../../../components/utility/safe-area.component";
 import { theme } from "../../../infrastructure/theme";
 import backButton2 from "../../../../assets/Buttons/backButton2";
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import LOCAL_HOST from '../../local.js'
 
 export const MapScreen = ({ navigation, route }) => {
   ////////////////////////////처음 state들//////////////////////////////////////
@@ -98,15 +65,6 @@ export const MapScreen = ({ navigation, route }) => {
   const axios = require("axios");
 
   /////지도를 지도 바깥에서 부를 수 있도록 정의
-<<<<<<< HEAD
-  const mapRef = React.createRef();
-  // 화면비율 조정하는 것
-
-  let { width, height } = Dimensions.get("window");
-  const ASPECT_RATIO = width / height;
-  const LATITUDE_DELTA = 0.008; //Very high zoom level
-  const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
-=======
   const map = useRef(null);
   const prev = createRef();
 
@@ -118,30 +76,22 @@ export const MapScreen = ({ navigation, route }) => {
   const LATITUDE_DELTA = 0.008; //Very high zoom level
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
   const [isDetail, setIsDetail] = useState(false);
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
 
   ///////처음 데이터셋팅(현위치, 누른 위치-주소-장소명, 선택장소 마커위치, 데이터베이스에 저장된 마커들)
   const { location, isLoading } = useContext(LocationContext);
 
   const [isAddressLoading, SetIsAddressLoading] = useState(true);
 
-<<<<<<< HEAD
-=======
   const [dropViewMode, setDropViewMode] = useState(false);
   const showModal = () => {
     setDropViewMode(true);
   };
 
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
   const [writeMode, setWriteMode] = useState(false);
   const [pressedLocation, setPressedLocation] = useState({
     latitude: 37.58646601781994,
     longitude: 127.02913699768948,
   });
-<<<<<<< HEAD
-=======
-
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
   const [Markers, setMarkers] = useState([
     {
       latitude: location[0],
@@ -149,10 +99,6 @@ export const MapScreen = ({ navigation, route }) => {
     },
   ]);
 
-<<<<<<< HEAD
-  const [drops, setDrops] = useState([
-    {
-=======
   const [currentRegion, updateRegion] = useState({
     // 지도의 센터값 위도 경도
     latitude: location[0],
@@ -166,7 +112,6 @@ export const MapScreen = ({ navigation, route }) => {
   const [drops, setDrops] = useState([
     {
       emoji: "😀",
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
       content: "드롭바이짱",
       createdAt: "2022-01-29T04:55:47.000Z",
       latitude: 37.398811798656766,
@@ -174,8 +119,6 @@ export const MapScreen = ({ navigation, route }) => {
       pk: 22,
       updatedAt: "2022-01-29T04:55:47.472Z",
     },
-<<<<<<< HEAD
-=======
     {
       emoji: "🥰",
       content: "드롭바이짱2",
@@ -205,7 +148,6 @@ export const MapScreen = ({ navigation, route }) => {
       pk: 5,
       updatedAt: "2022-01-29T04:55:47.472Z",
     },
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
   ]);
 
   const [definedLocation, setDefinedLocation] = useState({
@@ -227,15 +169,21 @@ export const MapScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     const LoadDrop = async () => {
+      console.log('loadDrops request sent');
+      const accessToken = await AsyncStorage.getItem('accessToken');
+      console.log(accessToken);
+      console.log(`http://${LOCAL_HOST}:3000/drops`)
       await axios({
         method: "get",
-        url: "http://localhost:3000/drops",
+        headers:{
+          Authorization: `Bearer ${accessToken}`
+        },
+        url: `http://${LOCAL_HOST}:3000/drops`,
       }).then((res) => {
+        console.log('response got');
         setDrops(res.data.data);
-<<<<<<< HEAD
-        console.log(res.data.data);
-=======
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
+      }).catch((error) => {
+        console.log('error message: ', error.message);
       });
     };
     LoadDrop();
@@ -245,22 +193,12 @@ export const MapScreen = ({ navigation, route }) => {
     return drops.map((drop) => {
       return (
         <MapView.Marker
-<<<<<<< HEAD
-          key={drop.pk}
-          title={drop.content}
-=======
           style={{ opacity: 0.85 }}
           key={drop.pk}
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
           coordinate={{
             latitude: drop.latitude,
             longitude: drop.longitude,
           }}
-<<<<<<< HEAD
-          onPress={() => {}}
-        >
-          <SvgXml xml={DropDefault} width={40} height={36}></SvgXml>
-=======
           onPress={() => {
             showModal();
             setWriteMode(false);
@@ -291,16 +229,11 @@ export const MapScreen = ({ navigation, route }) => {
               {drop.emoji}
             </Text>
           </ImageBackground>
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
         </MapView.Marker>
       );
     });
   };
   ///////길게 눌렀을 시 장소정보 가져오는 함수
-<<<<<<< HEAD
-=======
-
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
   useEffect(() => {
     const getAddress = () => {
       fetch(
@@ -329,12 +262,8 @@ export const MapScreen = ({ navigation, route }) => {
         .then((response) => response.json())
         .then(async (responseJson) => {
           await setPressedAddress(responseJson.result.formatted_address);
-<<<<<<< HEAD
-          await setPressedAddressName(responseJson.result.name);
-=======
           await setPressedAddressName(`새로운 장소!`);
           console.log("a");
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
         });
     };
 
@@ -364,9 +293,6 @@ export const MapScreen = ({ navigation, route }) => {
           for (let i = 0; i < 15; i++) {
             if (
               responseJson.results[i].geometry.location_type ===
-<<<<<<< HEAD
-              "GEOMETRIC_CENTER"
-=======
                 "GEOMETRIC_CENTER" ||
               responseJson.results[i].address_components[0].types.includes(
                 "point_of_interest"
@@ -377,17 +303,11 @@ export const MapScreen = ({ navigation, route }) => {
               responseJson.results[i].address_components[0].types.includes(
                 "landmark"
               )
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
             ) {
               setDefinedAddressID(responseJson.results[i].place_id);
               setCalibratedLocation(responseJson.results[i].geometry.location);
               break;
             }
-<<<<<<< HEAD
-
-            console.log(i);
-=======
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
           }
         });
     };
@@ -400,10 +320,7 @@ export const MapScreen = ({ navigation, route }) => {
         .then(async (responseJson) => {
           await setPressedAddress(responseJson.result.formatted_address);
           await setPressedAddressName(responseJson.result.name);
-<<<<<<< HEAD
-=======
           console.log("b");
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
         });
     };
     getDefinedAddress();
@@ -413,10 +330,6 @@ export const MapScreen = ({ navigation, route }) => {
   }, [definedLocation, definedAddressID]);
 
   useEffect(() => {
-<<<<<<< HEAD
-    console.log(calibratedLocation);
-=======
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
     setMarkers([
       {
         latitude: calibratedLocation.lat,
@@ -434,15 +347,12 @@ export const MapScreen = ({ navigation, route }) => {
     ]);
   }, [pressedLocation]);
 
-<<<<<<< HEAD
-=======
   const allCoords = drops.map((i) => ({
     geometry: {
       coordinates: [i.latitude, i.longitude],
     },
   }));
 
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
   ///////////////////////////////////////////////////////////////////////////////////
   //////////////////////////맵그리는 것 여기서부터 시작//////////////////////////////
   //////////////////////////////////////////////////////////////////////////////////////
@@ -450,27 +360,6 @@ export const MapScreen = ({ navigation, route }) => {
   if (isLoading) {
     return <Loading />;
   } else {
-<<<<<<< HEAD
-    return (
-      <View onStartShouldSetResponder={() => {}}>
-        <ExpoStatusBar style="auto" />
-        <SearchContainer>
-          <LinearGradient
-            colors={[
-              "rgba(166, 110, 159, 0.9)",
-              "rgba(166, 110, 159, 0.65)",
-              "rgba(166, 110, 159, 0.15)",
-              "rgba(166, 110, 159, 0.0)",
-            ]}
-            style={styles.background}
-            locations={[0.1, 0.45, 0.77, 1.0]}
-          >
-            {/* writeMode이지 않을 경우에 cloud */}
-            {!writeMode ? (
-              <Image source={cloud} height={542} width={158} />
-            ) : null}
-          </LinearGradient>
-=======
     // getCluster(allCoords, region);
     return (
       <View>
@@ -493,7 +382,6 @@ export const MapScreen = ({ navigation, route }) => {
               ) : null}
             </LinearGradient>
           ) : null}
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
 
           {writeMode && (
             <TextContainer>
@@ -502,61 +390,6 @@ export const MapScreen = ({ navigation, route }) => {
           )}
         </SearchContainer>
 
-<<<<<<< HEAD
-        <Map
-          onPress={(event) => {
-            setDefinedLocation(event.nativeEvent.coordinate);
-            SetIsAddressLoading(false);
-            setMarkers([]);
-          }}
-          onLongPress={(event) => {
-            setPressedLocation(event.nativeEvent.coordinate);
-            SetIsAddressLoading(false);
-            setMarkers([]);
-          }}
-          ref={mapRef}
-          showsUserLocation={true}
-          showsCompass={true}
-          provider={PROVIDER_GOOGLE}
-          initialRegion={{
-            // 지도의 센터값 위도 경도
-            latitude: location[0],
-            longitude: location[1],
-            //ZoomLevel 아래에 있는 것은 건드리지 않아도 됨
-            latitudeDelta: LATITUDE_DELTA,
-            longitudeDelta: LONGITUDE_DELTA,
-          }}
-        >
-          {dropsList(drops)}
-          {writeMode && !isAddressLoading
-            ? Markers.map((Marker, i) => {
-                return (
-                  <MapView.Marker
-                    styles={{ zIndex: 999 }}
-                    //장소선택 마커의 위치
-
-                    coordinate={Markers[0]}
-                  >
-                    <FadeInViewFaster>
-                      <ExpandView>
-                        <SvgXml
-                          xml={LocationSelected}
-                          width={33.5}
-                          height={45}
-                        />
-                      </ExpandView>
-                    </FadeInViewFaster>
-                  </MapView.Marker>
-                );
-              })
-            : null}
-        </Map>
-
-        {!writeMode ? (
-          <>
-            <Container>
-              <WriteButton
-=======
         <View
           onStartShouldSetResponder={() => {
             setDropViewMode(false);
@@ -593,7 +426,6 @@ export const MapScreen = ({ navigation, route }) => {
             <Container>
               <WriteButton
                 style={{ opacity: 0.95 }}
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
                 onPress={() => {
                   setWriteMode(true);
                   setPressedLocation({
@@ -608,14 +440,9 @@ export const MapScreen = ({ navigation, route }) => {
 
               <ContainerEnd>
                 <CurrentLocationButton
-<<<<<<< HEAD
-                  onPress={() => {
-                    mapRef.current.animateToRegion({
-=======
                   style={{ opacity: 0.95 }}
                   onPress={() => {
                     map.current.animateToRegion({
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
                       // 현재위치 버튼
                       latitude: location[0],
                       longitude: location[1],
@@ -633,11 +460,7 @@ export const MapScreen = ({ navigation, route }) => {
               </ContainerEnd>
             </Container>
           </>
-<<<<<<< HEAD
-        ) : (
-=======
         ) : writeMode ? (
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
           <>
             <PlaceContainer>
               <PlaceContainer2>
@@ -646,11 +469,7 @@ export const MapScreen = ({ navigation, route }) => {
                     setWriteMode(false);
                   }}
                 >
-<<<<<<< HEAD
-                  <SvgXml xml={backButton} width={50} height={50} />
-=======
                   <SvgXml xml={backButton2} width={50} height={50} />
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
                 </BackButtonContainer>
                 <PlaceNameContainer>
                   <PlaceNameContainer2>
@@ -683,9 +502,6 @@ export const MapScreen = ({ navigation, route }) => {
               </PlaceContainer3>
             </PlaceContainer>
           </>
-<<<<<<< HEAD
-        )}
-=======
         ) : dropViewMode ? (
           <>
             <TouchableWithoutFeedback onPress={() => {}}>
@@ -705,42 +521,7 @@ export const MapScreen = ({ navigation, route }) => {
             </TouchableWithoutFeedback>
           </>
         ) : null}
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
       </View>
     );
   }
 };
-<<<<<<< HEAD
-
-// <>
-//   <PlaceContainer>
-//     <PlaceContainer2>
-//       <BackButtonContainer
-//         onPress={() => {
-//           setWriteMode(false);
-//         }}
-//       >
-//         <SvgXml xml={backButton} width={50} height={50} />
-//       </BackButtonContainer>
-//       <PlaceNameContainer>
-//         <Text variant="label">{pressedAddressName}</Text>
-//         <Text variant="caption">{pressedAddress}</Text>
-//       </PlaceNameContainer>
-//     </PlaceContainer2>
-//     <PlaceContainer3>
-//       <SelectButtonContainer
-//         onPress={() => {
-//           navigation.navigate("WriteScreen", [
-//             { pressedAddress },
-//             { pressedAddressName },
-//             { pressedLocation },
-//           ]);
-//         }}
-//       >
-//         <SvgXml xml={selectButton} width={170} height={32} />
-//       </SelectButtonContainer>
-//     </PlaceContainer3>
-//   </PlaceContainer>
-// </>
-=======
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
