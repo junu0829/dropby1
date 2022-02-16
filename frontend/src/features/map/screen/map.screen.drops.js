@@ -8,7 +8,7 @@ import { LocationContext } from "../../../services/location/location.context";
 import styled from "styled-components/native";
 import { SvgXml } from "react-native-svg";
 import cloud from "../../../../assets/cloud.png";
-import write from "../../../../assets/write";
+import write from "../../../../assets/Buttons/write";
 
 import ExpoStatusBar from "expo-status-bar/build/ExpoStatusBar";
 import axios from "axios";
@@ -97,16 +97,16 @@ export default DropsOnMap = ({ navigation, route }) => {
             latitude: drop.latitude,
             longitude: drop.longitude,
           }}
-        ></MapView.Marker>
+        />
       );
     });
   };
   return (
     <>
-      <ExpoStatusBar style="auto"></ExpoStatusBar>
+      <ExpoStatusBar style="auto" />
 
       <SearchContainer>
-        <Image source={cloud} height={542} width={158}></Image>
+        <Image source={cloud} height={542} width={158} />
       </SearchContainer>
       <Map
         provider={PROVIDER_GOOGLE}
@@ -129,7 +129,7 @@ export default DropsOnMap = ({ navigation, route }) => {
           <SvgXml xml={write} width={56} height={65} />
         </TouchableOpacity>
         {/* 현재 위치로 이동하는 버튼 부분 */}
-        <ContainerEnd></ContainerEnd>
+        <ContainerEnd />
       </Container>
     </>
   );

@@ -20,6 +20,8 @@ color: ${theme.colors.bg.b}
 flex-wrap: wrap;
 margin-top: 0px;
 margin-bottom: 0px;
+opacity: 1
+z-index: 999
 `;
 
 const hint = (theme) => `

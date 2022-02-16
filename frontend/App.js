@@ -18,6 +18,7 @@ import {
 } from "@expo-google-fonts/dongle";
 
 import { LocationContextProvider } from "./src/services/location/location.context";
+import { FavouritesContextProvider } from "./src/services/favourites/favourites.context";
 
 export const setCookieContext = createContext(() => { });
 export const cookieContext = createContext();
@@ -37,6 +38,7 @@ export default function App() {
     return (
       <>
         <ThemeProvider theme={theme}>
+<<<<<<< HEAD
           <LocationContextProvider>
             <cookieContext.Provider value={cookies}>
               <setCookieContext.Provider value={setCookie}>
@@ -46,6 +48,13 @@ export default function App() {
               </setCookieContext.Provider>
             </cookieContext.Provider>
           </LocationContextProvider>
+=======
+          <FavouritesContextProvider>
+            <LocationContextProvider>
+              <Navigation />
+            </LocationContextProvider>
+          </FavouritesContextProvider>
+>>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
         </ThemeProvider>
         <ExpoStatusBar style="light" />
       </>
