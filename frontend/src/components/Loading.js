@@ -2,11 +2,19 @@ import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, Text, View } from "react-native";
 import { theme } from "../infrastructure/theme";
+<<<<<<< HEAD
+import LoadIcon from "../../assets/LoadIcon";
+import { SvgXml } from "react-native-svg";
+import styled from "styled-components";
+import { ActivityIndicator, Colors } from "react-native-paper";
+import LetsDrop from "../../assets/LetsDrop";
+=======
 import LoadIcon from "../../assets/images/LoadIcon";
 import { SvgXml } from "react-native-svg";
 import styled from "styled-components";
 import { ActivityIndicator, Colors } from "react-native-paper";
 import LetsDrop from "../../assets/Buttons/LetsDrop";
+>>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
 
 const LoadingAnim = styled(ActivityIndicator)`
   margin-left: -13px;
