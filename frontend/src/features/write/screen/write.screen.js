@@ -25,6 +25,8 @@ import addPicture from "../../../../assets/Buttons/addPicture";
 import LockButtonUnlocked from "../../../../assets/Buttons/LockButton(Unlocked)";
 
 import { container, styles } from "./writescreen.styles";
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import LOCAL_HOST from '../../local.js'
 
 export const WriteScreen = ({ navigation, route }) => {
   const [placeName, setPlaceName] = useState("새로운 장소");
@@ -87,17 +89,22 @@ export const WriteScreen = ({ navigation, route }) => {
   };
 
   const PostWrite = async () => {
-    axios
-      .post("http://localhost:3000/drops", {
-        // pk: 1,
-        content: content,
-        latitude: latitude,
-        longitude: longitude,
+    console.log('Postwrite request sent');
+    const accessToken = await AsyncStorage.getItem('accessToken');
+    await axios(`http://${LOCAL_HOST}:3000/drops`, {
+      method:"POST",
+      headers:{
+        Authorization: `Bearer ${accessToken}`
+      },
+      data:{
+        content,
+        latitude,
+        longitude
+      }
+    }).then((res) => {
+        console.log(`${res.data.data.content} 내용으로 ${res.data.msg}!`);
       })
-      .then(() => {
-        console.log("드롭 등록 완료");
-      })
-      .catch((e) => console.log(e));
+      .catch((e) => console.log(e))
   };
 
   return (
