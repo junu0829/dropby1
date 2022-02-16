@@ -13,15 +13,6 @@ const body = (theme) => `
     font-size: ${theme.fontSizes.body};
 `;
 const bold = (theme) => `
-<<<<<<< HEAD
-font-size: ${theme.fontSizes.body};
-font-family: ${theme.fonts.bold};
-font-weight: ${theme.fontWeights.bold};
-color: #FAFAFA;
-flex-wrap: wrap;
-margin-top: 0px;
-margin-bottom: 0px;
-=======
 font-size: ${theme.fontSizes.h5};
 font-family: ${theme.fonts.bold};
 font-weight: ${theme.fontWeights.bold};
@@ -31,7 +22,6 @@ margin-top: 0px;
 margin-bottom: 0px;
 opacity: 1
 z-index: 999
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310
 `;
 
 const hint = (theme) => `

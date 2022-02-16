@@ -1,15 +1,5 @@
 import React, { useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
-<<<<<<< HEAD:frontend/src/features/login/LogIn.js
-import { StyleSheet, Text, TouchableOpacity, View, Image, TextInput } from "react-native";
-import { theme } from "../../infrastructure/theme";
-import LoadIcon from "../../../assets/LoadIcon";
-import { SvgXml } from "react-native-svg";
-import LetsDrop from "../../../assets/LetsDrop";
-import { FadeInView } from "../../components/animations/fade.animation";
-import axios from "axios";
-import AsyncStorage from '@react-native-async-storage/async-storage'
-=======
 import { StyleSheet, Text, TouchableOpacity, View, Image } from "react-native";
 import { theme } from "../../../infrastructure/theme";
 import LoadIcon from "../../../../assets/images/LoadIcon";
@@ -18,7 +8,6 @@ import { SvgXml } from "react-native-svg";
 import LetsDrop from "../../../../assets/Buttons/LetsDrop";
 import { FadeInView } from "../../../components/animations/fade.animation";
 
->>>>>>> fad10bb7e8e9faaf0519cafe2c739080147c5310:frontend/src/features/login/Screens/LogIn.js
 export const LogIn = ({ navigation }) => {
 
   const [nickname, setNickname] = useState("");
