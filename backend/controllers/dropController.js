@@ -1,16 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const dropServices = require('../services/dropServices');
+const {getAccess} = require('../middlewares/auth');
 
 exports.newDrop = async(req, res, next) => {
     try {
-        const drop = await dropServices.newDrop(req.body);
+        const accessToken = getAccess(req.headers);
+        const drop = await dropServices.newDrop(accessToken, req.body);
         res.json({
             msg:'드롭 생성 완료',
             data:drop
         });
 
     }catch(error) {
+        console.log(error.message);
         next(error);
     }
 }

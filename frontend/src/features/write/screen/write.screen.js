@@ -2,7 +2,6 @@ import React from "react";
 
 import {
   Keyboard,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -14,17 +13,16 @@ import { useEffect, useState } from "react";
 
 import { SafeArea } from "../../../components/utility/safe-area.component";
 import { TextInput } from "react-native-gesture-handler";
-import { theme } from "../../../infrastructure/theme";
 import { SvgXml } from "react-native-svg";
 
 import Constants from "expo-constants";
 
-import addIcon from "../../../../assets/addIcon";
-import backButton2 from "../../../../assets/backButton2";
-import sendingButton from "../../../../assets/sendingButton";
-import bar from "../../../../assets/bar";
-import addPicture from "../../../../assets/addPicture";
-import LockButtonUnlocked from "../../../../assets/LockButton(Unlocked)";
+import addIcon from "../../../../assets/Buttons/addIcon";
+import backButton2 from "../../../../assets/Buttons/backButton2";
+import sendingButton from "../../../../assets/Buttons/sendingButton";
+import bar from "../../../../assets/Background/bar";
+import addPicture from "../../../../assets/Buttons/addPicture";
+import LockButtonUnlocked from "../../../../assets/Buttons/LockButton(Unlocked)";
 
 import { container, styles } from "./writescreen.styles";
 
@@ -32,7 +30,7 @@ export const WriteScreen = ({ navigation, route }) => {
   const [placeName, setPlaceName] = useState("새로운 장소");
   const [placeAddress, setPlaceAddress] = useState("새로운 장소-주소");
   const [placeLatlng, setPlaceLatlng] = useState([0, 0]);
-  const [selectedEmoji, setSelectedEmoji] = useState("");
+  const [selectedEmoji, setSelectedEmoji] = useState("😀");
 
   /////////////////////로컬 이미지 여기에 담김
   const [image, setImage] = useState(null);
@@ -47,9 +45,7 @@ export const WriteScreen = ({ navigation, route }) => {
     handleLongitude(placeLatlng.longitude);
     handlePk(user_idx);
     setImage(route.params.source);
-    setSelectedEmoji(route.params.emoji);
-    console.log(image);
-    console.log(selectedEmoji);
+    setSelectedEmoji(route.params.selectedEmoji);
   }, [
     route,
     placeLatlng.latitude,
@@ -93,14 +89,15 @@ export const WriteScreen = ({ navigation, route }) => {
   const PostWrite = async () => {
     axios
       .post("http://localhost:3000/drops", {
-        pk: 0,
+        // pk: 1,
         content: content,
         latitude: latitude,
         longitude: longitude,
       })
       .then(() => {
         console.log("드롭 등록 완료");
-      });
+      })
+      .catch((e) => console.log(e));
   };
 
   return (
@@ -117,19 +114,30 @@ export const WriteScreen = ({ navigation, route }) => {
               width={50}
               height={50}
               style={styles.backButton}
-            ></SvgXml>
+            />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
               navigation.navigate("Emoji");
             }}
           >
-            <SvgXml
-              xml={addIcon}
-              width={65}
-              height={50}
-              style={styles.addIcon}
-            ></SvgXml>
+            {selectedEmoji != null ? (
+              <Text
+                style={{
+                  height: 70,
+                  fontSize: 60,
+                }}
+              >
+                {selectedEmoji}
+              </Text>
+            ) : (
+              <SvgXml
+                xml={addIcon}
+                width={65}
+                height={50}
+                style={styles.addIcon}
+              />
+            )}
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
@@ -142,19 +150,14 @@ export const WriteScreen = ({ navigation, route }) => {
               width={67}
               height={40}
               style={styles.sendingButton}
-            ></SvgXml>
+            />
           </TouchableOpacity>
         </View>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.textContainer}>
             <Text style={styles.place}>{placeName}</Text>
             <Text style={styles.address}>{placeAddress}</Text>
-            <SvgXml
-              xml={bar}
-              width={280}
-              height={2}
-              style={styles.bar}
-            ></SvgXml>
+            <SvgXml xml={bar} width={280} height={2} style={styles.bar} />
             <TextInput
               style={styles.enter}
               placeholder="텍스트를 입력하세요"
@@ -197,7 +200,7 @@ export const WriteScreen = ({ navigation, route }) => {
             width={90}
             height={90}
             style={styles.addPicture}
-          ></SvgXml>
+          />
         </TouchableOpacity>
         <TouchableOpacity>
           <SvgXml
@@ -205,7 +208,7 @@ export const WriteScreen = ({ navigation, route }) => {
             width={41}
             height={55}
             style={styles.LockButtonUnlocked}
-          ></SvgXml>
+          />
         </TouchableOpacity>
       </View>
     </SafeArea>
