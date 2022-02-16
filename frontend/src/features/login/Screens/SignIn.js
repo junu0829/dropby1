@@ -32,7 +32,7 @@ export const SignInScreen = ({ navigation }) => {
   };
 
   const signIn = async() => {
-    console.log(`http://${LOCAL_HOST}:3000/auth/login`)
+    console.log('request sent to :', `http://${LOCAL_HOST}:3000/auth/login`)
     const response = await axios(`http://${LOCAL_HOST}:3000/auth/login`, {
       method:"POST",
       headers:{
@@ -126,7 +126,7 @@ export const SignInScreen = ({ navigation }) => {
             style={{ marginTop: 50 }}
             onPress={() => {
               signIn();
-              // navigation.navigate("MapScreen")
+              navigation.navigate("MapScreen")
             }}
           >
             <SvgXml xml={SignInButton} width={320} height={43} />
