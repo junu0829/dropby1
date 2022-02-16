@@ -4,6 +4,10 @@ const axiosInstance = axios.create();
 // fetch data from API using config
 // config contains url, method, headers, params, data, ...
 // reference: https://github.com/axios/axios#request-config
+
+axiosInstance.defaults.timeout = 30000;
+axiosInstance.defaults.timeoutErrorMessage = "timeout";
+
 const fetchApi = async (config) => {
   try {
     const { data } = await axiosInstance(config);

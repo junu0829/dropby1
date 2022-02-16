@@ -9,7 +9,7 @@ import searchButton from "../../../../../assets/Buttons/searchButton";
 import { SvgXml } from "react-native-svg";
 import { Text } from "../../../../components/typography/text.component";
 
-export const Cloud = ({ navigation, region }) => {
+export const Cloud = ({ navigation, region, refresh }) => {
   return (
     <>
       <View>
@@ -54,6 +54,7 @@ export const Cloud = ({ navigation, region }) => {
                   marginTop: 63,
                   zIndex: 999,
                 }}
+                onPress={() => refresh()}
               >
                 <Text variant="bold">탭해서 새로고침</Text>
               </TouchableOpacity>

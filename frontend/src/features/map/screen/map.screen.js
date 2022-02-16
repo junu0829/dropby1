@@ -167,59 +167,30 @@ export const MapScreen = ({ navigation, route }) => {
   ////////////////////////////여기서부터 useEffect 정의하기 시작//////////////////////////////////////////////////////
 
   //////////드롭불러오기
+  const LoadDrop = async () => {
+    var token = await getToken();
+    console.log(token);
+    console.log("드롭불러오기 시도...");
 
-  // const PostWrite = async () => {
-  //   var token = await getToken();
-  //   console.log(token);
-  //   console.log("write tried");
-  //   const response = await axios(`http://${LOCAL_HOST}:3000/drops`, {
-  //     method: "POST",
-  //     data: { content: content, latitude: latitude, longitude: longitude },
-  //     headers: {
-  //       Authorization: `Bearer ${token}`,
-  //     },
-  //     withCredentials: true,
-  //   })
-  //     .then((res) => {
-  //       console.log(res.data.data);
-  //       console.log("데이터 보냄");
-  //     })
-  //     .catch((error) => {
-  //       console.log(error.message);
-  //     });
-  //   return response;
-  // }
+    const response = await axios(`http://${LOCAL_HOST}:3000/drops`, {
+      method: "get",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      withCredentials: true,
+    })
+      .then((res) => {
+        setDrops(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
+    return response;
+  };
 
   useEffect(() => {
-    const LoadDrop = async () => {
-      var token = await getToken();
-      console.log(token);
-      console.log("드롭불러오기 시도...");
-
-      const response = await axios(`http://${LOCAL_HOST}:3000/drops`, {
-        method: "get",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        withCredentials: true,
-      })
-        .then((res) => {
-          setDrops(res.data.data);
-        })
-        .catch((error) => {
-          console.log(error.message);
-        });
-      return response;
-
-      // await axios({
-      //   method: "get",
-      //   url: "http://localhost:3000/drops",
-      // }).then((res) => {
-      //   setDrops(res.data.data);
-      // });
-    };
     LoadDrop();
-  }, [axios, pressedAddress]);
+  }, [currentRegion]);
 
   const dropsList = (drops) => {
     return drops.map((drop) => {
@@ -410,7 +381,11 @@ export const MapScreen = ({ navigation, route }) => {
             >
               {/* writeMode이지 않을 경우에 cloud */}
               {!writeMode ? (
-                <Cloud navigation={navigation} region={currentRegion} />
+                <Cloud
+                  navigation={navigation}
+                  region={currentRegion}
+                  refresh={LoadDrop}
+                />
               ) : null}
             </LinearGradient>
           ) : null}
