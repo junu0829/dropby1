@@ -25,6 +25,8 @@ import addPicture from "../../../../assets/Buttons/addPicture";
 import LockButtonUnlocked from "../../../../assets/Buttons/LockButton(Unlocked)";
 
 import { container, styles } from "./writescreen.styles";
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import LOCAL_HOST from '../../local.js'
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -91,36 +93,24 @@ export const WriteScreen = ({ navigation, route }) => {
   };
 
   const PostWrite = async () => {
-    var token = await getToken();
-    console.log(token);
-    console.log("write tried");
-    const response = await axios(`http://${LOCAL_HOST}:3000/drops`, {
-      method: "POST",
-      data: { content: content, latitude: latitude, longitude: longitude },
-      headers: {
-        Authorization: `Bearer ${token}`,
+
+    console.log('Postwrite request sent');
+    const accessToken = await AsyncStorage.getItem('accessToken');
+    await axios(`http://${LOCAL_HOST}:3000/drops`, {
+      method:"POST",
+      headers:{
+        Authorization: `Bearer ${accessToken}`
       },
-      withCredentials: true,
-    })
-      .then((res) => {
-        console.log(res.data.data);
-        console.log("데이터 보냄");
+      data:{
+        content,
+        latitude,
+        longitude
+      }
+    }).then((res) => {
+        console.log(`${res.data.data.content} 내용으로 ${res.data.msg}!`);
       })
-      .catch((error) => {
-        console.log(error.message);
-      });
-    return response;
-    // axios
-    //   .post("http://localhost:3000/drops", {
-    //     // pk: 1,
-    //     content: content,
-    //     latitude: latitude,
-    //     longitude: longitude,
-    //   })
-    //   .then(() => {
-    //     console.log("드롭 등록 완료");
-    //   })
-    //   .catch((e) => console.log(e));
+      .catch((e) => console.log(e))
+
   };
 
   return (

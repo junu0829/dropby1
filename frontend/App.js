@@ -38,6 +38,7 @@ export default function App() {
     return (
       <>
         <ThemeProvider theme={theme}>
+
           <LocationContextProvider>
             <cookieContext.Provider value={cookies}>
               <setCookieContext.Provider value={setCookie}>
@@ -47,6 +48,7 @@ export default function App() {
               </setCookieContext.Provider>
             </cookieContext.Provider>
           </LocationContextProvider>
+
         </ThemeProvider>
         <ExpoStatusBar style="light" />
       </>

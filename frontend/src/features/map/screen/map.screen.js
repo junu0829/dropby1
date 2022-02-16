@@ -56,8 +56,10 @@ import { SlideView } from "../../../components/animations/slide.animation";
 import { SafeArea } from "../../../components/utility/safe-area.component";
 import { theme } from "../../../infrastructure/theme";
 import backButton2 from "../../../../assets/Buttons/backButton2";
-import { cookieContext } from "../../../../App";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import LOCAL_HOST from '../../local.js'
+
 
 export const MapScreen = ({ navigation, route }) => {
   ////////////////////////////처음 state들//////////////////////////////////////
@@ -192,31 +194,24 @@ export const MapScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     const LoadDrop = async () => {
-      var token = await getToken();
-      console.log(token);
-      console.log("드롭불러오기 시도...");
 
-      const response = await axios(`http://${LOCAL_HOST}:3000/drops`, {
+      console.log('loadDrops request sent');
+      const accessToken = await AsyncStorage.getItem('accessToken');
+      console.log(accessToken);
+      console.log(`http://${LOCAL_HOST}:3000/drops`)
+      await axios({
         method: "get",
-        headers: {
-          Authorization: `Bearer ${token}`,
+        headers:{
+          Authorization: `Bearer ${accessToken}`
         },
-        withCredentials: true,
-      })
-        .then((res) => {
-          setDrops(res.data.data);
-        })
-        .catch((error) => {
-          console.log(error.message);
-        });
-      return response;
+        url: `http://${LOCAL_HOST}:3000/drops`,
+      }).then((res) => {
+        console.log('response got');
+        setDrops(res.data.data);
+      }).catch((error) => {
+        console.log('error message: ', error.message);
+      });
 
-      // await axios({
-      //   method: "get",
-      //   url: "http://localhost:3000/drops",
-      // }).then((res) => {
-      //   setDrops(res.data.data);
-      // });
     };
     LoadDrop();
   }, [axios, pressedAddress]);
