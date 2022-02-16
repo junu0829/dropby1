@@ -32,7 +32,6 @@ export const SignInScreen = ({ navigation }) => {
   };
 
   const signIn = async() => {
-    console.log('signIn clicked');
     const response = await axios(`http://${LOCAL_HOST}:3000/auth/login`, {
       method:"POST",
       headers:{
@@ -44,7 +43,6 @@ export const SignInScreen = ({ navigation }) => {
         password
       }
     }).then((res) => {
-      console.log(res.data.data);
       const accessToken = res.data.data.tokens.access;
       const refreshToken = res.data.data.tokens.refresh;
       const nickname = res.data.data.userData.nickname;
