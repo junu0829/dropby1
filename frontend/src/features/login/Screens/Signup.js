@@ -20,9 +20,56 @@ import SignUpButton from "../../../../assets/Buttons/SignUpButton";
 import { TextInput } from "react-native-gesture-handler";
 import backButtonWhite from "../../../../assets/Buttons/backButtonWhite";
 import { FadeInView } from "../../../components/animations/fade.animation";
-
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import axios from 'axios';
 export const SignUpScreen = ({ navigation }) => {
   const [isChecked, setChecked] = useState(false);
+
+  const [nickname, setNickname] = useState("");
+  const [password, setPassword] = useState("")
+  const [email, setEmail] = useState("");
+
+  const handleNickname = (e) => {
+    setNickname(e);
+  };
+
+  const handlePassword = (e) => {
+    setPassword(e);
+  };
+
+  const handleEmail = (e) => {
+    setEmail(e);
+  };
+
+  const signup = async() => {
+    console.log('signup clicked');
+    const response = await axios('http://192.168.0.18:3000/auth/signup', {
+      method:"POST",
+      headers:{
+        'Accept':'application/json',
+        "Content-Type":"application/json"
+      },
+      data:{
+        nickname,
+        email,
+        password
+      }
+    }).then((res) => {
+      console.log(res.data.data);
+      const accessToken = res.data.data.tokens.access;
+      const refreshToken = res.data.data.tokens.refresh;
+      const nickname = res.data.data.userData.nickname;
+      AsyncStorage.setItem('accessToken', accessToken);
+      AsyncStorage.setItem('refreshToken', refreshToken);
+      AsyncStorage.setItem('nickname', nickname);
+      console.log('tokens saved in asyncstorage')
+    }).catch((error) => {
+      console.log(error.message)
+    });
+
+    return response;
+  }
+
   return (
     <>
       <LinearGradient
@@ -63,7 +110,7 @@ export const SignUpScreen = ({ navigation }) => {
                   style={styles.inputStyle}
                   placeholderTextColor="#02B5AA"
                   placeholder="닉네임"
-                  onChangeText={() => {}}
+                  onChangeText={nickname => handleNickname(nickname)}
                   value={null}
                 ></TextInput>
               </View>
@@ -72,7 +119,7 @@ export const SignUpScreen = ({ navigation }) => {
                   style={styles.inputStyle}
                   placeholderTextColor="#02B5AA"
                   placeholder="이메일"
-                  onChangeText={() => {}}
+                  onChangeText={email => handleEmail(email)}
                   value={null}
                 ></TextInput>
               </View>
@@ -86,7 +133,7 @@ export const SignUpScreen = ({ navigation }) => {
                   style={styles.inputStyle}
                   placeholderTextColor="#02B5AA"
                   placeholder="비밀번호"
-                  onChangeText={() => {}}
+                  onChangeText={password => handlePassword(password)}
                   value={null}
                 ></TextInput>
               </View>
@@ -146,7 +193,10 @@ export const SignUpScreen = ({ navigation }) => {
           <View style={styles.container4}>
             <TouchableOpacity
               style={{ marginTop: 50 }}
-              onPress={() => navigation.navigate("SignIn")}
+              onPress={() => {
+                signup();
+                navigation.navigate("MapScreen");
+              }}
             >
               <SvgXml xml={SignUpButton} width={320} height={43} />
             </TouchableOpacity>

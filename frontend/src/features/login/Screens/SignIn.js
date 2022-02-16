@@ -12,9 +12,49 @@ import { TextInput } from "react-native-gesture-handler";
 import SignInButton from "../../../../assets/Buttons/SignInButton";
 import AreYouStartingButton from "../../../../assets/Buttons/AreYouStartingButton";
 import FindingPWButton from "../../../../assets/Buttons/FindingPWButton";
-
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 export const SignInScreen = ({ navigation }) => {
   const [isChecked, setChecked] = useState(false);
+
+  const [password, setPassword] = useState("")
+  const [email, setEmail] = useState("");
+
+  const handlePassword = (e) => {
+    setPassword(e);
+  };
+
+  const handleEmail = (e) => {
+    setEmail(e);
+  };
+
+  const signIn = async() => {
+    console.log('signIn clicked');
+    const response = await axios('http://192.168.0.18:3000/auth/login', {
+      method:"POST",
+      headers:{
+        'Accept':'application/json',
+        "Content-Type":"application/json"
+      },
+      data:{
+        email,
+        password
+      }
+    }).then((res) => {
+      console.log(res.data.data);
+      const accessToken = res.data.data.tokens.access;
+      const refreshToken = res.data.data.tokens.refresh;
+      const nickname = res.data.data.userData.nickname;
+      AsyncStorage.setItem('accessToken', accessToken);
+      AsyncStorage.setItem('refreshToken', refreshToken);
+      AsyncStorage.setItem('nickname', nickname);
+      console.log('tokens saved in asyncstorage')
+    }).catch((error) => {
+      console.log(error.message)
+    });
+
+    return response;
+  }
   return (
     <>
       <LinearGradient
@@ -38,7 +78,7 @@ export const SignInScreen = ({ navigation }) => {
               style={styles.input}
               placeholderTextColor="#02B5AA"
               placeholder="이메일"
-              onChangeText={() => {}}
+              onChangeText={email => handleEmail(email)}
               value={null}
             ></TextInput>
           </View>
@@ -47,7 +87,7 @@ export const SignInScreen = ({ navigation }) => {
               style={styles.input}
               placeholderTextColor="#02B5AA"
               placeholder="비밀번호"
-              onChangeText={() => {}}
+              onChangeText={password => handlePassword(password)}
               value={null}
             ></TextInput>
           </View>
@@ -82,7 +122,10 @@ export const SignInScreen = ({ navigation }) => {
 
           <TouchableOpacity
             style={{ marginTop: 50 }}
-            onPress={() => navigation.navigate("MapScreen")}
+            onPress={() => {
+              signIn();
+              navigation.navigate("MapScreen")
+            }}
           >
             <SvgXml xml={SignInButton} width={320} height={43} />
           </TouchableOpacity>
