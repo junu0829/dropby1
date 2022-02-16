@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import {
   StyleSheet,
@@ -14,6 +14,7 @@ import { SvgXml } from "react-native-svg";
 import Checkbox from "expo-checkbox";
 
 import SignUpCloud from "../../../../assets/Background/SignUpCloud.png";
+import { cookieContext, setCookieContext } from "../../../../App";
 
 import SignUpButton from "../../../../assets/Buttons/SignUpButton";
 
@@ -26,6 +27,7 @@ import axios from "axios";
 import LOCAL_HOST from "../../local.js";
 export const SignUpScreen = ({ navigation }) => {
   const [isChecked, setChecked] = useState(false);
+  const setCookie = useContext(setCookieContext);
 
   const [nickname, setNickname] = useState("");
   const [password, setPassword] = useState("");
@@ -65,9 +67,11 @@ export const SignUpScreen = ({ navigation }) => {
         AsyncStorage.setItem("accessToken", accessToken);
         AsyncStorage.setItem("refreshToken", refreshToken);
         AsyncStorage.setItem("nickname", nickname);
+
         console.log("tokens saved in asyncstorage");
       })
       .catch((error) => {
+        alert("회원가입 오류입니다");
         console.log(error.message);
       });
 

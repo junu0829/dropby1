@@ -38,11 +38,15 @@ export default function App() {
     return (
       <>
         <ThemeProvider theme={theme}>
-          <FavouritesContextProvider>
-            <LocationContextProvider>
-              <Navigation />
-            </LocationContextProvider>
-          </FavouritesContextProvider>
+          <LocationContextProvider>
+            <cookieContext.Provider value={cookies}>
+              <setCookieContext.Provider value={setCookie}>
+                <CookiesProvider>
+                  <Navigation />
+                </CookiesProvider>
+              </setCookieContext.Provider>
+            </cookieContext.Provider>
+          </LocationContextProvider>
         </ThemeProvider>
         <ExpoStatusBar style="light" />
       </>

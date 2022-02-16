@@ -9,12 +9,12 @@ import {
   Image,
   Video,
 } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 
 import { SafeArea } from "../../../components/utility/safe-area.component";
 import { TextInput } from "react-native-gesture-handler";
 import { SvgXml } from "react-native-svg";
-
+import LOCAL_HOST from "../../local.js";
 import Constants from "expo-constants";
 
 import addIcon from "../../../../assets/Buttons/addIcon";
@@ -26,7 +26,11 @@ import LockButtonUnlocked from "../../../../assets/Buttons/LockButton(Unlocked)"
 
 import { container, styles } from "./writescreen.styles";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 export const WriteScreen = ({ navigation, route }) => {
+  const getToken = async () => AsyncStorage.getItem("accessToken");
+
   const [placeName, setPlaceName] = useState("새로운 장소");
   const [placeAddress, setPlaceAddress] = useState("새로운 장소-주소");
   const [placeLatlng, setPlaceLatlng] = useState([0, 0]);
@@ -87,17 +91,36 @@ export const WriteScreen = ({ navigation, route }) => {
   };
 
   const PostWrite = async () => {
-    axios
-      .post("http://localhost:3000/drops", {
-        // pk: 1,
-        content: content,
-        latitude: latitude,
-        longitude: longitude,
+    var token = await getToken();
+    console.log(token);
+    console.log("write tried");
+    const response = await axios(`http://${LOCAL_HOST}:3000/drops`, {
+      method: "POST",
+      data: { content: content, latitude: latitude, longitude: longitude },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      withCredentials: true,
+    })
+      .then((res) => {
+        console.log(res.data.data);
+        console.log("데이터 보냄");
       })
-      .then(() => {
-        console.log("드롭 등록 완료");
-      })
-      .catch((e) => console.log(e));
+      .catch((error) => {
+        console.log(error.message);
+      });
+    return response;
+    // axios
+    //   .post("http://localhost:3000/drops", {
+    //     // pk: 1,
+    //     content: content,
+    //     latitude: latitude,
+    //     longitude: longitude,
+    //   })
+    //   .then(() => {
+    //     console.log("드롭 등록 완료");
+    //   })
+    //   .catch((e) => console.log(e));
   };
 
   return (
