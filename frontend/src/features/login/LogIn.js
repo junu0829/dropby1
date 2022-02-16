@@ -10,21 +10,39 @@ import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage'
 export const LogIn = ({ navigation }) => {
 
-  const [username, setUsername] = useState("");
+  const [nickname, setNickname] = useState("");
   const [password, setPassword] = useState("")
   const [email, setEmail] = useState("");
 
+  const handleNickname = (e) => {
+    setNickname(e);
+  };
+
+  const handlePassword = (e) => {
+    setPassword(e);
+  };
+
+  const handleEmail = (e) => {
+    setEmail(e);
+  };
+
   const signup = async (userData) => {
-    const response = await axios({
-      method:"post",
-      url:"http://172.30.3.88:3000/auth/signup",
-      data:userData,
-      withCredentials:true,
-    })
-    .then((res) => {
-      console.log(res);
-      const accessToken = res.data.access;
-      const refreshToken = res.data.refresh;
+    console.log('signup clicked');
+    const response = await axios('http://192.168.0.18:3000/auth/signup', {
+      method:"POST",
+      headers:{
+        'Accept':'application/json',
+        "Content-Type":"application/json"},
+      data:{
+        nickname,
+        email,
+        password
+      }
+    }).then((res) => {
+      console.log(res.data);
+      console.log(res.data.data.tokens);
+      const accessToken = res.data.data.tokens.access;
+      const refreshToken = res.data.data.tokens.refresh;
       AsyncStorage.setItem('accessToken', accessToken);
       AsyncStorage.setItem('refreshToken', refreshToken);
       console.log('token saved in asyncstorage');
@@ -54,17 +72,20 @@ export const LogIn = ({ navigation }) => {
             <SvgXml xml={LoadIcon} width={72} height={123} />
           </View>
           <View style={styles.container4}>
-            <TextInput onChangeText={username => setUsername(username)} style={styles.input} placeholder="username" />
+            <TextInput onChangeText={nickname => handleNickname(nickname)} style={styles.input} placeholder="username" />
           </View>
           <View style={styles.container4}>
-            <TextInput onChangeText={email => setEmail(email)} style={styles.input} placeholder="email" />
+            <TextInput onChangeText={email => handleEmail(email)} style={styles.input} placeholder="email" />
           </View>
           <View style={styles.container4}>
-            <TextInput onChangeText={password => setPassword(password)} style={styles.input} placeholder="password" />
+            <TextInput onChangeText={password => handlePassword(password)} style={styles.input} placeholder="password" />
           </View>
 
           <View style={styles.container3}>
-            <TouchableOpacity onPress={() => signup({username, email, password})}>
+            <TouchableOpacity onPress={() =>{
+              signup();
+              navigation.navigate("MapScreen")
+              }}>
               <SvgXml xml={LetsDrop} width={231} height={47} />
             </TouchableOpacity>
           </View>
@@ -73,7 +94,7 @@ export const LogIn = ({ navigation }) => {
     </>
   );
 };
-
+ //handleEvent 참고. + 인자 없이 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "black",
