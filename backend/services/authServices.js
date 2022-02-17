@@ -7,12 +7,14 @@ require('dotenv').config();
 const {signAccess, signRefresh, verifyAccess, verifyRefresh} = require('../middlewares/auth');
 
 exports.signUp = async ({nickname, email, password}) => {
+    let context = {'user':null, 'error':''};
     try {
-        const userExists = await User.findOne({where:{email}})
+        const userExists = await User.findOne({where:{email}}) //없으면 null 반환
         console.log(userExists)
         if (userExists) {
+            context['error'] = '이미 사용 중인 이메일입니다!'
             console.log('이미 사용 중인 이메일입니다!');
-            return false;
+            return context;
         } else {
             const salt = await bcrypt.genSalt(10);
             const hashed_pw = await bcrypt.hash(password, salt);
@@ -20,14 +22,15 @@ exports.signUp = async ({nickname, email, password}) => {
                 nickname,
                 email,
                 password:hashed_pw
-    });
-        return user;
+            });
+            context['user'] = user;
+            return context;
         }
 
     } catch(error) {
         console.log(error);
-        return error;
-        
+        context['error'] = 'catch' + error.message;
+        return context;  
     }
 };
 
