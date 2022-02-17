@@ -23,7 +23,7 @@ import backButtonWhite from "../../../../assets/Buttons/backButtonWhite";
 import { FadeInView } from "../../../components/animations/fade.animation";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-
+import { saveToken } from '../../../components/utility/auth.js'
 import LOCAL_HOST from "../../local.js";
 export const SignUpScreen = ({ navigation }) => {
   const [isChecked, setChecked] = useState(false);
@@ -60,14 +60,7 @@ export const SignUpScreen = ({ navigation }) => {
       },
     })
       .then((res) => {
-        console.log(res.data.data);
-        const accessToken = res.data.data.tokens.access;
-        const refreshToken = res.data.data.tokens.refresh;
-        const nickname = res.data.data.userData.nickname;
-        AsyncStorage.setItem("accessToken", accessToken);
-        AsyncStorage.setItem("refreshToken", refreshToken);
-        AsyncStorage.setItem("nickname", nickname);
-
+        saveToken(res.data.data.tokens);
         console.log("tokens saved in asyncstorage");
       })
       .catch((error) => {
