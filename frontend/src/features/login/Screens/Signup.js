@@ -21,10 +21,9 @@ import SignUpButton from "../../../../assets/Buttons/SignUpButton";
 import { TextInput } from "react-native-gesture-handler";
 import backButtonWhite from "../../../../assets/Buttons/backButtonWhite";
 import { FadeInView } from "../../../components/animations/fade.animation";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
-import { saveToken } from '../../../components/utility/auth.js'
-import LOCAL_HOST from "../../local.js";
+
+import { signUp } from '../../../features/local.js'
+
 export const SignUpScreen = ({ navigation }) => {
   const [isChecked, setChecked] = useState(false);
   const setCookie = useContext(setCookieContext);
@@ -45,31 +44,7 @@ export const SignUpScreen = ({ navigation }) => {
     setEmail(e);
   };
 
-  const signup = async () => {
-    console.log("signup clicked");
-    const response = await axios(`http://${LOCAL_HOST}:3000/auth/signup`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      data: {
-        nickname,
-        email,
-        password,
-      },
-    })
-      .then((res) => {
-        saveToken(res.data.data.tokens);
-        console.log("tokens saved in asyncstorage");
-      })
-      .catch((error) => {
-        alert("회원가입 오류입니다");
-        console.log(error.message);
-      });
-
-    return response;
-  };
+  
 
   return (
     <>
@@ -195,7 +170,7 @@ export const SignUpScreen = ({ navigation }) => {
             <TouchableOpacity
               style={{ marginTop: 50 }}
               onPress={() => {
-                signup();
+                signUp();
                 navigation.navigate("MapScreen");
               }}
             >
