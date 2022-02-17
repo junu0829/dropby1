@@ -16,7 +16,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import LOCAL_HOST from "../../local.js";
-
+import { saveToken } from '../../../components/utility/auth.js'
 export const SignInScreen = ({ navigation }) => {
   const [isChecked, setChecked] = useState(false);
 
@@ -44,12 +44,7 @@ export const SignInScreen = ({ navigation }) => {
       },
     })
       .then((res) => {
-        const accessToken = res.data.data.tokens.access;
-        const refreshToken = res.data.data.tokens.refresh;
-        const nickname = res.data.data.userData.nickname;
-        AsyncStorage.setItem("accessToken", accessToken);
-        AsyncStorage.setItem("refreshToken", refreshToken);
-        AsyncStorage.setItem("nickname", nickname);
+        saveToken(res.data.data.tokens);
         console.log("tokens saved in asyncstorage");
       })
       .catch((error) => {
