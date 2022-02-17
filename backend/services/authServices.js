@@ -7,12 +7,14 @@ require('dotenv').config();
 const {signAccess, signRefresh, verifyAccess, verifyRefresh} = require('../middlewares/auth');
 
 exports.signUp = async ({nickname, email, password}) => {
-    let context = {'user':null, 'error':''};
+    console.log('services #1');
+    console.log('services ######################');
+    let context = {'user':null, 'msg':''};
     try {
         const userExists = await User.findOne({where:{email}}) //없으면 null 반환
         console.log(userExists)
         if (userExists) {
-            context['error'] = '이미 사용 중인 이메일입니다!'
+            context['msg'] = '이미 사용 중인 이메일입니다!'
             console.log('이미 사용 중인 이메일입니다!');
             return context;
         } else {
@@ -29,14 +31,14 @@ exports.signUp = async ({nickname, email, password}) => {
 
     } catch(error) {
         console.log(error);
-        context['error'] = 'catch' + error.message;
+        context['msg'] = 'catch' + error.message;
         return context;  
     }
 };
 
 exports.logIn = async({email, password}) => {
     const user = await User.findOne({where:{email}})
-    userData = user.dataValues;
+    const userData = user.dataValues;
 
     const accessToken = signAccess(userData);
     const refreshToken = signRefresh();
@@ -49,6 +51,7 @@ exports.logIn = async({email, password}) => {
     user.save();
     return {userData, tokens};
 }
+    
 
 exports.tokenRefresh = async (accessToken, refreshToken) => {
     const authResult = verifyAccess(accessToken);
