@@ -1,5 +1,13 @@
-import React, { createRef } from "react";
-import MapView from "react-native-maps";
+import React, {
+  createRef,
+  useEffect,
+  useContext,
+  useState,
+  useRef,
+  useMemo,
+  useReducer,
+} from "react";
+import MapView, { Marker } from "react-native-maps";
 import {
   Dimensions,
   View,
@@ -10,12 +18,10 @@ import {
 
 import { Text } from "../../../components/typography/text.component";
 
-import { useEffect, useContext, useState, useRef, useMemo } from "react";
-
 import { LocationContext } from "../../../services/location/location.context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Loading } from "../../../components/Loading";
-import Supercluster from "supercluster";
+
 import LOCAL_HOST from "../../local.js";
 import { SvgXml } from "react-native-svg";
 import ExpoStatusBar from "expo-status-bar/build/ExpoStatusBar";
@@ -42,8 +48,7 @@ import { ClusteredMap } from "./component/ClusteredMap";
 //assets
 import Drops from "../../../../assets/images/Drops";
 import { APIKey, PlAPIKey } from "../../../../APIkeys";
-import DropDefault from "../../../../assets/images/DropDefault";
-
+import { reducer, initialState } from "./dropRefresh.service";
 import write from "../../../../assets/Buttons/write";
 import PurpleDrop from "../../../../assets/images/PurpleDrop.png";
 
@@ -52,22 +57,22 @@ import currentLocation from "../../../../assets/Buttons/currentLocation";
 import selectButton from "../../../../assets/Buttons/selectButton";
 
 import { Cloud } from "./component/cloud";
+
 import { SlideView } from "../../../components/animations/slide.animation";
-import { SafeArea } from "../../../components/utility/safe-area.component";
-import { theme } from "../../../infrastructure/theme";
+
 import backButton2 from "../../../../assets/Buttons/backButton2";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import { LoadedDrop } from "../../../services/drops/LoadedDrop.service";
+import axiosInstance from "../../../services/fetch";
+
 export const MapScreen = ({ navigation, route }) => {
   ////////////////////////////처음 state들//////////////////////////////////////
   ///axios는 서버로부터 data json불러와주는 도구
-  const getToken = async () => AsyncStorage.getItem("accessToken");
-  const axios = require("axios");
 
   /////지도를 지도 바깥에서 부를 수 있도록 정의
   const map = useRef(null);
-  const prev = createRef();
 
   // 화면비율 조정하는 것
 
@@ -120,36 +125,9 @@ export const MapScreen = ({ navigation, route }) => {
       pk: 22,
       updatedAt: "2022-01-29T04:55:47.472Z",
     },
-    {
-      emoji: "🥰",
-      content: "드롭바이짱2",
-      createdAt: "2022-01-29T04:55:47.000Z",
-      latitude: 37.397841735093614,
-      longitude: 126.6367502933775,
-      pk: 23,
-      updatedAt: "2022-01-29T04:55:47.472Z",
-    },
-
-    // 126.67815894345523
-    {
-      emoji: "🐵",
-      content: "드롭바이짱3",
-      createdAt: "2022-01-29T04:55:47.000Z",
-      latitude: 37.397686933515644,
-      longitude: 126.63464320297088,
-      pk: 2,
-      updatedAt: "2022-01-29T04:55:47.472Z",
-    },
-    {
-      emoji: "🍇",
-      content: "드롭바이짱4",
-      createdAt: "2022-01-29T04:55:47.000Z",
-      latitude: 37.39791239133797,
-      longitude: 126.67815894345523,
-      pk: 5,
-      updatedAt: "2022-01-29T04:55:47.472Z",
-    },
   ]);
+
+  const [dropState, dispatch] = useReducer(reducer, initialState);
 
   const [definedLocation, setDefinedLocation] = useState({
     latitude: 37.58646601781994,
@@ -163,59 +141,34 @@ export const MapScreen = ({ navigation, route }) => {
   const [pressedAddressID, setPressedAddressID] = useState(null);
   const [pressedAddress, setPressedAddress] = useState(null);
   const [pressedAddressName, setPressedAddressName] = useState("새로운 장소");
+  const [refreshednumber, setRefreshednumber] = useState(0);
 
   ////////////////////////////여기서부터 useEffect 정의하기 시작//////////////////////////////////////////////////////
 
-  //////////드롭불러오기
-  const LoadDrop = async () => {
-    var token = await getToken();
-    console.log(token);
-    console.log("드롭불러오기 시도...");
+  //////희한하게 얘를 useEffect바깥에 놓으면 어떨땐 되고 어떨땐 안되는데... 조금 더 테스트를 해볼 필요가 있겠다. 만약에 드롭이 하나밖에 안뜨면 reload 하거나, useEffect안에 넣고 해볼 것.
 
-    const response = await axios(`http://${LOCAL_HOST}:3000/drops`, {
-      method: "get",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      withCredentials: true,
-    })
-      .then((res) => {
-        setDrops(res.data.data);
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
-    return response;
-  };
+  // const LoadDrop = () => {
+  //   console.log("드롭 불러오는중...");
+
+  //   axiosInstance
+  //     .get(`http://${LOCAL_HOST}:3000/drops`)
+  //     .then((res) => {
+  //       console.log("드롭 불러옴");
+  //       setDrops(res.data.data);
+  //     })
+  //     .catch((error) => {
+  //       console.log("error message: ", error.message);
+  //     });
+  // // };
 
   useEffect(() => {
-    const LoadDrop = async () => {
-      console.log("loadDrops request sent");
-      const accessToken = await AsyncStorage.getItem("accessToken");
-      console.log(accessToken);
-      console.log(`http://${LOCAL_HOST}:3000/drops`);
-      await axios({
-        method: "get",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-        url: `http://${LOCAL_HOST}:3000/drops`,
-      })
-        .then((res) => {
-          console.log("response got");
-          setDrops(res.data.data);
-        })
-        .catch((error) => {
-          console.log("error message: ", error.message);
-        });
-    };
-    LoadDrop();
+    LoadedDrop(setDrops);
   }, [currentRegion]);
 
   const dropsList = (drops) => {
     return drops.map((drop) => {
       return (
-        <MapView.Marker
+        <Marker
           style={{ opacity: 0.85 }}
           key={drop.pk}
           coordinate={{
@@ -252,7 +205,7 @@ export const MapScreen = ({ navigation, route }) => {
               {drop.emoji}
             </Text>
           </ImageBackground>
-        </MapView.Marker>
+        </Marker>
       );
     });
   };
@@ -383,7 +336,6 @@ export const MapScreen = ({ navigation, route }) => {
   if (isLoading) {
     return <Loading />;
   } else {
-    // getCluster(allCoords, region);
     return (
       <View>
         <ExpoStatusBar style="auto" />
@@ -404,7 +356,7 @@ export const MapScreen = ({ navigation, route }) => {
                 <Cloud
                   navigation={navigation}
                   region={currentRegion}
-                  refresh={LoadDrop}
+                  setDrops={setDrops}
                 />
               ) : null}
             </LinearGradient>
@@ -521,6 +473,7 @@ export const MapScreen = ({ navigation, route }) => {
                       { pressedAddress },
                       { pressedAddressName },
                       { pressedLocation },
+                      { calibratedLocation },
                     ]);
                   }}
                 >
@@ -534,7 +487,6 @@ export const MapScreen = ({ navigation, route }) => {
             <TouchableWithoutFeedback onPress={() => {}}>
               <SlideView isDetail={isDetail}>
                 <DropPreview
-                  ref={prev}
                   pressedAddress={pressedAddress}
                   pressedAddressName={pressedAddressName}
                   dropContent={dropContent}

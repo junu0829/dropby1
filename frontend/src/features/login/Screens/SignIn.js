@@ -14,6 +14,7 @@ import AreYouStartingButton from "../../../../assets/Buttons/AreYouStartingButto
 import FindingPWButton from "../../../../assets/Buttons/FindingPWButton";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axiosInstance from "../../../services/fetch";
 
 import LOCAL_HOST from "../../local.js";
 

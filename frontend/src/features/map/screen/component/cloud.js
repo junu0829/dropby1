@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, ImageBackground, TouchableOpacity } from "react-native";
 
 import { ContainerStart, ContainerEnd4 } from "../map.screen.styles";
@@ -8,8 +8,16 @@ import FeedTransitionButton from "../../../../../assets/Buttons/FeedTransitionBu
 import searchButton from "../../../../../assets/Buttons/searchButton";
 import { SvgXml } from "react-native-svg";
 import { Text } from "../../../../components/typography/text.component";
+import { LoadedDrop } from "../../../../services/drops/LoadedDrop.service";
 
-export const Cloud = ({ navigation, region, refresh }) => {
+export const Cloud = ({ navigation, region, setDrops }) => {
+  const [dropss, refresh] = useState([]);
+  const [isrefrehsed, setIsRefreshed] = useState(false);
+
+  useEffect(() => {
+    setDrops(dropss);
+  }, [dropss]);
+
   return (
     <>
       <View>
@@ -54,7 +62,16 @@ export const Cloud = ({ navigation, region, refresh }) => {
                   marginTop: 63,
                   zIndex: 999,
                 }}
-                onPress={() => refresh()}
+                onPress={() => {
+                  const refreshing = new Promise.resolve(LoadedDrop(refresh));
+
+                  refreshing.then((e) => {
+                    console.log("드롭새로고침");
+                  });
+
+                  setIsRefreshed(!isrefrehsed);
+                  // .then(() => console.log(dropss));
+                }}
               >
                 <Text variant="bold">탭해서 새로고침</Text>
               </TouchableOpacity>

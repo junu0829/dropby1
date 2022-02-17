@@ -33,7 +33,7 @@ export const WriteScreen = ({ navigation, route }) => {
 
   const [placeName, setPlaceName] = useState("새로운 장소");
   const [placeAddress, setPlaceAddress] = useState("새로운 장소-주소");
-  const [placeLatlng, setPlaceLatlng] = useState([0, 0]);
+  const [placeLatlng, setPlaceLatlng] = useState({});
   const [selectedEmoji, setSelectedEmoji] = useState("😀");
 
   /////////////////////로컬 이미지 여기에 담김
@@ -44,20 +44,30 @@ export const WriteScreen = ({ navigation, route }) => {
   useEffect(() => {
     setPlaceAddress(route.params[0].pressedAddress);
     setPlaceName(route.params[1].pressedAddressName);
-    setPlaceLatlng(route.params[2].pressedLocation);
-    handleLatitude(placeLatlng.latitude);
-    handleLongitude(placeLatlng.longitude);
-    handlePk(user_idx);
+    if (route.params[3].calibratedLocation) {
+      setPlaceLatlng(route.params[3].calibratedLocation);
+      handleLatitude(placeLatlng.lat);
+      handleLongitude(placeLatlng.lng);
+    } else {
+      setPlaceLatlng(route.params[2].pressedLocation);
+      handleLatitude(placeLatlng.latitude);
+      handleLongitude(placeLatlng.longitude);
+    }
+  }, [route, placeLatlng.latitude, placeLatlng.longitude, placeLatlng]);
+
+  useEffect(() => {
     setImage(route.params.source);
     setSelectedEmoji(route.params.selectedEmoji);
+    console.log(placeLatlng);
   }, [
     route,
     placeLatlng.latitude,
     placeLatlng.longitude,
-    user_idx,
     image,
     selectedEmoji,
+    placeLatlng,
   ]);
+
   ////////////////////
 
   const [pk, setPk] = useState("");
@@ -151,6 +161,7 @@ export const WriteScreen = ({ navigation, route }) => {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
+              console.log(placeLatlng);
               PostWrite();
               navigation.navigate("MapScreen", drop);
             }}

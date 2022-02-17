@@ -23,7 +23,6 @@ export const DropPreview = ({
   pressedAddress = {},
   pressedAddressName = {},
   dropContent = {},
-  drop = {},
   navigation,
   setIsDetail,
   isDetail = {},
@@ -95,7 +94,6 @@ export const DropPreview = ({
             >
               <SvgXml xml={write} width={56} height={65} />
             </WriteButton>
-            <Favourite drop={drop} />
           </View>
         </PlaceContainer>
         <View
