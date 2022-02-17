@@ -170,7 +170,7 @@ export const SignUpScreen = ({ navigation }) => {
             <TouchableOpacity
               style={{ marginTop: 50 }}
               onPress={() => {
-                signUp();
+                signUp(nickname, email, password);
                 navigation.navigate("MapScreen");
               }}
             >

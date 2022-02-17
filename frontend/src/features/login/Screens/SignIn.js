@@ -95,7 +95,7 @@ export const SignInScreen = ({ navigation }) => {
           <TouchableOpacity
             style={{ marginTop: 50 }}
             onPress={() => {
-              signIn();
+              signIn(navigation, email, password);
               navigation.navigate("MapScreen");
             }}
           >
