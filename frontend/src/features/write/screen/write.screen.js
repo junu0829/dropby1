@@ -27,7 +27,7 @@ import LockButtonUnlocked from "../../../../assets/Buttons/LockButton(Unlocked)"
 import { container, styles } from "./writescreen.styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LOCAL_HOST from "../../local.js";
-
+import {checkIfTokenExists} from '../../../components/utility/auth.js'
 export const WriteScreen = ({ navigation, route }) => {
   const getToken = async () => AsyncStorage.getItem("accessToken");
 
@@ -92,22 +92,29 @@ export const WriteScreen = ({ navigation, route }) => {
 
   const PostWrite = async () => {
     console.log("Postwrite request sent");
-    const accessToken = await AsyncStorage.getItem("accessToken");
-    await axios(`http://${LOCAL_HOST}:3000/drops`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: {
-        content,
-        latitude,
-        longitude,
-      },
-    })
-      .then((res) => {
-        console.log(`${res.data.data.content} 내용으로 ${res.data.msg}!`);
+    if (checkIfTokenExists) {
+      const accessToken = await AsyncStorage.getItem("accessToken");
+
+      await axios(`http://${LOCAL_HOST}:3000/drops`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        data: {
+          content,
+          latitude,
+          longitude,
+        },
       })
-      .catch((e) => console.log(e));
+        .then((res) => {
+          console.log(`${res.data.data.content} 내용으로 ${res.data.msg}!`);
+        })
+        .catch((e) => console.log(e));
+
+    } else {
+      alert('유효한 사용자가 아닙니다.');
+    }
+    
   };
 
   return (
