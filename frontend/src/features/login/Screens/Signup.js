@@ -22,7 +22,7 @@ import { TextInput } from "react-native-gesture-handler";
 import backButtonWhite from "../../../../assets/Buttons/backButtonWhite";
 import { FadeInView } from "../../../components/animations/fade.animation";
 
-import { signUp } from '../../../features/local.js'
+import { signUp } from '../../../components/utility/auth.js'
 
 export const SignUpScreen = ({ navigation }) => {
   const [isChecked, setChecked] = useState(false);
