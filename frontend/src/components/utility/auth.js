@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LOCAL_HOST from "../../features/local.js";
 
+//AsyncStorage에 토큰이 있는지 확인
 export const checkIfTokenExists = () => {
     if (AsyncStorage.getItem('accessToken') && AsyncStorage.getItem('refreshToken')) {
         return true;
@@ -8,11 +9,13 @@ export const checkIfTokenExists = () => {
     return false;
 }
 
+//토큰을 AsyncStorage에 저장
 export const saveToken = (tokens) => {
     AsyncStorage.setItem("accessToken", tokens.access);
     AsyncStorage.setItem("refreshToken", tokens.refresh);
 }
 
+//signIn, signUp이 오류가 나면 서버에서 에러 메시지를 보내줌.
 export const signIn = async () => {
     const response = await axios(`http://${LOCAL_HOST}:3000/auth/login`, {
         method: "POST",
