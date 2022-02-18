@@ -67,6 +67,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { LoadedDrop } from "../../../services/drops/LoadedDrop.service";
 import axiosInstance from "../../../services/fetch";
+import NewPlaceButton from "../../../../assets/Buttons/NewPlaceButton";
 
 export const MapScreen = ({ navigation, route }) => {
   ////////////////////////////처음 state들//////////////////////////////////////
@@ -115,6 +116,8 @@ export const MapScreen = ({ navigation, route }) => {
     longitudeDelta: LONGITUDE_DELTA,
   });
   const [drop, setDrop] = useState(null);
+
+  const [dropTime, setDropTime] = useState(null);
   const [dropContent, setDropContent] = useState(null);
   const [drops, setDrops] = useState([
     {
@@ -142,6 +145,7 @@ export const MapScreen = ({ navigation, route }) => {
   const [pressedAddressID, setPressedAddressID] = useState(null);
   const [pressedAddress, setPressedAddress] = useState(null);
   const [pressedAddressName, setPressedAddressName] = useState("새로운 장소");
+  const [newPlaceSelectionMode, setNewPlaceSelectioMode] = useState(false);
 
   ////////////////////////////여기서부터 useEffect 정의하기 시작//////////////////////////////////////////////////////
 
@@ -171,15 +175,14 @@ export const MapScreen = ({ navigation, route }) => {
     return (
       <>
         <ClusteredMap
-          onPress={(event) => {
-            setDefinedLocation(event.nativeEvent.coordinate);
-
-            setMarkers([]);
-          }}
           onLongPress={(event) => {
-            setPressedLocation(event.nativeEvent.coordinate);
-
-            setMarkers([]);
+            if (!newPlaceSelectionMode) {
+              setDefinedLocation(event.nativeEvent.coordinate);
+              setMarkers([]);
+            } else {
+              setPressedLocation(event.nativeEvent.coordinate);
+              setMarkers([]);
+            }
           }}
           ref={map}
           location={location}
@@ -187,17 +190,18 @@ export const MapScreen = ({ navigation, route }) => {
           LONGITUDE_DELTA={LONGITUDE_DELTA}
           writeMode={writeMode}
           isAddressLoading={isAddressLoading}
+          newPlaceSelectionMode={newPlaceSelectionMode}
           Markers={Markers}
           allCoords={allCoords}
           region={currentRegion}
           updateRegion={updateRegion}
         >
           {drops.map((drop, i) => {
-            console.log(drop.createdAt);
+            console.log(drop.pk);
             return (
               <Marker
                 style={{ opacity: 0.85 }}
-                key={drop.createdAt}
+                key={drop.pk}
                 coordinate={{
                   latitude: drop.latitude,
                   longitude: drop.longitude,
@@ -211,6 +215,7 @@ export const MapScreen = ({ navigation, route }) => {
                   });
                   setDropContent(drop.content);
                   setDrop(drop.pk);
+                  setDropTime(drop.createdAt);
                 }}
               >
                 <ImageBackground
@@ -266,7 +271,7 @@ export const MapScreen = ({ navigation, route }) => {
         .then((response) => response.json())
         .then(async (responseJson) => {
           await setPressedAddress(responseJson.result.formatted_address);
-          await setPressedAddressName(`새로운 장소!`);
+          await setPressedAddressName(`새로운 장소`);
           console.log("a");
         });
     };
@@ -397,7 +402,7 @@ export const MapScreen = ({ navigation, route }) => {
 
           {writeMode && (
             <TextContainer>
-              <Text variant="hint">드롭을 남길 장소를 눌러주세요</Text>
+              <Text variant="hint">드롭을 남길 장소를 꾸욱 눌러주세요</Text>
             </TextContainer>
           )}
         </SearchContainer>
@@ -452,6 +457,23 @@ export const MapScreen = ({ navigation, route }) => {
         ) : writeMode ? (
           <>
             <PlaceContainer>
+              <View
+                style={{
+                  bottom: 70,
+                  width: 50,
+                  height: 50,
+                  marginLeft: 5,
+                  Index: 5,
+                }}
+              >
+                <TouchableOpacity
+                  onPress={() => {
+                    setNewPlaceSelectioMode(true);
+                  }}
+                >
+                  <SvgXml xml={NewPlaceButton} width={50} height={50} />
+                </TouchableOpacity>
+              </View>
               <PlaceContainer2>
                 <BackButtonContainer
                   onPress={() => {
@@ -470,7 +492,7 @@ export const MapScreen = ({ navigation, route }) => {
 
                 <ContainerEnd2>
                   <TouchableOpacity style={styles.Drops}>
-                    <SvgXml xml={Drops} width={38} height={42} />
+                    <SvgXml xml={Drops} width={22} height={30} />
                   </TouchableOpacity>
                   <Text style={styles.drop}>23개</Text>
                 </ContainerEnd2>
@@ -503,6 +525,7 @@ export const MapScreen = ({ navigation, route }) => {
                   pressedLocation={pressedLocation}
                   navigation={navigation}
                   drop={drop}
+                  dropTime={dropTime}
                   isDetail={isDetail}
                   setIsDetail={setIsDetail}
                 />

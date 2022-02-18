@@ -40,7 +40,7 @@ height: 165px
  
 `;
 export const PlaceContainer2 = styled.View`
-
+top: -50px;
 flex-direction: row
 flex: 1
  
@@ -51,7 +51,7 @@ export const PlaceContainer3 = styled.View`
 flex-direction: row
 justify-content:center
 flex: 1
-bottom: 30px
+bottom: 50px
  
 `;
 

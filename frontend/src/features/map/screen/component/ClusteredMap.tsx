@@ -15,6 +15,7 @@ import ClusterMarker from "./ClusteredMarker";
 export const ClusteredMap = forwardRef<MapClusteringProps & MapViewProps, any>(
   (
     {
+      newPlaceSelectionMode = {},
       children,
       region = {},
       updateRegion,
@@ -311,7 +312,7 @@ export const ClusteredMap = forwardRef<MapClusteringProps & MapViewProps, any>(
           ) : null
         )}
         {otherChildren}
-        {writeMode && !isAddressLoading
+        {writeMode && !isAddressLoading && !newPlaceSelectionMode
           ? Markers.map((Mker) => {
               return (
                 <Marker
