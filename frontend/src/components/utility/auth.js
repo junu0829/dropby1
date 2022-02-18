@@ -39,19 +39,20 @@ export const signIn = async (email, password) => {
     return response;
 };
 
-export const signUp = async (nickname, email, password) => { //회원가입 시 발생하는 에러는 이미 사용중인 이메일, 비밀번호 짧게 정도?
-    if (nickname.length < 1) {
-        Alert.alert('닉네임을 입력해 주세요!');
+export const signUp = async (nickname, email, password) => {
+    if (nickname.length < 2) {
+        Alert.alert('닉네임을 두 글자 이상 입력해 주세요!');
         return;
     };
-    if (email.length < 4) {
-        Alert.alert('이메일을 입력해 주세요!');
+    const emailRe = /[A-Za-z0-9]+@[a-z]+\.[a-z]+/
+    if (!emailRe.test(email)) {
+        Alert.alert('이메일 형식이 유효하지 않습니다!');
         return;
     };
     if (password.length < 8) {
         Alert.alert('비밀번호를 8자리 이상 입력해 주세요!');
         return;
-    }; //속도 문제 때문에 프런트에서 검증하는 게 좋을 거 같긴 함.. 로직 추가 필요.
+    };
 
     const response = await axios(`http://${LOCAL_HOST}:3000/auth/signup`, {
         method: "POST",
