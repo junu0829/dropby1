@@ -163,7 +163,7 @@ export const WriteScreen = ({ navigation, route }) => {
             onPress={() => {
               console.log(placeLatlng);
               PostWrite();
-              navigation.navigate("MapScreen", drop);
+              navigation.navigate("MapScreen");
             }}
           >
             <SvgXml

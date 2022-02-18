@@ -10,14 +10,7 @@ import { SvgXml } from "react-native-svg";
 import { Text } from "../../../../components/typography/text.component";
 import { LoadedDrop } from "../../../../services/drops/LoadedDrop.service";
 
-export const Cloud = ({ navigation, region, setDrops }) => {
-  const [dropss, refresh] = useState([]);
-  const [isrefrehsed, setIsRefreshed] = useState(false);
-
-  useEffect(() => {
-    setDrops(dropss);
-  }, [dropss]);
-
+export const Cloud = ({ navigation, region }) => {
   return (
     <>
       <View>
@@ -57,24 +50,14 @@ export const Cloud = ({ navigation, region, setDrops }) => {
                 justifyContent: "center",
               }}
             >
-              <TouchableOpacity
+              <View
                 style={{
                   marginTop: 63,
                   zIndex: 999,
                 }}
-                onPress={() => {
-                  const refreshing = new Promise.resolve(LoadedDrop(refresh));
-
-                  refreshing.then((e) => {
-                    console.log("드롭새로고침");
-                  });
-
-                  setIsRefreshed(!isrefrehsed);
-                  // .then(() => console.log(dropss));
-                }}
               >
                 <Text variant="bold">탭해서 새로고침</Text>
-              </TouchableOpacity>
+              </View>
             </View>
             <ContainerEnd4>
               <TouchableOpacity

@@ -1,7 +1,7 @@
 import axiosInstance from "../fetch.js";
 import LOCAL_HOST from "../../features/local.js";
-
-export const LoadedDrop = (refresh) => {
+import { useMemo } from "react";
+export const LoadedDrop = (setDrops) => {
   console.log("드롭 불러오는중...");
 
   axiosInstance
@@ -9,7 +9,7 @@ export const LoadedDrop = (refresh) => {
     .then((res) => {
       console.log("드롭 불러옴");
 
-      refresh(res.data.data);
+      setDrops(res.data.data);
     })
     .catch((error) => {
       console.log("error message: ", error.message);

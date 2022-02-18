@@ -7,6 +7,7 @@ import React, {
   useMemo,
   useReducer,
 } from "react";
+import { useIsFocused } from "@react-navigation/native";
 import MapView, { Marker } from "react-native-maps";
 import {
   Dimensions,
@@ -141,7 +142,6 @@ export const MapScreen = ({ navigation, route }) => {
   const [pressedAddressID, setPressedAddressID] = useState(null);
   const [pressedAddress, setPressedAddress] = useState(null);
   const [pressedAddressName, setPressedAddressName] = useState("새로운 장소");
-  const [refreshednumber, setRefreshednumber] = useState(0);
 
   ////////////////////////////여기서부터 useEffect 정의하기 시작//////////////////////////////////////////////////////
 
@@ -161,53 +161,81 @@ export const MapScreen = ({ navigation, route }) => {
   //     });
   // // };
 
+  const isFocused = useIsFocused();
+  /// 처음 시작시 useEffect가 세번 되풀이 되는데 막을 방법이 없을까? 찾아볼것.
   useEffect(() => {
     LoadedDrop(setDrops);
-  }, [currentRegion]);
+  }, [currentRegion, isFocused]);
 
   const dropsList = (drops) => {
-    return drops.map((drop) => {
-      return (
-        <Marker
-          style={{ opacity: 0.85 }}
-          key={drop.pk}
-          coordinate={{
-            latitude: drop.latitude,
-            longitude: drop.longitude,
+    return (
+      <>
+        <ClusteredMap
+          onPress={(event) => {
+            setDefinedLocation(event.nativeEvent.coordinate);
+
+            setMarkers([]);
           }}
-          onPress={() => {
-            showModal();
-            setWriteMode(false);
-            setPressedLocation({
-              latitude: drop.latitude,
-              longitude: drop.longitude,
-            });
-            setDropContent(drop.content);
-            setDrop(drop.pk);
+          onLongPress={(event) => {
+            setPressedLocation(event.nativeEvent.coordinate);
+
+            setMarkers([]);
           }}
+          ref={map}
+          location={location}
+          LATITUDE_DELTA={LATITUDE_DELTA}
+          LONGITUDE_DELTA={LONGITUDE_DELTA}
+          writeMode={writeMode}
+          isAddressLoading={isAddressLoading}
+          Markers={Markers}
+          allCoords={allCoords}
+          region={currentRegion}
+          updateRegion={updateRegion}
         >
-          <ImageBackground
-            source={PurpleDrop}
-            style={{
-              width: 34,
-              height: 44,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 25,
-                left: 1,
-                top: 1,
-              }}
-            >
-              {drop.emoji}
-            </Text>
-          </ImageBackground>
-        </Marker>
-      );
-    });
+          {drops.map((drop, i) => {
+            console.log(drop.createdAt);
+            return (
+              <Marker
+                style={{ opacity: 0.85 }}
+                key={drop.createdAt}
+                coordinate={{
+                  latitude: drop.latitude,
+                  longitude: drop.longitude,
+                }}
+                onPress={() => {
+                  showModal();
+                  setWriteMode(false);
+                  setPressedLocation({
+                    latitude: drop.latitude,
+                    longitude: drop.longitude,
+                  });
+                  setDropContent(drop.content);
+                  setDrop(drop.pk);
+                }}
+              >
+                <ImageBackground
+                  source={PurpleDrop}
+                  style={{
+                    width: 34,
+                    height: 44,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 25,
+                      left: 1,
+                      top: 1,
+                    }}
+                  ></Text>
+                </ImageBackground>
+              </Marker>
+            );
+          })}
+        </ClusteredMap>
+      </>
+    );
   };
   ///////길게 눌렀을 시 장소정보 가져오는 함수
   useEffect(() => {
@@ -329,6 +357,8 @@ export const MapScreen = ({ navigation, route }) => {
     },
   }));
 
+  const [_, forceUpdate] = useReducer((x) => x + 1, 0);
+
   ///////////////////////////////////////////////////////////////////////////////////
   //////////////////////////맵그리는 것 여기서부터 시작//////////////////////////////
   //////////////////////////////////////////////////////////////////////////////////////
@@ -353,11 +383,14 @@ export const MapScreen = ({ navigation, route }) => {
             >
               {/* writeMode이지 않을 경우에 cloud */}
               {!writeMode ? (
-                <Cloud
-                  navigation={navigation}
-                  region={currentRegion}
-                  setDrops={setDrops}
-                />
+                <TouchableOpacity
+                  onPress={() => {
+                    LoadedDrop(setDrops);
+                    forceUpdate;
+                  }}
+                >
+                  <Cloud navigation={navigation} region={currentRegion} />
+                </TouchableOpacity>
               ) : null}
             </LinearGradient>
           ) : null}
@@ -374,30 +407,7 @@ export const MapScreen = ({ navigation, route }) => {
             setDropViewMode(false);
           }}
         >
-          <ClusteredMap
-            onPress={(event) => {
-              setDefinedLocation(event.nativeEvent.coordinate);
-
-              setMarkers([]);
-            }}
-            onLongPress={(event) => {
-              setPressedLocation(event.nativeEvent.coordinate);
-
-              setMarkers([]);
-            }}
-            ref={map}
-            location={location}
-            LATITUDE_DELTA={LATITUDE_DELTA}
-            LONGITUDE_DELTA={LONGITUDE_DELTA}
-            writeMode={writeMode}
-            isAddressLoading={isAddressLoading}
-            Markers={Markers}
-            allCoords={allCoords}
-            region={currentRegion}
-            updateRegion={updateRegion}
-          >
-            {dropsList(drops)}
-          </ClusteredMap>
+          {dropsList(drops)}
         </View>
 
         {!writeMode && !dropViewMode ? (
