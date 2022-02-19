@@ -74,8 +74,6 @@ exports.tokenRefresh = async(req, res, next) => {
 
 exports.logOut = async(req, res, next) => {
     try {
-        res.clearCookie();
-    
         const refreshRemoved = await authServices.logOut(req.headers);
         if (refreshRemoved.success) {
             res.status(200).json({
@@ -83,7 +81,8 @@ exports.logOut = async(req, res, next) => {
                 leftUser:refreshRemoved.userData,
                 status:refreshRemoved.message
             })
-        } else {
+        }
+        if (refreshRemoved.success === false) {
             res.status(400).json({
                 message:'로그아웃 실패',
                 leftUser:refreshRemoved.userData,

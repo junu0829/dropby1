@@ -55,7 +55,8 @@ module.exports = () => {
     passport.use('jwtAccess',
         new JWTStrategy({
             jwtFromRequest:ExtractJwt.fromAuthHeaderAsBearerToken(),
-            secretOrKey:process.env.JWT_SECRET_ACCESS_KEY
+            secretOrKey:process.env.JWT_SECRET_ACCESS_KEY,
+            passReqToCallback:true,
         }, JWTVerify)
     );
     //JWT Refresh Strategy
