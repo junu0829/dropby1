@@ -78,3 +78,22 @@ export const signUp = async (nickname, email, password, callback) => {
         });
     return response;
 };
+
+export const tokenRefresh = async (accessToken, refreshToken) => {
+
+    const refresh = await axios(`http://${LOCAL_HOST}:3000/auth/token/refresh`, {
+        method:"POST",
+        headers:{
+            Accept:"application/json",
+            Authorization: `Bearer ${accessToken}`,
+            Refresh:refreshToken,
+        }
+    }).then((res) => {
+        console.log('res.data', res.data);
+        return res.data;
+    }).catch((error) => {
+        console.log('Token refresh error', error.message);
+        return error;
+    }) 
+    return refresh;
+}
