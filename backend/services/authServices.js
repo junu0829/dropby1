@@ -4,7 +4,7 @@ const passport = require('passport');
 const {User} = require('../models');
 const {createBlackList} = require('jwt-blacklist')
 require('dotenv').config();
-const {signAccess, signRefresh, verifyAccess, verifyRefresh} = require('../middlewares/auth');
+const {signAccess, signRefresh, verifyAccess, verifyRefresh, getUserWithRefresh} = require('../middlewares/auth');
 
 exports.signUp = async ({nickname, email, password}) => {
     console.log('services #1');
@@ -55,7 +55,7 @@ exports.logIn = async({email, password}) => {
 
 exports.tokenRefresh = async (accessToken, refreshToken) => {
     const accessResult = verifyAccess(accessToken); //만료되지 않아야만 userData 반환함.
-    console.log(authResult);
+    console.log('accessResult', accessResult);
 
     if (accessResult.userData) { //accessToken이 만료되지 않음. 
         return {
@@ -69,22 +69,26 @@ exports.tokenRefresh = async (accessToken, refreshToken) => {
     }
     //accessToken이 만료됨
     if (accessResult.success === false && accessResult.message === 'jwt expired') { //accessToken은 만료되었고
-        
-        const refreshResult = verifyRefresh(refreshToken); 
-        if (refreshResult === false) { //refreshToken도 유효하지 않음.
+        console.log('이중 조건문 진입?!');
+        const refreshResult = await verifyRefresh(refreshToken); 
+        if (refreshResult.success === false) { //refreshToken도 유효하지 않음.
             return {
                 success:false,
                 status:'No token valid. Re-login required.',
-                token:null
+                tokens:null
             }
         }
 
-        if (refreshResult === true) {
-            const newAccess = signAccess();
+        if (refreshResult.success === true) {
+            const userData = await getUserWithRefresh(refreshToken);
+            const newAccess = signAccess({
+                pk:userData.pk,
+                email:userData.email
+            });
             return {
                 success:true,
                 status:'New Access Token granted',
-                token:{
+                tokens:{
                     access:newAccess,
                     refresh:refreshToken
                 }
