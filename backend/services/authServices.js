@@ -91,12 +91,10 @@ exports.tokenRefresh = async (accessToken, refreshToken) => {
 }
 
 exports.logOut = async({authorization, refresh}) => {
-    const accessToken = authorization.split('Bearer ')[1];
-    const authResult = verifyAccess(accessToken);
+    const refreshToken = refresh;
+    const refreshResult = await verifyRefresh(refreshToken);
     try {
-        console.log(authResult);
-        const user = await User.findOne({where:{email:authResult.userData.email}});
-        console.log(user);
+        const user = await User.findOne({where:{pk:refreshResult.userPk}});
         if (user) {
             user.Refresh = null;
             user.save()
@@ -104,10 +102,11 @@ exports.logOut = async({authorization, refresh}) => {
             return {
                 success:true,
                 userData:user,
-                message:'LoRefresh Token removed'
+                message:'LogOut Success(Refresh Token removed)'
             }
 
-        } else {
+        } 
+        if (!user) {
             return {
                 success:false,
                 userData:null,
