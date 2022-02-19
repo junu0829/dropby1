@@ -40,10 +40,10 @@ height: 165px
  
 `;
 export const PlaceContainer2 = styled.View`
-top: -50px;
-flex-direction: row
-flex: 1
- 
+  top: -50px;
+  flex-direction: row;
+  flex: 1;
+  left: 5px;
 `;
 
 export const PlaceContainer3 = styled.View`

@@ -13,6 +13,7 @@ import SuperCluster from "supercluster";
 import ClusterMarker from "./ClusteredMarker";
 import PlaceIcons from "../../../../../assets/PlaceIcons";
 import { TouchableOpacity, View } from "react-native";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 export const ClusteredMap = forwardRef<MapClusteringProps & MapViewProps, any>(
   (
@@ -28,7 +29,8 @@ export const ClusteredMap = forwardRef<MapClusteringProps & MapViewProps, any>(
       writeMode = {},
       isAddressLoading = {},
       Markers = {},
-
+      setCalibratedLocation,
+      setMarkers,
       radius,
       maxZoom,
       minZoom,
@@ -274,6 +276,9 @@ export const ClusteredMap = forwardRef<MapClusteringProps & MapViewProps, any>(
 
     return (
       <Map
+        onLongPress={() => {
+          setIsPressed(null);
+        }}
         {...restProps}
         ref={(map) => {
           mapRef.current = map;
@@ -316,7 +321,7 @@ export const ClusteredMap = forwardRef<MapClusteringProps & MapViewProps, any>(
           ) : null
         )}
         {otherChildren}
-        {writeMode && !isAddressLoading && !newPlaceSelectionMode
+        {writeMode && !isAddressLoading
           ? Markers.map((Mker) => {
               return (
                 <Marker
@@ -327,7 +332,7 @@ export const ClusteredMap = forwardRef<MapClusteringProps & MapViewProps, any>(
                 >
                   <FadeInViewFaster>
                     <ExpandView>
-                      <SvgXml xml={LocationSelected} width={33.5} height={45} />
+                      <SvgXml xml={LocationSelected} width={33.5} height={54} />
                     </ExpandView>
                   </FadeInViewFaster>
                 </Marker>
@@ -338,7 +343,7 @@ export const ClusteredMap = forwardRef<MapClusteringProps & MapViewProps, any>(
           ? Places.map((Place) => {
               return (
                 <Marker
-                  style={{ zIndex: 999 }}
+                  style={{ zIndex: 1 }}
                   //장소선택 마커의 위치
 
                   coordinate={{
@@ -350,20 +355,27 @@ export const ClusteredMap = forwardRef<MapClusteringProps & MapViewProps, any>(
                     console.log(isPressed);
                     setPressedAddressName(Place.place_name);
                     setPressedAddress(Place.road_address_name);
+                    setMarkers([]);
+                    setCalibratedLocation({
+                      lat: parseFloat(Place.y),
+                      lng: parseFloat(Place.x),
+                    });
                   }}
                 >
                   {Place == isPressed ? (
                     <FadeInViewFaster>
                       <ExpandView>
-                        <SvgXml xml={PlaceIcons} width={20} height={20} />
+                        <SvgXml xml={PlaceIcons} width={1} height={1} />
                       </ExpandView>
                     </FadeInViewFaster>
                   ) : (
-                    <FadeInViewFaster>
-                      <ExpandView>
-                        <SvgXml xml={PlaceIcons} width={10} height={10} />
-                      </ExpandView>
-                    </FadeInViewFaster>
+                    <TouchableOpacity>
+                      <FadeInViewFaster>
+                        <ExpandView>
+                          <SvgXml xml={PlaceIcons} width={11} height={11} />
+                        </ExpandView>
+                      </FadeInViewFaster>
+                    </TouchableOpacity>
                   )}
                 </Marker>
               );

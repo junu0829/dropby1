@@ -31,11 +31,17 @@ export const DropPreview = ({
   dropTime = {},
   navigation,
   setIsDetail,
+
   isDetail = {},
 }) => {
+  const [calibratedLocation, setCalibratedLocation] = useState({});
+  const [placeName, setPlaceName] = useState("");
   const [touchY, setTouchY] = useState(null);
   const [marginT, setMarginT] = useState(0);
   const dropTimeShown = dropTime.substring(5, 10);
+  useEffect(() => {
+    setPlaceName(pressedAddressName);
+  }, [placeName, pressedAddressName]);
 
   const dropTimeMonth =
     dropTimeShown.substring(0, 1) == 0
@@ -72,8 +78,8 @@ export const DropPreview = ({
         }}
       >
         <PlaceContainer style={{ flex: 1 }}>
-          <PlaceContainer2>
-            <Text style={styles1.place}>{pressedAddressName}</Text>
+          <PlaceContainer2 style={{ top: 0 }}>
+            <Text style={styles1.place}>{placeName}</Text>
             {/* <Text style={styles.placeaddress2}>{pressedAddress}</Text> */}
 
             <ContainerEnd3>
@@ -102,6 +108,7 @@ export const DropPreview = ({
                     { pressedAddress },
                     { pressedAddressName },
                     { pressedLocation },
+                    { calibratedLocation },
                   ]);
                 }}
               >

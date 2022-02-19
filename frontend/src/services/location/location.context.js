@@ -6,7 +6,7 @@ export const LocationContext = React.createContext();
 
 export const LocationContextProvider = ({ children }) => {
   const [location, setLocation] = useState(
-    [37.58646601781994, 127.02913699768948]
+    [0, 0]
     // 37.58646601781994,127.02913699768948
   );
   const [isLoading, setIsLoading] = useState(true);

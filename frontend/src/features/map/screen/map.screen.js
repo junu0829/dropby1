@@ -15,7 +15,12 @@ import {
   View,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  Keyboard,
   ImageBackground,
+  TextInput,
+  StyleSheet,
+  Platform,
+  KeyboardAvoidingView,
 } from "react-native";
 
 import { Text } from "../../../components/typography/text.component";
@@ -71,6 +76,8 @@ import axiosInstance from "../../../services/fetch";
 import NewPlaceButton from "../../../../assets/Buttons/NewPlaceButton";
 import axios from "axios";
 import { KakaoKey } from "../../../../APIkeys";
+import PlacePlusIcon from "../../../../assets/Buttons/PlacePlusIcon";
+import PlaceAddIcon from "../../../../assets/Buttons/PlaceAddIcon";
 
 export const MapScreen = ({ navigation, route }) => {
   ////////////////////////////처음 state들//////////////////////////////////////
@@ -99,10 +106,7 @@ export const MapScreen = ({ navigation, route }) => {
   };
 
   const [writeMode, setWriteMode] = useState(false);
-  const [pressedLocation, setPressedLocation] = useState({
-    latitude: 37.58646601781994,
-    longitude: 127.02913699768948,
-  });
+  const [pressedLocation, setPressedLocation] = useState({});
   const [Markers, setMarkers] = useState([
     {
       latitude: location[0],
@@ -168,14 +172,8 @@ export const MapScreen = ({ navigation, route }) => {
     },
   ]);
 
-  const [definedLocation, setDefinedLocation] = useState({
-    latitude: 37.58646601781994,
-    longitude: 127.02913699768948,
-  });
-  const [calibratedLocation, setCalibratedLocation] = useState({
-    latitude: 37.58646601781994,
-    longitude: 127.02913699768948,
-  });
+  const [definedLocation, setDefinedLocation] = useState({});
+  const [calibratedLocation, setCalibratedLocation] = useState({});
   const [definedAddressID, setDefinedAddressID] = useState(null);
   const [pressedAddressID, setPressedAddressID] = useState(null);
   const [pressedAddress, setPressedAddress] = useState(null);
@@ -210,6 +208,7 @@ export const MapScreen = ({ navigation, route }) => {
     return (
       <>
         <ClusteredMap
+          onPress={Keyboard.dismiss}
           onLongPress={(event) => {
             if (!newPlaceSelectionMode) {
               setDefinedLocation(event.nativeEvent.coordinate);
@@ -221,8 +220,10 @@ export const MapScreen = ({ navigation, route }) => {
           }}
           ref={map}
           Places={Places}
+          setMarkers={setMarkers}
           setPressedAddress={setPressedAddress}
           setPressedAddressName={setPressedAddressName}
+          setCalibratedLocation={setCalibratedLocation}
           location={location}
           LATITUDE_DELTA={LATITUDE_DELTA}
           LONGITUDE_DELTA={LONGITUDE_DELTA}
@@ -280,7 +281,7 @@ export const MapScreen = ({ navigation, route }) => {
       </>
     );
   };
-  ///////길게 눌렀을 시 장소정보 가져오는 함수
+  //////새로운  장소정보 가져오는 함수
   useEffect(() => {
     const getAddress = () => {
       fetch(
@@ -324,7 +325,7 @@ export const MapScreen = ({ navigation, route }) => {
     setWriteMode(false);
   }, [route.params]);
 
-  //////////가볍게 눌렀을 시 장소정보 가져오는 함수
+  //////////정해진 장소정보 가져오는 함수
 
   useEffect(() => {
     const getDefinedAddress = () => {
@@ -356,7 +357,8 @@ export const MapScreen = ({ navigation, route }) => {
               break;
             }
           }
-        });
+        })
+        .catch((e) => setPressedAddressName("다른 장소를 눌러주세요"));
     };
 
     const getDefinedPlaceDetail = () => {
@@ -368,7 +370,8 @@ export const MapScreen = ({ navigation, route }) => {
           await setPressedAddress(responseJson.result.formatted_address);
           await setPressedAddressName(responseJson.result.name);
           console.log("b");
-        });
+        })
+        .catch((e) => setPressedAddressName("다른 장소를 눌러주세요"));
     };
     getDefinedAddress();
     getDefinedPlaceDetail();
@@ -377,30 +380,28 @@ export const MapScreen = ({ navigation, route }) => {
   }, [definedLocation, definedAddressID]);
 
   useEffect(() => {
-    setMarkers([
-      {
-        latitude: calibratedLocation.lat,
-        longitude: calibratedLocation.lng,
-      },
-    ]);
-  }, [calibratedLocation]);
-
-  useEffect(() => {
-    setMarkers([
-      {
-        latitude: pressedLocation.latitude,
-        longitude: pressedLocation.longitude,
-      },
-    ]);
-  }, [pressedLocation]);
+    if (!newPlaceSelectionMode) {
+      setMarkers([
+        {
+          latitude: calibratedLocation.lat,
+          longitude: calibratedLocation.lng,
+        },
+      ]);
+    } else {
+      setMarkers([
+        {
+          latitude: pressedLocation.latitude,
+          longitude: pressedLocation.longitude,
+        },
+      ]);
+    }
+  }, [calibratedLocation, pressedLocation, newPlaceSelectionMode]);
 
   const allCoords = drops.map((i) => ({
     geometry: {
       coordinates: [i.latitude, i.longitude],
     },
   }));
-
-  const [_, forceUpdate] = useReducer((x) => x + 1, 0);
 
   ///////////////////////////////////////////////////////////////////////////////////
   //////////////////////////맵그리는 것 여기서부터 시작//////////////////////////////
@@ -410,168 +411,224 @@ export const MapScreen = ({ navigation, route }) => {
     return <Loading />;
   } else {
     return (
-      <View>
-        <ExpoStatusBar style="auto" />
-        <SearchContainer>
-          {!isDetail ? (
-            <LinearGradient
-              colors={[
-                "rgba(166, 110, 159, 0.9)",
-                "rgba(166, 110, 159, 0.65)",
-                "rgba(166, 110, 159, 0.15)",
-                "rgba(166, 110, 159, 0.0)",
-              ]}
-              style={styles.background}
-              locations={[0.1, 0.45, 0.77, 1.0]}
-            >
-              {/* writeMode이지 않을 경우에 cloud */}
-              {!writeMode ? (
-                <TouchableOpacity
-                  onPress={() => {
-                    LoadedDrop(setDrops);
-                    forceUpdate;
-                  }}
-                >
-                  <Cloud navigation={navigation} region={currentRegion} />
-                </TouchableOpacity>
-              ) : null}
-            </LinearGradient>
-          ) : null}
-
-          {writeMode && (
-            <TextContainer>
-              <Text variant="hint">드롭을 남길 장소를 꾸욱 눌러주세요</Text>
-            </TextContainer>
-          )}
-        </SearchContainer>
-
-        <View
-          onStartShouldSetResponder={() => {
-            setDropViewMode(false);
-          }}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={styles3.container}
         >
-          {dropsList(drops)}
-        </View>
-
-        {!writeMode && !dropViewMode ? (
-          <>
-            <Container>
-              <WriteButton
-                style={{ opacity: 0.95 }}
-                onPress={() => {
-                  setWriteMode(true);
-                  setPressedLocation({
-                    latitude: location[0],
-                    longitude: location[1],
-                  });
-                  SetIsAddressLoading(false);
-                }}
-              >
-                <SvgXml xml={write} width={56} height={65} />
-              </WriteButton>
-
-              <ContainerEnd>
-                <CurrentLocationButton
-                  style={{ opacity: 0.95 }}
-                  onPress={() => {
-                    map.current.animateToRegion({
-                      // 현재위치 버튼
-                      latitude: location[0],
-                      longitude: location[1],
-                      latitudeDelta: LATITUDE_DELTA,
-                      longitudeDelta: LONGITUDE_DELTA,
-                    });
-                    setPressedLocation({
-                      latitude: location[0],
-                      longitude: location[1],
-                    });
-                  }}
+          <View>
+            <ExpoStatusBar style="auto" />
+            <SearchContainer>
+              {!isDetail ? (
+                <LinearGradient
+                  colors={[
+                    "rgba(166, 110, 159, 0.9)",
+                    "rgba(166, 110, 159, 0.65)",
+                    "rgba(166, 110, 159, 0.15)",
+                    "rgba(166, 110, 159, 0.0)",
+                  ]}
+                  style={styles.background}
+                  locations={[0.1, 0.45, 0.77, 1.0]}
                 >
-                  <SvgXml xml={currentLocation} width={50} height={50} />
-                </CurrentLocationButton>
-              </ContainerEnd>
-            </Container>
-          </>
-        ) : writeMode ? (
-          <>
-            <PlaceContainer>
-              <View
-                style={{
-                  bottom: 70,
-                  width: 50,
-                  height: 50,
-                  marginLeft: 5,
-                  Index: 5,
-                }}
-              >
-                <TouchableOpacity
-                  onPress={() => {
-                    setNewPlaceSelectioMode(true);
-                  }}
-                >
-                  <SvgXml xml={NewPlaceButton} width={50} height={50} />
-                </TouchableOpacity>
-              </View>
-              <PlaceContainer2>
-                <BackButtonContainer
-                  onPress={() => {
-                    setWriteMode(false);
-                  }}
-                >
-                  <SvgXml xml={backButton2} width={50} height={50} />
-                </BackButtonContainer>
-                <PlaceNameContainer>
-                  <PlaceNameContainer2>
-                    <Text style={styles.placename}>{pressedAddressName}</Text>
-                  </PlaceNameContainer2>
+                  {/* writeMode이지 않을 경우에 cloud */}
+                  {!writeMode ? (
+                    <TouchableOpacity
+                      onPress={() => {
+                        LoadedDrop(setDrops);
+                      }}
+                    >
+                      <Cloud navigation={navigation} region={currentRegion} />
+                    </TouchableOpacity>
+                  ) : null}
+                </LinearGradient>
+              ) : null}
 
-                  <Text style={styles.placeaddress}>{pressedAddress}</Text>
-                </PlaceNameContainer>
+              {writeMode && (
+                <TextContainer>
+                  <Text variant="hint">드롭을 남길 장소를 눌러주세요</Text>
+                </TextContainer>
+              )}
+            </SearchContainer>
 
-                <ContainerEnd2>
-                  <TouchableOpacity style={styles.Drops}>
-                    <SvgXml xml={Drops} width={22} height={30} />
-                  </TouchableOpacity>
-                  <Text style={styles.drop}>23개</Text>
-                </ContainerEnd2>
-              </PlaceContainer2>
+            <View
+              onStartShouldSetResponder={() => {
+                setDropViewMode(false);
+              }}
+            >
+              {dropsList(drops)}
+            </View>
 
-              <PlaceContainer3>
-                <SelectButtonContainer
-                  onPress={() => {
-                    navigation.navigate("WriteScreen", [
-                      { pressedAddress },
-                      { pressedAddressName },
-                      { pressedLocation },
-                      { calibratedLocation },
-                    ]);
-                  }}
-                >
-                  <SvgXml xml={selectButton} width={170} height={32} />
-                </SelectButtonContainer>
-              </PlaceContainer3>
-            </PlaceContainer>
-          </>
-        ) : dropViewMode ? (
-          <>
-            <TouchableWithoutFeedback onPress={() => {}}>
-              <SlideView isDetail={isDetail}>
-                <DropPreview
-                  pressedAddress={pressedAddress}
-                  pressedAddressName={pressedAddressName}
-                  dropContent={dropContent}
-                  pressedLocation={pressedLocation}
-                  navigation={navigation}
-                  drop={drop}
-                  dropTime={dropTime}
-                  isDetail={isDetail}
-                  setIsDetail={setIsDetail}
-                />
-              </SlideView>
-            </TouchableWithoutFeedback>
-          </>
-        ) : null}
-      </View>
+            {!writeMode && !dropViewMode ? (
+              <>
+                <Container>
+                  <WriteButton
+                    style={{ opacity: 0.95 }}
+                    onPress={() => {
+                      setWriteMode(true);
+                      setPressedLocation({
+                        latitude: location[0],
+                        longitude: location[1],
+                      });
+                      SetIsAddressLoading(false);
+                    }}
+                  >
+                    <SvgXml xml={write} width={56} height={65} />
+                  </WriteButton>
+
+                  <ContainerEnd>
+                    <CurrentLocationButton
+                      style={{ opacity: 0.95 }}
+                      onPress={() => {
+                        map.current.animateToRegion({
+                          // 현재위치 버튼
+                          latitude: location[0],
+                          longitude: location[1],
+                          latitudeDelta: LATITUDE_DELTA,
+                          longitudeDelta: LONGITUDE_DELTA,
+                        });
+                        setPressedLocation({
+                          latitude: location[0],
+                          longitude: location[1],
+                        });
+                      }}
+                    >
+                      <SvgXml xml={currentLocation} width={50} height={50} />
+                    </CurrentLocationButton>
+                  </ContainerEnd>
+                </Container>
+              </>
+            ) : writeMode ? (
+              <>
+                <PlaceContainer>
+                  <View
+                    style={{
+                      bottom: 70,
+                      width: 50,
+                      height: 50,
+                      marginLeft: 5,
+                      Index: 5,
+                    }}
+                  >
+                    {!newPlaceSelectionMode ? (
+                      <TouchableOpacity
+                        onPress={() => {
+                          setNewPlaceSelectioMode(true);
+                        }}
+                      >
+                        <SvgXml xml={PlacePlusIcon} width={40} height={40} />
+                      </TouchableOpacity>
+                    ) : (
+                      <TouchableOpacity
+                        onPress={() => {
+                          setNewPlaceSelectioMode(false);
+                        }}
+                      >
+                        <SvgXml xml={PlaceAddIcon} width={40} height={40} />
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                  <PlaceContainer2>
+                    <BackButtonContainer
+                      onPress={() => {
+                        setWriteMode(false);
+                      }}
+                    >
+                      <SvgXml xml={backButton2} width={50} height={50} />
+                    </BackButtonContainer>
+                    <PlaceNameContainer>
+                      {!newPlaceSelectionMode ? (
+                        <PlaceNameContainer2>
+                          <Text style={styles.placename}>
+                            {pressedAddressName}
+                          </Text>
+                        </PlaceNameContainer2>
+                      ) : (
+                        <PlaceNameContainer2>
+                          <View style={styles3.TextBack}>
+                            <TextInput
+                              style={styles3.enter}
+                              placeholder="새로운 장소"
+                              onChangeText={(content) =>
+                                setPressedAddressName(content)
+                              }
+                            ></TextInput>
+                          </View>
+                        </PlaceNameContainer2>
+                      )}
+
+                      <Text style={styles.placeaddress}>{pressedAddress}</Text>
+                    </PlaceNameContainer>
+
+                    <ContainerEnd2>
+                      <TouchableOpacity style={styles.Drops}>
+                        <SvgXml xml={Drops} width={22} height={30} />
+                      </TouchableOpacity>
+                      <Text style={styles.drop}>0개 </Text>
+                    </ContainerEnd2>
+                  </PlaceContainer2>
+
+                  <PlaceContainer3>
+                    <SelectButtonContainer
+                      onPress={() => {
+                        navigation.navigate("WriteScreen", [
+                          { pressedAddress },
+                          { pressedAddressName },
+                          { pressedLocation },
+                          { calibratedLocation },
+                        ]);
+                      }}
+                    >
+                      <SvgXml xml={selectButton} width={170} height={32} />
+                    </SelectButtonContainer>
+                  </PlaceContainer3>
+                </PlaceContainer>
+              </>
+            ) : dropViewMode ? (
+              <>
+                <TouchableWithoutFeedback onPress={() => {}}>
+                  <SlideView isDetail={isDetail}>
+                    <DropPreview
+                      pressedAddress={pressedAddress}
+                      pressedAddressName={pressedAddressName}
+                      dropContent={dropContent}
+                      pressedLocation={pressedLocation}
+                      navigation={navigation}
+                      drop={drop}
+                      dropTime={dropTime}
+                      isDetail={isDetail}
+                      setIsDetail={setIsDetail}
+                    />
+                  </SlideView>
+                </TouchableWithoutFeedback>
+              </>
+            ) : null}
+          </View>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     );
   }
 };
+
+const styles3 = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  enter: {
+    fontSize: 17,
+    fontWeight: "500",
+    color: "#9A9A9A",
+    marginLeft: 5,
+    textAlign: "center",
+  },
+  TextBack: {
+    width: 200,
+    left: -8,
+    top: 3,
+    height: 25,
+    padding: 5,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "flex-start",
+    backgroundColor: "#F4F4F4",
+  },
+});
