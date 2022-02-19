@@ -18,10 +18,12 @@ exports.signAccess = (userData) => { //AccessToken 발급
     );
 };
 
-exports.signRefresh = () => { //RefreshToken 발급
+exports.signRefresh = (userPk) => { //RefreshToken 발급
     
     return jwt.sign(
-        {},
+        {
+            pk:userPk
+        },
         process.env.JWT_SECRET_REFRESH_KEY,
         {
             algorithm:process.env.JWT_ALGORITHM,
