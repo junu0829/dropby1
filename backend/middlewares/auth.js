@@ -33,7 +33,7 @@ exports.signRefresh = (userPk) => { //RefreshToken 발급
 }
 exports.verifyAccess = (accessToken) => { //AccessToken 검증
     try {
-        verified = jwt.verify(accessToken, process.env.JWT_SECRET_ACCESS_KEY)
+        const verified = jwt.verify(accessToken, process.env.JWT_SECRET_ACCESS_KEY)
         return {
             success:true,
             message:'Token Verified',
@@ -51,21 +51,38 @@ exports.verifyAccess = (accessToken) => { //AccessToken 검증
     }
 }
 
-exports.verifyRefresh = async (refreshToken, userData) => { //RefreshToken 검증
+exports.verifyRefresh = async (refreshToken) => { //RefreshToken 검증
     try {
-        const userToken = await User.findOne({where:{pk:userData.pk}}).Refresh;
-        if (refreshToken === userToken) {
-            try {
-                jwt.verify(refreshToken, process.env.JWT_SECRET_REFRESH_KEY);
-                return true;
-            } catch(error) {
-                return false;
-            }
-        } else {
-            return false;
+        const verified = jwt.verify(refreshToken, process.env.JWT_SECRET_REFRESH_KEY);
+        const user = await User.findOne({where:{pk:verified.pk}});
+        console.log(user);
+        const userToken = user.dataValues.Refresh;
+        console.log('refreshToken', refreshToken);
+        console.log('userToken', userToken);
+
+        if (userToken === refreshToken) {
+            console.log('일치 조건 걸림')
+            return {
+                success:true,
+                message:'Token exists and verified',
+                userPk:verified.pk
+                }
         }
+        if (userToken !== refreshToken) {
+            console.log('불일치 조건 걸림');
+            return {
+                success:false,
+                message:'Token valid, but not found in DB',
+                userPk:verified.pk
+            }
+        }
+        console.log('조건 안 걸림');        
     } catch (error) {
-        return false;
+        return {
+            success:false,
+            message:'Token not verified',
+            userPk:null
+        };
     }
 };
 
@@ -78,7 +95,7 @@ exports.getAccess = ({authorization}) => {
         return error.message;
     }
 }
-exports.getUser = async (accessToken) => {
+exports.getUserWithAccess = async (accessToken) => {
     try {
         console.log('getUser', accessToken);
         verified = jwt.verify(accessToken, process.env.JWT_SECRET_ACCESS_KEY)
@@ -86,6 +103,17 @@ exports.getUser = async (accessToken) => {
         const user = await User.findOne({where:{pk:verified.pk}})
 
         return user.dataValues
+    } catch(error) {
+        return error.message;
+    }
+}
+
+exports.getUserWithRefresh = async (refreshToken) => {
+    try {
+        const verified = jwt.verify(refreshToken, process.env.JWT_SECRET_REFRESH_KEY);
+        const user = await User.findOne({where:{pk:verified.pk}})
+
+        return user.dataValues;
     } catch(error) {
         return error.message;
     }
