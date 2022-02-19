@@ -47,14 +47,14 @@ exports.tokenRefresh = async(req, res, next) => {
                 res.status(200).json({
                     message:'Access Token 신규 발급 성공',
                     status:refreshResult.status,
-                    tokens:refreshResult.token
+                    tokens:refreshResult.tokens
                 })
             } 
             if (refreshResult.success === false) {
                 res.status(400).json({
                     msg:'Access Token 신규 발급 실패',
                     status:refreshResult.status,
-                    tokens:refreshResult.token
+                    tokens:refreshResult.tokens
                 })
             }
     

@@ -56,7 +56,7 @@ module.exports = () => {
         new JWTStrategy({
             jwtFromRequest:ExtractJwt.fromAuthHeaderAsBearerToken(),
             secretOrKey:process.env.JWT_SECRET_ACCESS_KEY,
-            passReqToCallback:true,
+            passReqToCallback:false,
         }, JWTVerify)
     );
     //JWT Refresh Strategy
