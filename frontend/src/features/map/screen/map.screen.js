@@ -56,9 +56,9 @@ import { SlideView } from "../../../components/animations/slide.animation";
 import { SafeArea } from "../../../components/utility/safe-area.component";
 import { theme } from "../../../infrastructure/theme";
 import backButton2 from "../../../../assets/Buttons/backButton2";
-
+import { checkIfTokenExists }from '../../../components/utility/auth.js'
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { withoutAuthInstance } from "../../../components/utility/interceptors/index.js";
 export const MapScreen = ({ navigation, route }) => {
   ////////////////////////////처음 state들//////////////////////////////////////
   ///axios는 서버로부터 data json불러와주는 도구
@@ -191,6 +191,7 @@ export const MapScreen = ({ navigation, route }) => {
   useEffect(() => {
     const LoadDrop = async () => {
       console.log("loadDrops request sent");
+
       const accessToken = await AsyncStorage.getItem("accessToken");
       console.log(accessToken);
       console.log(`http://${LOCAL_HOST}:3000/drops`);

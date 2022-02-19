@@ -23,7 +23,7 @@ import sendingButton from "../../../../assets/Buttons/sendingButton";
 import bar from "../../../../assets/Background/bar";
 import addPicture from "../../../../assets/Buttons/addPicture";
 import LockButtonUnlocked from "../../../../assets/Buttons/LockButton(Unlocked)";
-
+import axiosInstance from "../../../components/utility/interceptors/index.js";
 import { container, styles } from "./writescreen.styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LOCAL_HOST from "../../local.js";
@@ -95,8 +95,7 @@ export const WriteScreen = ({ navigation, route }) => {
     if (checkIfTokenExists) {
       const accessToken = await AsyncStorage.getItem("accessToken");
 
-      await axios(`http://${LOCAL_HOST}:3000/drops`, {
-        method: "POST",
+      await axiosInstance.post(`http://${LOCAL_HOST}:3000/drops`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -107,6 +106,7 @@ export const WriteScreen = ({ navigation, route }) => {
         },
       })
         .then((res) => {
+          console.log('response got', res);
           console.log(`${res.data.data.content} 내용으로 ${res.data.msg}!`);
         })
         .catch((e) => console.log(e));
@@ -159,7 +159,7 @@ export const WriteScreen = ({ navigation, route }) => {
           <TouchableOpacity
             onPress={() => {
               PostWrite();
-              navigation.navigate("MapScreen", drop);
+              // navigation.navigate("MapScreen", drop);
             }}
           >
             <SvgXml
