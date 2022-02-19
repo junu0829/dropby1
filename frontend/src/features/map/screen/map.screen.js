@@ -5,6 +5,7 @@ import React, {
   useState,
   useRef,
   useMemo,
+  useCallback,
   useReducer,
 } from "react";
 import { useIsFocused } from "@react-navigation/native";
@@ -68,6 +69,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LoadedDrop } from "../../../services/drops/LoadedDrop.service";
 import axiosInstance from "../../../services/fetch";
 import NewPlaceButton from "../../../../assets/Buttons/NewPlaceButton";
+import axios from "axios";
+import { KakaoKey } from "../../../../APIkeys";
 
 export const MapScreen = ({ navigation, route }) => {
   ////////////////////////////처음 state들//////////////////////////////////////
@@ -115,6 +118,40 @@ export const MapScreen = ({ navigation, route }) => {
     latitudeDelta: LATITUDE_DELTA,
     longitudeDelta: LONGITUDE_DELTA,
   });
+
+  const [rectNW, setRectNW] = useState("1,1");
+  const [rectSE, setRectSE] = useState("0,0");
+  const [Places, setPlaces] = useState([]);
+
+  useEffect(() => {
+    const NWLat = currentRegion.latitude + currentRegion.latitudeDelta;
+    const NWLng = currentRegion.longitude + currentRegion.longitudeDelta;
+    const SELat = currentRegion.latitude - currentRegion.latitudeDelta;
+    const SELng = currentRegion.longitude - currentRegion.longitudeDelta;
+    setRectNW(`${NWLng},${NWLat}`);
+    setRectSE(`${SELng},${SELat}`);
+    LoadPlaces();
+  }, [currentRegion, writeMode]);
+
+  const LoadPlaces = useCallback(() => {
+    axios
+      .get(
+        `https://dapi.kakao.com/v2/local/search/category.json?category_group_code=CE7&rect=${rectNW},${rectSE}`,
+        {
+          headers: {
+            Accept: "application/json",
+            Authorization: `KakaoAK ${KakaoKey}`,
+          },
+        }
+      )
+      .then((res) => {
+        setPlaces(res.data.documents);
+
+        console.log("카페 불러옴");
+      })
+      .catch((error) => console.log("error = " + error));
+  }, [rectNW, rectSE]);
+
   const [drop, setDrop] = useState(null);
 
   const [dropTime, setDropTime] = useState(null);
@@ -130,8 +167,6 @@ export const MapScreen = ({ navigation, route }) => {
       updatedAt: "2022-01-29T04:55:47.472Z",
     },
   ]);
-
-  const [dropState, dispatch] = useReducer(reducer, initialState);
 
   const [definedLocation, setDefinedLocation] = useState({
     latitude: 37.58646601781994,
@@ -185,6 +220,9 @@ export const MapScreen = ({ navigation, route }) => {
             }
           }}
           ref={map}
+          Places={Places}
+          setPressedAddress={setPressedAddress}
+          setPressedAddressName={setPressedAddressName}
           location={location}
           LATITUDE_DELTA={LATITUDE_DELTA}
           LONGITUDE_DELTA={LONGITUDE_DELTA}

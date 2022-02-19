@@ -11,6 +11,8 @@ import { MapClusteringProps } from "./ClusteredMapViewTypes";
 
 import SuperCluster from "supercluster";
 import ClusterMarker from "./ClusteredMarker";
+import PlaceIcons from "../../../../../assets/PlaceIcons";
+import { TouchableOpacity, View } from "react-native";
 
 export const ClusteredMap = forwardRef<MapClusteringProps & MapViewProps, any>(
   (
@@ -22,7 +24,7 @@ export const ClusteredMap = forwardRef<MapClusteringProps & MapViewProps, any>(
       location = {},
       LATITUDE_DELTA = {},
       LONGITUDE_DELTA = {},
-
+      Places = {},
       writeMode = {},
       isAddressLoading = {},
       Markers = {},
@@ -43,12 +45,14 @@ export const ClusteredMap = forwardRef<MapClusteringProps & MapViewProps, any>(
       tracksViewChanges,
       spiralEnabled,
       superClusterRef,
+      setPressedAddress,
+      setPressedAddressName,
       ...restProps
     },
     ref
   ) => {
     const [markers, updateMarkers] = useState([]);
-
+    const [isPressed, setIsPressed] = useState(null);
     const mapRef = useRef();
     // const [currentRegion, updateRegion] = useState(
     //   restProps.region || restProps.initialRegion
@@ -326,6 +330,41 @@ export const ClusteredMap = forwardRef<MapClusteringProps & MapViewProps, any>(
                       <SvgXml xml={LocationSelected} width={33.5} height={45} />
                     </ExpandView>
                   </FadeInViewFaster>
+                </Marker>
+              );
+            })
+          : null}
+        {writeMode && !isAddressLoading && !newPlaceSelectionMode
+          ? Places.map((Place) => {
+              return (
+                <Marker
+                  style={{ zIndex: 999 }}
+                  //장소선택 마커의 위치
+
+                  coordinate={{
+                    latitude: parseFloat(Place.y),
+                    longitude: parseFloat(Place.x),
+                  }}
+                  onPress={() => {
+                    setIsPressed(Place);
+                    console.log(isPressed);
+                    setPressedAddressName(Place.place_name);
+                    setPressedAddress(Place.road_address_name);
+                  }}
+                >
+                  {Place == isPressed ? (
+                    <FadeInViewFaster>
+                      <ExpandView>
+                        <SvgXml xml={PlaceIcons} width={20} height={20} />
+                      </ExpandView>
+                    </FadeInViewFaster>
+                  ) : (
+                    <FadeInViewFaster>
+                      <ExpandView>
+                        <SvgXml xml={PlaceIcons} width={10} height={10} />
+                      </ExpandView>
+                    </FadeInViewFaster>
+                  )}
                 </Marker>
               );
             })
