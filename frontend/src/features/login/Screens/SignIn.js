@@ -12,11 +12,7 @@ import { TextInput } from "react-native-gesture-handler";
 import SignInButton from "../../../../assets/Buttons/SignInButton";
 import AreYouStartingButton from "../../../../assets/Buttons/AreYouStartingButton";
 import FindingPWButton from "../../../../assets/Buttons/FindingPWButton";
-import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
-import LOCAL_HOST from "../../local.js";
-
+import { signIn } from '../../../components/utility/auth.js'
 export const SignInScreen = ({ navigation }) => {
   const [isChecked, setChecked] = useState(false);
 
@@ -31,33 +27,6 @@ export const SignInScreen = ({ navigation }) => {
     setEmail(e);
   };
 
-  const signIn = async () => {
-    const response = await axios(`http://${LOCAL_HOST}:3000/auth/login`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      data: {
-        email,
-        password,
-      },
-    })
-      .then((res) => {
-        const accessToken = res.data.data.tokens.access;
-        const refreshToken = res.data.data.tokens.refresh;
-        const nickname = res.data.data.userData.nickname;
-        AsyncStorage.setItem("accessToken", accessToken);
-        AsyncStorage.setItem("refreshToken", refreshToken);
-        AsyncStorage.setItem("nickname", nickname);
-        console.log("tokens saved in asyncstorage");
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
-
-    return response;
-  };
   return (
     <>
       <LinearGradient
@@ -126,8 +95,7 @@ export const SignInScreen = ({ navigation }) => {
           <TouchableOpacity
             style={{ marginTop: 50 }}
             onPress={() => {
-              signIn();
-              navigation.navigate("MapScreen");
+              signIn(email, password, () => navigation.navigate("MapScreen"));
             }}
           >
             <SvgXml xml={SignInButton} width={320} height={43} />

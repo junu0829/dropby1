@@ -7,12 +7,16 @@ require('dotenv').config();
 const {signAccess, signRefresh, verifyAccess, verifyRefresh} = require('../middlewares/auth');
 
 exports.signUp = async ({nickname, email, password}) => {
+    console.log('services #1');
+    console.log('services ######################');
+    let context = {'user':null, 'msg':''};
     try {
-        const userExists = await User.findOne({where:{email}})
+        const userExists = await User.findOne({where:{email}}) //없으면 null 반환
         console.log(userExists)
         if (userExists) {
+            context['msg'] = '이미 사용 중인 이메일입니다!'
             console.log('이미 사용 중인 이메일입니다!');
-            return false;
+            return context;
         } else {
             const salt = await bcrypt.genSalt(10);
             const hashed_pw = await bcrypt.hash(password, salt);
@@ -20,20 +24,21 @@ exports.signUp = async ({nickname, email, password}) => {
                 nickname,
                 email,
                 password:hashed_pw
-    });
-        return user;
+            });
+            context['user'] = user;
+            return context;
         }
 
     } catch(error) {
         console.log(error);
-        return error;
-        
+        context['msg'] = 'catch' + error.message;
+        return context;  
     }
 };
 
 exports.logIn = async({email, password}) => {
     const user = await User.findOne({where:{email}})
-    userData = user.dataValues;
+    const userData = user.dataValues;
 
     const accessToken = signAccess(userData);
     const refreshToken = signRefresh();
@@ -46,6 +51,7 @@ exports.logIn = async({email, password}) => {
     user.save();
     return {userData, tokens};
 }
+    
 
 exports.tokenRefresh = async (accessToken, refreshToken) => {
     const authResult = verifyAccess(accessToken);

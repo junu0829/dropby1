@@ -1,28 +1,22 @@
-const express = require('express');
-const passport = require('passport');
-const router = express.Router();
 const authServices = require('../services/authServices');
-const jwt = require('jsonwebtoken');
-const {createBlackList} = require('jwt-blacklist');
 
 exports.signUp = async(req, res, next) => {
     try {
-        const newUser = await authServices.signUp(req.body);
-        console.log('back to controller', newUser);
-        if (newUser) {
+        console.log('signup #1');
+        const context = await authServices.signUp(req.body);
+        if (context['user']) {
             next(); //router에서 다음 -> 로그인 로직으로.
         } else {
             res.status(409).json({
-                msg:'이미 존재하는 이메일입니다.'
-            })
+                msg:context['msg']
+            });
         }
     } catch (error) {
         console.log(error);
         res.status(400).json({
-            msg: '회원가입 실패'
-        })
+            msg:context['msg']
+        });
     }
-
 };
 
 exports.logIn = async(req, res, next) => {
