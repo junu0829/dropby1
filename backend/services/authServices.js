@@ -53,9 +53,9 @@ exports.tokenRefresh = async (accessToken, refreshToken) => {
 
     if (accessResult.userData) { //accessToken이 만료되지 않음. 
         return {
-            'success':false,
-            'status':'Access Token not expired',
-            'token':{
+            success:false,
+            status:'Access Token not expired',
+            tokens:{
                 'access':accessToken,
                 'refresh':refreshToken
             }
@@ -102,25 +102,25 @@ exports.logOut = async({authorization, refresh}) => {
             user.save()
     
             return {
-                'success':true,
-                'userData':user,
-                'message':'Refresh Token removed'
+                success:true,
+                userData:user,
+                message:'LoRefresh Token removed'
             }
 
         } else {
             return {
-                'success':false,
-                'userData':null,
-                'message':'User not found'
+                success:false,
+                userData:null,
+                message:'User not found'
             }
         }
 
     } catch(error) {
         console.log(error);
         return {
-            'success':false,
-            'userData':null,
-            'message':error.message
+            success:false,
+            userData:null,
+            message:error.message
         }
 
     }
