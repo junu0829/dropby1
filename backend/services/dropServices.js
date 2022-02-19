@@ -1,11 +1,11 @@
 const { Drop } = require("../models");
 
 
-const { getUser } = require("../middlewares/auth");
+const { getUserWithAccess } = require("../middlewares/auth");
 
 
 exports.newDrop = async (accessToken, body) => {
-  const user = await getUser(accessToken);
+  const user = await getUserWithAccess(accessToken);
   const { content, latitude, longitude } = body;
 
 
