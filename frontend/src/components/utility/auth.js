@@ -16,7 +16,7 @@ export const saveToken = (tokens) => {
     AsyncStorage.setItem("refreshToken", tokens.refresh);
 }
 
-export const signIn = async (email, password) => {
+export const signIn = async (email, password, callback) => {
     console.log(`signIn request sent to http://${LOCAL_HOST}:3000/auth/login`);
     const response = await axios(`http://${LOCAL_HOST}:3000/auth/login`, {
         method: "POST",
@@ -32,6 +32,7 @@ export const signIn = async (email, password) => {
         .then((res) => {
             saveToken(res.data.data.tokens);
             console.log("tokens saved in asyncstorage");
+            callback();
         })
         .catch((error) => {
             Alert.alert('이메일과 비밀번호를 확인해 주세요!');
@@ -40,7 +41,7 @@ export const signIn = async (email, password) => {
     return response;
 };
 
-export const signUp = async (nickname, email, password) => {
+export const signUp = async (nickname, email, password, callback) => {
     if (nickname.length < 2) {
         Alert.alert('닉네임을 두 글자 이상 입력해 주세요!');
         return;
@@ -70,6 +71,7 @@ export const signUp = async (nickname, email, password) => {
         .then((res) => {
             saveToken(res.data.data.tokens);
             console.log("tokens saved in asyncstorage");
+            callback();
         })
         .catch((error) => {
             Alert.alert(error.response.data.msg);
