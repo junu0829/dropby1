@@ -21,9 +21,7 @@ exports.signAccess = (userData) => { //AccessToken 발급
 exports.signRefresh = (userPk) => { //RefreshToken 발급
     
     return jwt.sign(
-        {
-            pk:userPk
-        },
+        {pk:userPk},
         process.env.JWT_SECRET_REFRESH_KEY,
         {
             algorithm:process.env.JWT_ALGORITHM,
@@ -55,35 +53,29 @@ exports.verifyRefresh = async (refreshToken) => { //RefreshToken 검증
     try {
         const verified = jwt.verify(refreshToken, process.env.JWT_SECRET_REFRESH_KEY);
         const user = await User.findOne({where:{pk:verified.pk}});
-        console.log(user);
         const userToken = user.dataValues.Refresh;
-        console.log('refreshToken', refreshToken);
-        console.log('userToken', userToken);
 
         if (userToken === refreshToken) {
-            console.log('일치 조건 걸림')
             return {
                 success:true,
                 message:'Token exists and verified',
                 userPk:verified.pk
-                }
-        }
+                };
+        };
         if (userToken !== refreshToken) {
-            console.log('불일치 조건 걸림');
             return {
                 success:false,
                 message:'Token valid, but not found in DB',
                 userPk:verified.pk
-            }
-        }
-        console.log('조건 안 걸림');        
+            };
+        };  
     } catch (error) {
         return {
             success:false,
             message:'Token not verified',
             userPk:null
         };
-    }
+    };
 };
 
 exports.getAccess = ({authorization}) => {
@@ -95,11 +87,10 @@ exports.getAccess = ({authorization}) => {
         return error.message;
     }
 }
+
 exports.getUserWithAccess = async (accessToken) => {
     try {
-        console.log('getUser', accessToken);
-        verified = jwt.verify(accessToken, process.env.JWT_SECRET_ACCESS_KEY)
-        console.log('getuser verified', verified);
+        const verified = jwt.verify(accessToken, process.env.JWT_SECRET_ACCESS_KEY)
         const user = await User.findOne({where:{pk:verified.pk}})
 
         return user.dataValues
