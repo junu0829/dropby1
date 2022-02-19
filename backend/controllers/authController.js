@@ -42,12 +42,12 @@ exports.tokenRefresh = async(req, res, next) => {
         console.log('authorization', req.headers.authorization);
         console.log('refresh', req.headers.refresh)
         if (req.headers.authorization && req.headers.refresh) {
-
+            console.log('조건문 통과');
             const accessToken = req.headers.authorization.split('Bearer ')[1];
             const refreshToken = req.headers.refresh;
-    
+
             const refreshResult = await authServices.tokenRefresh(accessToken, refreshToken); //success, status, token을 받아 옴.
-    
+            console.log('refreshResult', refreshResult);
             if (refreshResult.success) {
                 res.status(200).json({
                     message:'Access Token 신규 발급 성공',
