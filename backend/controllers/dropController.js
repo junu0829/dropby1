@@ -7,7 +7,7 @@ exports.newDrop = async (req, res, next) => {
     try {
         const accessToken = getAccess(req.headers);
         const drop = await dropServices.newDrop(accessToken, req.body);
-        res.json({
+        res.status(201).json({
             msg:'드롭 생성 완료',
             data:drop
         });
@@ -22,7 +22,7 @@ exports.getDrops = async (req, res, next) => {
     try {
         const drops = await dropServices.getDrops();
         console.log('drops sent');
-        res.json({
+        res.status(200).json({
             msg: '전체 드롭 조회 완료',
             data:drops
         })
@@ -37,7 +37,7 @@ exports.updateDrop = async (req, res, next) => {
         console.log(dropPk);
         console.log(req.user);
         const updatedDrop = await dropServices.updateDrop(req.body, dropPk);
-        res.json({
+        res.status(200).json({
             msg:'드롭 내용 수정 완료',
             data:updatedDrop
         })
@@ -50,7 +50,7 @@ exports.deleteDrop = async (req, res, next) => {
     try {
         const dropPk = req.params.pk;
         const dropDeleted = await dropServices.deleteDrop(dropPk);
-        res.json({
+        res.status(204).json({
             msg:'드롭 삭제 완료',
             data:null
         })
