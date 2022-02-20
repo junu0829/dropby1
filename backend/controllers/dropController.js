@@ -33,8 +33,10 @@ exports.getDrops = async (req, res, next) => {
 
 exports.updateDrop = async (req, res, next) => {
     try {
+        const dropPk = req.params.pk;
+        console.log(dropPk);
         console.log(req.user);
-        const updatedDrop = await dropServices.updateDrop();
+        const updatedDrop = await dropServices.updateDrop(req.body, dropPk);
         res.json({
             msg:'드롭 내용 수정 완료',
             data:updatedDrop
@@ -46,7 +48,8 @@ exports.updateDrop = async (req, res, next) => {
 
 exports.deleteDrop = async (req, res, next) => {
     try {
-        const dropDeleted = await dropServices.deleteDrop();
+        const dropPk = req.params.pk;
+        const dropDeleted = await dropServices.deleteDrop(dropPk);
         res.json({
             msg:'드롭 삭제 완료',
             data:null
