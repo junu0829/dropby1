@@ -23,7 +23,7 @@ import sendingButton from "../../../../assets/Buttons/sendingButton";
 import bar from "../../../../assets/Background/bar";
 import addPicture from "../../../../assets/Buttons/addPicture";
 import LockButtonUnlocked from "../../../../assets/Buttons/LockButton(Unlocked)";
-import axiosInstance from "../../../components/utility/interceptors/index.js";
+import {noAuthInstance} from "../../../components/utility/interceptors/index.js";
 import { container, styles } from "./writescreen.styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LOCAL_HOST from "../../local.js";
@@ -95,7 +95,7 @@ export const WriteScreen = ({ navigation, route }) => {
     if (checkIfTokenExists) {
       const accessToken = await AsyncStorage.getItem("accessToken");
 
-      await axiosInstance.post(`http://${LOCAL_HOST}:3000/drops`, {
+      await noAuthInstance.post(`http://${LOCAL_HOST}:3000/drops`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
