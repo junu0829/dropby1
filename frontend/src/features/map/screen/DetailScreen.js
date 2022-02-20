@@ -17,47 +17,14 @@ import HeartIcon from "../../../../assets/HeartIcon";
 import emptyHeart from "../../../../assets/emptyHeart";
 import LikeButton from "../../../../assets/LikeButton";
 import sendingAirplane from "../../../../assets/sendingAirplane";
+import { theme } from "../../../infrastructure/theme";
 
 export const DetailScreen = () => {
   return (
     <View style={styles.container}>
       <StatusBar style="black" />
 
-      <View style={styles.containerTop}>
-        <View style={styles.textContainer}>
-          <Text style={styles.place}>고려대학교 인촌기념관</Text>
-          <Text style={styles.address}>서울 성북구 안암로 145,Seoul,Korea</Text>
-        </View>
-
-        <View style={styles.editContainer}>
-          <TouchableOpacity>
-            <SvgXml
-              xml={edit}
-              width={6}
-              height={20}
-              style={styles.edit}
-            ></SvgXml>
-          </TouchableOpacity>
-        </View>
-      </View>
-
       <View style={styles.dropContainer}>
-        <View style={styles.contentContainer}>
-          <SvgXml
-            xml={dropIcon}
-            width={47}
-            height={69}
-            style={styles.dropIcon}
-          ></SvgXml>
-          <View style={styles.writingContainer}>
-            <View style={styles.timeContainer}>
-              <Text style={styles.time}>57분</Text>
-            </View>
-            <Text style={styles.content}>오늘 날씨 좋다!!</Text>
-            <Text style={styles.hashtag}>#행복</Text>
-          </View>
-        </View>
-
         <ScrollView horizontal={true} style={styles.imageContainer}>
           <View style={styles.pictureInput}></View>
           <View style={styles.pictureInput}></View>
@@ -199,7 +166,8 @@ export const DetailScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "white",
+    backgroundColor: theme.colors.bg.white,
+    alignItems: "center",
   },
 
   containerTop: {

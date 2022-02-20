@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, ImageBackground, TouchableOpacity } from "react-native";
 
 import { ContainerStart, ContainerEnd4 } from "../map.screen.styles";
@@ -8,8 +8,9 @@ import FeedTransitionButton from "../../../../../assets/Buttons/FeedTransitionBu
 import searchButton from "../../../../../assets/Buttons/searchButton";
 import { SvgXml } from "react-native-svg";
 import { Text } from "../../../../components/typography/text.component";
+import { LoadedDrop } from "../../../../services/drops/LoadedDrop.service";
 
-export const Cloud = ({ navigation, region, refresh }) => {
+export const Cloud = ({ navigation, region }) => {
   return (
     <>
       <View>
@@ -49,15 +50,14 @@ export const Cloud = ({ navigation, region, refresh }) => {
                 justifyContent: "center",
               }}
             >
-              <TouchableOpacity
+              <View
                 style={{
                   marginTop: 63,
                   zIndex: 999,
                 }}
-                onPress={() => refresh()}
               >
                 <Text variant="bold">탭해서 새로고침</Text>
-              </TouchableOpacity>
+              </View>
             </View>
             <ContainerEnd4>
               <TouchableOpacity

@@ -1,17 +1,11 @@
 import React, { useState, useEffect } from "react";
 
-import * as Location from "expo-location";
 
-export const LocationContext = React.createContext();
+
+export const DropDataContext = React.createContext();
 
 export const LocationContextProvider = ({ children }) => {
-  const [location, setLocation] = useState(
-    [0, 0]
-    // 37.58646601781994,127.02913699768948
-  );
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorMsg, setErrorMsg] = useState(null);
-
+  const Data
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();

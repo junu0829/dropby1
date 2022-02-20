@@ -11,21 +11,26 @@ import { MapClusteringProps } from "./ClusteredMapViewTypes";
 
 import SuperCluster from "supercluster";
 import ClusterMarker from "./ClusteredMarker";
+import PlaceIcons from "../../../../../assets/PlaceIcons";
+import { TouchableOpacity, View } from "react-native";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 export const ClusteredMap = forwardRef<MapClusteringProps & MapViewProps, any>(
   (
     {
+      newPlaceSelectionMode = {},
       children,
       region = {},
       updateRegion,
       location = {},
       LATITUDE_DELTA = {},
       LONGITUDE_DELTA = {},
-
+      Places = {},
       writeMode = {},
       isAddressLoading = {},
       Markers = {},
-
+      setCalibratedLocation,
+      setMarkers,
       radius,
       maxZoom,
       minZoom,
@@ -42,12 +47,14 @@ export const ClusteredMap = forwardRef<MapClusteringProps & MapViewProps, any>(
       tracksViewChanges,
       spiralEnabled,
       superClusterRef,
+      setPressedAddress,
+      setPressedAddressName,
       ...restProps
     },
     ref
   ) => {
     const [markers, updateMarkers] = useState([]);
-
+    const [isPressed, setIsPressed] = useState(null);
     const mapRef = useRef();
     // const [currentRegion, updateRegion] = useState(
     //   restProps.region || restProps.initialRegion
@@ -269,6 +276,9 @@ export const ClusteredMap = forwardRef<MapClusteringProps & MapViewProps, any>(
 
     return (
       <Map
+        onLongPress={() => {
+          setIsPressed(null);
+        }}
         {...restProps}
         ref={(map) => {
           mapRef.current = map;
@@ -322,9 +332,51 @@ export const ClusteredMap = forwardRef<MapClusteringProps & MapViewProps, any>(
                 >
                   <FadeInViewFaster>
                     <ExpandView>
-                      <SvgXml xml={LocationSelected} width={33.5} height={45} />
+                      <SvgXml xml={LocationSelected} width={33.5} height={54} />
                     </ExpandView>
                   </FadeInViewFaster>
+                </Marker>
+              );
+            })
+          : null}
+        {writeMode && !isAddressLoading && !newPlaceSelectionMode
+          ? Places.map((Place) => {
+              return (
+                <Marker
+                  style={{ zIndex: 1 }}
+                  //장소선택 마커의 위치
+
+                  coordinate={{
+                    latitude: parseFloat(Place.y),
+                    longitude: parseFloat(Place.x),
+                  }}
+                  onPress={() => {
+                    setIsPressed(Place);
+                    console.log(isPressed);
+                    setPressedAddressName(Place.place_name);
+                    setPressedAddress(Place.road_address_name);
+                    setMarkers([]);
+                    setCalibratedLocation({
+                      lat: parseFloat(Place.y),
+                      lng: parseFloat(Place.x),
+                    });
+                  }}
+                >
+                  {Place == isPressed ? (
+                    <FadeInViewFaster>
+                      <ExpandView>
+                        <SvgXml xml={PlaceIcons} width={1} height={1} />
+                      </ExpandView>
+                    </FadeInViewFaster>
+                  ) : (
+                    <TouchableOpacity>
+                      <FadeInViewFaster>
+                        <ExpandView>
+                          <SvgXml xml={PlaceIcons} width={11} height={11} />
+                        </ExpandView>
+                      </FadeInViewFaster>
+                    </TouchableOpacity>
+                  )}
                 </Marker>
               );
             })
