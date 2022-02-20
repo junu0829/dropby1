@@ -12,7 +12,12 @@ import { TextInput } from "react-native-gesture-handler";
 import SignInButton from "../../../../assets/Buttons/SignInButton";
 import AreYouStartingButton from "../../../../assets/Buttons/AreYouStartingButton";
 import FindingPWButton from "../../../../assets/Buttons/FindingPWButton";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axiosInstance from "../../../services/fetch";
 import { signIn } from '../../../components/utility/auth.js'
+import LOCAL_HOST from "../../local.js";
+
 export const SignInScreen = ({ navigation }) => {
   const [isChecked, setChecked] = useState(false);
 

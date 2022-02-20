@@ -58,7 +58,7 @@ import { theme } from "../../../infrastructure/theme";
 import backButton2 from "../../../../assets/Buttons/backButton2";
 import { checkIfTokenExists }from '../../../components/utility/auth.js'
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { withoutAuthInstance } from "../../../components/utility/interceptors/index.js";
+
 export const MapScreen = ({ navigation, route }) => {
   ////////////////////////////처음 state들//////////////////////////////////////
   ///axios는 서버로부터 data json불러와주는 도구
