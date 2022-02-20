@@ -24,3 +24,30 @@ exports.getDrops = async () => {
   const drops = await Drop.findAll({});
   return drops;
 };
+
+exports.updateDrop = async ({content}, dropPk) => {
+  const drop = await Drop.findOne({
+    where:{
+      pk:dropPk
+    }
+  });
+
+  drop.content = content;
+  await drop.save();
+
+  return drop;
+
+}
+
+exports.deleteDrop = async (dropPk) => {
+  const drop = await Drop.findOne({
+    where:{
+      pk:dropPk
+    }
+  });
+
+  await drop.destroy();
+
+  return true;
+
+}
