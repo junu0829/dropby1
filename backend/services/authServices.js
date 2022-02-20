@@ -1,18 +1,17 @@
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const passport = require('passport');
 const {User} = require('../models');
-const {createBlackList} = require('jwt-blacklist')
 require('dotenv').config();
-const {signAccess, signRefresh, verifyAccess, verifyRefresh} = require('../middlewares/auth');
+const {signAccess, signRefresh, verifyAccess, verifyRefresh, getUserWithRefresh} = require('../middlewares/auth');
 
 exports.signUp = async ({nickname, email, password}) => {
+    let context = {'user':null, 'msg':''};
     try {
-        const userExists = await User.findOne({where:{email}})
-        console.log(userExists)
+        const userExists = await User.findOne({where:{email}}) //없으면 null 반환
+
         if (userExists) {
+            context['msg'] = '이미 사용 중인 이메일입니다!'
             console.log('이미 사용 중인 이메일입니다!');
-            return false;
+            return context;
         } else {
             const salt = await bcrypt.genSalt(10);
             const hashed_pw = await bcrypt.hash(password, salt);
@@ -20,72 +19,71 @@ exports.signUp = async ({nickname, email, password}) => {
                 nickname,
                 email,
                 password:hashed_pw
-    });
-        return user;
+            });
+            context['user'] = user;
+            return context;
         }
 
     } catch(error) {
         console.log(error);
-        return error;
-        
+        context['msg'] = 'catch' + error.message;
+        return context;  
     }
 };
 
 exports.logIn = async({email, password}) => {
     const user = await User.findOne({where:{email}})
-    userData = user.dataValues;
+    const userData = user.dataValues;
 
     const accessToken = signAccess(userData);
-    const refreshToken = signRefresh();
+    const refreshToken = signRefresh(userData.pk);
 
     const tokens = {
-        'access':accessToken,
-        'refresh':refreshToken,
+        access:accessToken,
+        refresh:refreshToken,
     };
     user.Refresh = refreshToken;
     user.save();
     return {userData, tokens};
 }
+    
 
 exports.tokenRefresh = async (accessToken, refreshToken) => {
-    const authResult = verifyAccess(accessToken);
+    const accessResult = verifyAccess(accessToken); //만료되지 않아야만 userData 반환함.
 
-    if (authResult.userData === null) { //verify된 데이터가 없음.
+    if (accessResult.userData) { //accessToken이 만료되지 않음. 
         return {
-            'success':false,
-            'status':'no verified data',
-            'token':null
-        };
-    } else {
-        const refreshResult = verifyRefresh(refreshToken)
-
-        if (authResult.success === false && authResult.message === 'jwt expired') {
-            if (refreshResult === false) { //accessToken과 refreshToken이 모두 유효하지 않음 -> 재로그인해야 함.
-                return {
-                    'success':false,
-                    'status':'no token valid. re-login required',
-                    'token':null
-                }
-
-            } else { //accessToken은 유효하지 않으나 refreshToken이 유효함. == 새 access 발급.
-
-                const newAccess = signAccess(authResult);
-                return {
-                    'success':true,
-                    'status':'Access Token granted',
-                    'token':{
-                        'access':newAccess,
-                        'refresh':refreshToken
-                    }
-                }
+            success:false,
+            status:'Access Token not expired',
+            tokens:{
+                'access':accessToken,
+                'refresh':refreshToken
             }
-        } else { //accessToken이 만료되지 않음
+        }
+    }
+    //accessToken이 만료됨
+    if (accessResult.success === false && accessResult.message === 'jwt expired') { //accessToken은 만료되었고
+        const refreshResult = await verifyRefresh(refreshToken); 
+        if (refreshResult.success === false) { //refreshToken도 유효하지 않음.
             return {
-                'success':false,
-                'status':'Access Token not expired',
-                'token':{
-                    'access':accessToken,
-                    'refresh':refreshToken
+                success:false,
+                status:'No token valid. Re-login required.',
+                tokens:null
+            }
+        }
+
+        if (refreshResult.success === true) { //refreshToken은 유효함 == 새 accessToken 발급
+            const userData = await getUserWithRefresh(refreshToken);
+            const newAccess = signAccess({
+                pk:userData.pk,
+                email:userData.email
+            });
+            return {
+                success:true,
+                status:'New Access Token granted',
+                tokens:{
+                    access:newAccess,
+                    refresh:refreshToken
                 }
             }
         }
@@ -93,52 +91,38 @@ exports.tokenRefresh = async (accessToken, refreshToken) => {
 }
 
 exports.logOut = async({authorization, refresh}) => {
-    const accessToken = authorization.split('Bearer ')[1];
-    const authResult = verifyAccess(accessToken);
+    const refreshToken = refresh;
+    const refreshResult = await verifyRefresh(refreshToken);
     try {
-        console.log(authResult);
-        const user = await User.findOne({where:{email:authResult.userData.email}});
-        console.log(user);
+        const user = await User.findOne({where:{pk:refreshResult.userPk}});
         if (user) {
             user.Refresh = null;
             user.save()
     
             return {
-                'success':true,
-                'userData':user,
-                'message':'Refresh Token removed'
+                success:true,
+                userData:user,
+                message:'LogOut Success(Refresh Token removed)'
             }
 
-        } else {
+        } 
+        if (!user) {
             return {
-                'success':false,
-                'userData':null,
-                'message':'User not found'
+                success:false,
+                userData:null,
+                message:'User not found'
             }
         }
 
     } catch(error) {
         console.log(error);
         return {
-            'success':false,
-            'userData':null,
-            'message':error.message
+            success:false,
+            userData:null,
+            message:error.message
         }
 
     }
 
 }
 
-// const blacklist = await createBlackList();
-// console.log(blacklist);
-// const blacklisted= await blacklist.add(refreshToken);
-// if (blacklisted) {
-//     return {
-//         'success':true,
-//         'msg':'Token blacklisted'}
-// } else {
-//     return {
-//         'success':false,
-//         'msg':'Token blacklist failed'
-//     }
-// }

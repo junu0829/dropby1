@@ -23,17 +23,17 @@ import sendingButton from "../../../../assets/Buttons/sendingButton";
 import bar from "../../../../assets/Background/bar";
 import addPicture from "../../../../assets/Buttons/addPicture";
 import LockButtonUnlocked from "../../../../assets/Buttons/LockButton(Unlocked)";
-
+import {noAuth} from "../../../components/utility/interceptors/index.js";
 import { container, styles } from "./writescreen.styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LOCAL_HOST from "../../local.js";
-
+import {checkIfTokenExists} from '../../../components/utility/auth.js'
 export const WriteScreen = ({ navigation, route }) => {
   const getToken = async () => AsyncStorage.getItem("accessToken");
 
   const [placeName, setPlaceName] = useState("새로운 장소");
   const [placeAddress, setPlaceAddress] = useState("새로운 장소-주소");
-  const [placeLatlng, setPlaceLatlng] = useState({});
+  const [placeLatlng, setPlaceLatlng] = useState([0, 0]);
   const [selectedEmoji, setSelectedEmoji] = useState("😀");
 
   /////////////////////로컬 이미지 여기에 담김
@@ -44,30 +44,20 @@ export const WriteScreen = ({ navigation, route }) => {
   useEffect(() => {
     setPlaceAddress(route.params[0].pressedAddress);
     setPlaceName(route.params[1].pressedAddressName);
-    if (route.params[3].calibratedLocation) {
-      setPlaceLatlng(route.params[3].calibratedLocation);
-      handleLatitude(placeLatlng.lat);
-      handleLongitude(placeLatlng.lng);
-    } else {
-      setPlaceLatlng(route.params[2].pressedLocation);
-      handleLatitude(placeLatlng.latitude);
-      handleLongitude(placeLatlng.longitude);
-    }
-  }, [route, placeLatlng.latitude, placeLatlng.longitude, placeLatlng]);
-
-  useEffect(() => {
+    setPlaceLatlng(route.params[2].pressedLocation);
+    handleLatitude(placeLatlng.latitude);
+    handleLongitude(placeLatlng.longitude);
+    handlePk(user_idx);
     setImage(route.params.source);
     setSelectedEmoji(route.params.selectedEmoji);
-    console.log(placeLatlng);
   }, [
     route,
     placeLatlng.latitude,
     placeLatlng.longitude,
+    user_idx,
     image,
     selectedEmoji,
-    placeLatlng,
   ]);
-
   ////////////////////
 
   const [pk, setPk] = useState("");
@@ -102,22 +92,29 @@ export const WriteScreen = ({ navigation, route }) => {
 
   const PostWrite = async () => {
     console.log("Postwrite request sent");
-    const accessToken = await AsyncStorage.getItem("accessToken");
-    await axios(`http://${LOCAL_HOST}:3000/drops`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: {
-        content,
-        latitude,
-        longitude,
-      },
-    })
-      .then((res) => {
-        console.log(`${res.data.data.content} 내용으로 ${res.data.msg}!`);
+    if (checkIfTokenExists) {
+      const accessToken = await AsyncStorage.getItem("accessToken");
+
+      await noAuthInstance.post(`http://${LOCAL_HOST}:3000/drops`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        data: {
+          content,
+          latitude,
+          longitude,
+        },
       })
-      .catch((e) => console.log(e));
+        .then((res) => {
+          console.log('response got', res);
+          console.log(`${res.data.data.content} 내용으로 ${res.data.msg}!`);
+        })
+        .catch((e) => console.log(e));
+
+    } else {
+      alert('유효한 사용자가 아닙니다.');
+    }
+    
   };
 
   return (
@@ -161,9 +158,8 @@ export const WriteScreen = ({ navigation, route }) => {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              console.log(placeLatlng);
               PostWrite();
-              navigation.navigate("MapScreen");
+              // navigation.navigate("MapScreen", drop);
             }}
           >
             <SvgXml
