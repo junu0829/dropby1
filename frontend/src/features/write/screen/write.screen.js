@@ -23,7 +23,7 @@ import sendingButton from "../../../../assets/Buttons/sendingButton";
 import bar from "../../../../assets/Background/bar";
 import addPicture from "../../../../assets/Buttons/addPicture";
 import LockButtonUnlocked from "../../../../assets/Buttons/LockButton(Unlocked)";
-import {noAuth} from "../../../components/utility/interceptors/index.js";
+import noAuthInstance from "../../../components/utility/interceptors/index.js";
 import { container, styles } from "./writescreen.styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LOCAL_HOST from "../../local.js";
