@@ -19,7 +19,7 @@ exports.newPlace = async (req, res, next) => {
 exports.getPlace = async (req, res, next) => {
     try {
         const placePk = req.params.pk;
-        const place = await dropServices.getPlace(placePk);
+        const place = await placeServices.getPlace(placePk);
 
         res.status(200).json({
             msg: '장소 정보 조회 성공',
