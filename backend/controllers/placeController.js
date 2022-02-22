@@ -1,0 +1,31 @@
+const express = require('express');
+const placeServices = require('../services/placeServices');
+const {getAccess} = require('../middlewares/auth');
+
+exports.newPlace = async (req, res, next) => {
+    try {
+        const place = await placeServices.newPlace(req.body);
+        res.status(201).json({
+            msg:'장소 생성 완료',
+            data:place
+        });
+
+    }catch(error) {
+        console.log(error.message);
+        next(error);
+    }
+}
+
+exports.getPlace = async (req, res, next) => {
+    try {
+        const place = await dropServices.getPlace();
+
+        res.status(200).json({
+            msg: '장소 정보 조회 성공',
+            data:place
+        })
+    } catch(error) {
+        next(error);
+    }
+}
+
