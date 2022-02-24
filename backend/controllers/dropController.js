@@ -34,8 +34,6 @@ exports.getDrops = async (req, res, next) => {
 exports.updateDrop = async (req, res, next) => {
     try {
         const dropPk = req.params.pk;
-        console.log(dropPk);
-        console.log(req.user);
         const updatedDrop = await dropServices.updateDrop(req.body, dropPk);
         res.status(200).json({
             msg:'드롭 내용 수정 완료',
