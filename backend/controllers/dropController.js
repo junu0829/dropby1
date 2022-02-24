@@ -3,9 +3,10 @@ const {getAccess} = require('../utils/auth');
 
 exports.newDrop = async (req, res, next) => {
     try {
-        const placeId = req.params.placeId;
+        console.log(req)
+        const placePk = req.params.placePk;
         const accessToken = getAccess(req.headers);
-        const drop = await dropServices.newDrop(accessToken, req.body, placeId);
+        const drop = await dropServices.newDrop(accessToken, req.body, placePk);
         res.status(201).json({
             msg:'드롭 생성 완료',
             data:drop
@@ -19,8 +20,10 @@ exports.newDrop = async (req, res, next) => {
 
 exports.getDrops = async (req, res, next) => {
     try {
-        const placeId = req.params.placeId;
-        const drops = await dropServices.getDrops(placeId);
+        console.log(req);
+        console.log(req.params);
+        const placePk= req.params.placePk;
+        const drops = await dropServices.getDrops(placePk);
         console.log('drops sent');
         res.status(200).json({
             msg: '드롭 조회 완료',

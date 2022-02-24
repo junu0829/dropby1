@@ -18,7 +18,7 @@ exports.newPlace = async (req, res, next) => {
 
 exports.getPlace = async (req, res, next) => {
     try {
-        const placePk = req.params.pk;
+        const placePk = req.params.placePk;
         const place = await placeServices.getPlace(placePk);
 
         res.status(200).json({
