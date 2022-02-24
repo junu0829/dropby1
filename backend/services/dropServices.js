@@ -16,8 +16,12 @@ exports.newDrop = async (accessToken, body, placeId) => {
 };
 
 
-exports.getDrops = async () => {
-  const drops = await Drop.findAll({});
+exports.getDrops = async (placeId) => {
+  const drops = await Drop.findAll({
+    where:{
+      placePk:placeId
+    }
+  });
   return drops;
 };
 
