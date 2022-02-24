@@ -1,6 +1,6 @@
 const express = require('express');
 const placeServices = require('../services/placeServices');
-const {getAccess} = require('../middlewares/auth');
+const {getAccess} = require('../utils/auth');
 
 exports.newPlace = async (req, res, next) => {
     try {

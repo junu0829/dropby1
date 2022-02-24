@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const dropServices = require('../services/dropServices');
-const {getAccess} = require('../middlewares/auth');
+const {getAccess} = require('../utils/auth');
 
 exports.newDrop = async (req, res, next) => {
     try {
