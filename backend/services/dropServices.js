@@ -1,7 +1,7 @@
 const { Drop } = require("../models");
 
 
-const { getUserWithAccess } = require("../middlewares/auth");
+const { getUserWithAccess } = require("../utils/auth");
 
 
 exports.newDrop = async (accessToken, body) => {
