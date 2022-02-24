@@ -12,14 +12,6 @@ const Drop = sequelize.define("Drop", {
                     type:DataTypes.TEXT,
                     allowNull:false,
                 },
-                latitude: {
-                    type:DataTypes.FLOAT,
-                    allowNull:false,
-                },
-                longitude:{
-                    type:DataTypes.FLOAT,
-                    allowNull:false,
-                },
                 createdAt:{
                     type:DataTypes.DATE,
                     defaultValue: DataTypes.NOW

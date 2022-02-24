@@ -4,6 +4,7 @@ const db = {};
 
 db.Drop = require('./drop');
 db.User = require('./user');
+db.Place = require('./place');
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
@@ -24,4 +25,20 @@ db.Drop.belongsTo(db.User, {
     onDelete:'CASCADE'
 });
 
+// 한 장소에는 여러 개의 드롭이 존재할 수 있음
+db.Place.hasMany(db.Drop, {
+    foreignKey:{
+        name:'placePk',
+        allowNull:false
+    },
+    onDelete:'CASCADE'
+});
+
+db.Drop.belongsTo(db.Place, {
+    foreignKey:{
+        name:'placePk',
+        allowNull:false
+    },
+    
+})
 module.exports = db;

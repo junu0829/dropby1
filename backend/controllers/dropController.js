@@ -1,12 +1,12 @@
-const express = require('express');
-const router = express.Router();
 const dropServices = require('../services/dropServices');
-const {getAccess} = require('../middlewares/auth');
+const {getAccess} = require('../utils/auth');
 
 exports.newDrop = async (req, res, next) => {
     try {
+        console.log(req)
+        const placePk = req.params.placePk;
         const accessToken = getAccess(req.headers);
-        const drop = await dropServices.newDrop(accessToken, req.body);
+        const drop = await dropServices.newDrop(accessToken, req.body, placePk);
         res.status(201).json({
             msg:'드롭 생성 완료',
             data:drop
@@ -20,10 +20,13 @@ exports.newDrop = async (req, res, next) => {
 
 exports.getDrops = async (req, res, next) => {
     try {
-        const drops = await dropServices.getDrops();
+        console.log(req);
+        console.log(req.params);
+        const placePk= req.params.placePk;
+        const drops = await dropServices.getDrops(placePk);
         console.log('drops sent');
         res.status(200).json({
-            msg: '전체 드롭 조회 완료',
+            msg: '드롭 조회 완료',
             data:drops
         })
     } catch(error) {
@@ -34,8 +37,6 @@ exports.getDrops = async (req, res, next) => {
 exports.updateDrop = async (req, res, next) => {
     try {
         const dropPk = req.params.pk;
-        console.log(dropPk);
-        console.log(req.user);
         const updatedDrop = await dropServices.updateDrop(req.body, dropPk);
         res.status(200).json({
             msg:'드롭 내용 수정 완료',
