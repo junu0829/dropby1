@@ -6,6 +6,6 @@ const jwtpassportAuth = passport.authenticate('jwtAccess', {session:false});
 
 router.post('/', jwtpassportAuth, controller.newDrop);
 router.get('/', jwtpassportAuth, controller.getDrops);
-router.put('/:pk', jwtpassportAuth, controller.updateDrop);
-router.delete('/:pk', jwtpassportAuth, controller.deleteDrop);
+router.put('/:dropPk', jwtpassportAuth, controller.updateDrop);
+router.delete('/:dropPk', jwtpassportAuth, controller.deleteDrop);
 module.exports = router;
