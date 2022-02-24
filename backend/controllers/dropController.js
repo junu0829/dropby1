@@ -5,8 +5,9 @@ const {getAccess} = require('../utils/auth');
 
 exports.newDrop = async (req, res, next) => {
     try {
+        const placeId = req.params.placeId;
         const accessToken = getAccess(req.headers);
-        const drop = await dropServices.newDrop(accessToken, req.body);
+        const drop = await dropServices.newDrop(accessToken, req.body, placeId);
         res.status(201).json({
             msg:'드롭 생성 완료',
             data:drop
