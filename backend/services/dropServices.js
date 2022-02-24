@@ -1,27 +1,27 @@
 const { Drop } = require("../models");
+const { getUserWithAccess } = require("../utils/auth");
 
 
-const { getUserWithAccess } = require("../middlewares/auth");
-
-
-exports.newDrop = async (accessToken, body) => {
+exports.newDrop = async (accessToken, body, placePk) => {
   const user = await getUserWithAccess(accessToken);
-  const { content, latitude, longitude } = body;
-
+  const content = body.content;
 
   const drop = await Drop.create({
     content,
-    latitude,
-    longitude,
     createdAt: Date(),
     creatorPk: user.pk,
+    placePk
   });
   return drop;
 };
 
 
-exports.getDrops = async () => {
-  const drops = await Drop.findAll({});
+exports.getDrops = async (placePk) => {
+  const drops = await Drop.findAll({
+    where:{
+      placePk
+    }
+  });
   return drops;
 };
 

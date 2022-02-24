@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const {User} = require('../models');
 require('dotenv').config();
-const {signAccess, signRefresh, verifyAccess, verifyRefresh, getUserWithRefresh} = require('../middlewares/auth');
+const {signAccess, signRefresh, verifyAccess, verifyRefresh, getUserWithRefresh} = require('../utils/auth');
 
 exports.signUp = async ({nickname, email, password}) => {
     let context = {'user':null, 'msg':''};

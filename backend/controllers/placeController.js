@@ -1,6 +1,6 @@
 const express = require('express');
 const placeServices = require('../services/placeServices');
-const {getAccess} = require('../middlewares/auth');
+const {getAccess} = require('../utils/auth');
 
 exports.newPlace = async (req, res, next) => {
     try {
@@ -18,7 +18,7 @@ exports.newPlace = async (req, res, next) => {
 
 exports.getPlace = async (req, res, next) => {
     try {
-        const placePk = req.params.pk;
+        const placePk = req.params.placePk;
         const place = await placeServices.getPlace(placePk);
 
         res.status(200).json({
