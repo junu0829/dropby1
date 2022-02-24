@@ -2,7 +2,7 @@ const { Drop } = require("../models");
 const { getUserWithAccess } = require("../utils/auth");
 
 
-exports.newDrop = async (accessToken, body, placeId) => {
+exports.newDrop = async (accessToken, body, placePk) => {
   const user = await getUserWithAccess(accessToken);
   const content = body.content;
 
@@ -10,16 +10,16 @@ exports.newDrop = async (accessToken, body, placeId) => {
     content,
     createdAt: Date(),
     creatorPk: user.pk,
-    placePk:placeId
+    placePk
   });
   return drop;
 };
 
 
-exports.getDrops = async (placeId) => {
+exports.getDrops = async (placePk) => {
   const drops = await Drop.findAll({
     where:{
-      placePk:placeId
+      placePk
     }
   });
   return drops;
