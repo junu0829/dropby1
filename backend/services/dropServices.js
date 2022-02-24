@@ -2,16 +2,15 @@ const { Drop } = require("../models");
 const { getUserWithAccess } = require("../utils/auth");
 
 
-exports.newDrop = async (accessToken, body) => {
+exports.newDrop = async (accessToken, body, placeId) => {
   const user = await getUserWithAccess(accessToken);
   const content = body.content;
 
   const drop = await Drop.create({
     content,
-    latitude,
-    longitude,
     createdAt: Date(),
     creatorPk: user.pk,
+    placePk:placeId
   });
   return drop;
 };
