@@ -23,7 +23,7 @@ exports.getDrops = async (req, res, next) => {
         const drops = await dropServices.getDrops(placeId);
         console.log('drops sent');
         res.status(200).json({
-            msg: '전체 드롭 조회 완료',
+            msg: '드롭 조회 완료',
             data:drops
         })
     } catch(error) {
