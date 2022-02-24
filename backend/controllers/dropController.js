@@ -1,5 +1,3 @@
-const express = require('express');
-const router = express.Router();
 const dropServices = require('../services/dropServices');
 const {getAccess} = require('../utils/auth');
 
@@ -21,7 +19,8 @@ exports.newDrop = async (req, res, next) => {
 
 exports.getDrops = async (req, res, next) => {
     try {
-        const drops = await dropServices.getDrops();
+        const placeId = req.params.placeId;
+        const drops = await dropServices.getDrops(placeId);
         console.log('drops sent');
         res.status(200).json({
             msg: '전체 드롭 조회 완료',
