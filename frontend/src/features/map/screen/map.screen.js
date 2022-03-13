@@ -426,7 +426,7 @@ export const MapScreen = ({ navigation, route }) => {
           <ClusteredMap
             onPress={(event) => {
               setDefinedLocation(event.nativeEvent.coordinate);
-
+console.log(event.nativeEvent.coordinate);
               setMarkers([]);
             }}
             onLongPress={(event) => {
