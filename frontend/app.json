@@ -30,7 +30,7 @@
     "android": {
       "package": "com.dropby1.jun",
       "versionCode": 1,
-
+      "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#FFFFFF"

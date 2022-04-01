@@ -63,17 +63,17 @@ export const SignUpScreen = ({ navigation }) => {
         <FadeInView>
           <View style={styles.container2}>
             <TouchableOpacity
-              style={{ right: 140, top: 40 }}
+              style={{ right: 140, bottom: 50 }}
               onPress={() => navigation.navigate("SignIn")}
             >
               <SvgXml xml={backButtonWhite} width={20} height={20} />
             </TouchableOpacity>
-            <Text style={styles.CatchPhrase}>간단하게 정보를 입력해주세요</Text>
           </View>
 
           <View style={styles.container3}>
             <ImageBackground
               source={SignUpCloud}
+              resizeMode="stretch"
               style={{
                 width: "100%",
                 height: "100%",
@@ -81,6 +81,9 @@ export const SignUpScreen = ({ navigation }) => {
                 alignItems: "center",
               }}
             >
+              <Text style={styles.CatchPhrase}>
+                간단하게 정보를 입력해주세요
+              </Text>
               <View style={styles.inputBoxStyle}>
                 <TextInput
                   style={styles.inputStyle}
@@ -99,11 +102,9 @@ export const SignUpScreen = ({ navigation }) => {
                   value={null}
                 ></TextInput>
               </View>
-
               <View style={styles.space}>
                 <Text style={styles.authButton}>이메일 인증하기</Text>
               </View>
-
               <View style={styles.inputBoxStyle2}>
                 <TextInput
                   style={styles.inputStyle}
@@ -113,10 +114,9 @@ export const SignUpScreen = ({ navigation }) => {
                   value={null}
                 ></TextInput>
               </View>
-
               <View
                 style={{
-                  top: 20,
+                  marginTop: 40,
                   width: 220,
                   height: 30,
                   flexDirection: "row",
@@ -137,20 +137,21 @@ export const SignUpScreen = ({ navigation }) => {
                 >
                   <Text
                     style={{
-                      color: "#808080",
+                      color: "#D0D0D0",
                       fontSize: 12,
                       width: 130,
                       left: 20,
                       opacity: 0.7,
                       fontWeight: "700",
                       marginTop: 10,
+                      zIndex: 999,
                     }}
                   >
                     Dropby의 이용약관과
                   </Text>
                   <Text
                     style={{
-                      color: "#808080",
+                      color: "#D0D0D0",
                       fontSize: 12,
                       width: 200,
 
@@ -193,11 +194,10 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     opacity: 0.78,
     fontSize: 14,
-    top: 100,
 
     justifyContent: "center",
 
-    marginTop: 80,
+    marginTop: 70,
   },
   container6: {
     flex: 5,
@@ -215,6 +215,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     alignItems: "center",
     zIndex: 999,
+    marginTop: 5,
   },
   container3: {
     flex: 12,
@@ -244,10 +245,11 @@ const styles = StyleSheet.create({
   },
   inputBoxStyle: {
     backgroundColor: "#F8F5F5",
-    width: 300,
-    height: 38,
+    justifyContent: "center",
+    width: 290,
+    height: 34,
     opacity: 1,
-    marginTop: 120,
+    marginTop: 20,
     borderRadius: 20,
     borderColor: theme.colors.bg.b,
     borderWidth: 0.5,
@@ -255,8 +257,9 @@ const styles = StyleSheet.create({
   },
   inputBoxStyle2: {
     backgroundColor: "#F8F5F5",
-    width: 300,
-    height: 38,
+    justifyContent: "center",
+    width: 290,
+    height: 34,
     opacity: 1,
     borderColor: theme.colors.bg.b,
     borderWidth: 0.5,
@@ -271,9 +274,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   inputStyle: {
-    fontSize: 16,
+    fontSize: 14,
     left: 50,
-    top: 4,
+
     fontFamily: theme.fonts.body,
   },
 });

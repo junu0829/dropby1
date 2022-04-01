@@ -217,6 +217,7 @@ export const MapScreen = ({ navigation, route }) => {
     return (
       <>
         <ClusteredMap
+         
           onPress={Keyboard.dismiss}
           onLongPress={(event) => {
             if (!newPlaceSelectionMode) {
