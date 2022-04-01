@@ -40,6 +40,7 @@ export const DropPreview = ({
   const [marginT, setMarginT] = useState(0);
   const dropTimeShown = dropTime.substring(5, 10);
   useEffect(() => {
+    setPlaceName;
     setPlaceName(pressedAddressName);
   }, [placeName, pressedAddressName]);
 

@@ -106,11 +106,14 @@ export const MapScreen = ({ navigation, route }) => {
   };
 
   const [writeMode, setWriteMode] = useState(false);
-  const [pressedLocation, setPressedLocation] = useState({});
+  const [pressedLocation, setPressedLocation] = useState({
+    latitude: 0,
+    longitude: 0,
+  });
   const [Markers, setMarkers] = useState([
     {
-      latitude: location[0],
-      longitude: location[1],
+      latitude: Number(location[0]),
+      longitude: Number(location[1]),
     },
   ]);
 
@@ -172,11 +175,17 @@ export const MapScreen = ({ navigation, route }) => {
     },
   ]);
 
-  const [definedLocation, setDefinedLocation] = useState({});
-  const [calibratedLocation, setCalibratedLocation] = useState({});
-  const [definedAddressID, setDefinedAddressID] = useState(null);
-  const [pressedAddressID, setPressedAddressID] = useState(null);
-  const [pressedAddress, setPressedAddress] = useState(null);
+  const [definedLocation, setDefinedLocation] = useState({
+    latitude: 0,
+    longitude: 0,
+  });
+  const [calibratedLocation, setCalibratedLocation] = useState({
+    latitude: 0,
+    longitude: 0,
+  });
+  const [definedAddressID, setDefinedAddressID] = useState("");
+  const [pressedAddressID, setPressedAddressID] = useState("");
+  const [pressedAddress, setPressedAddress] = useState("");
   const [pressedAddressName, setPressedAddressName] = useState("새로운 장소");
   const [newPlaceSelectionMode, setNewPlaceSelectioMode] = useState(false);
 
@@ -208,6 +217,7 @@ export const MapScreen = ({ navigation, route }) => {
     return (
       <>
         <ClusteredMap
+         
           onPress={Keyboard.dismiss}
           onLongPress={(event) => {
             if (!newPlaceSelectionMode) {
@@ -242,8 +252,8 @@ export const MapScreen = ({ navigation, route }) => {
                 style={{ opacity: 0.85 }}
                 key={drop.pk}
                 coordinate={{
-                  latitude: drop.latitude,
-                  longitude: drop.longitude,
+                  latitude: drop && Number(drop.latitude),
+                  longitude: drop && Number(drop.longitude),
                 }}
                 onPress={() => {
                   showModal();

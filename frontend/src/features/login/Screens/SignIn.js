@@ -125,7 +125,7 @@ export const SignInScreen = ({ navigation }) => {
           </View>
 
           <TouchableOpacity
-            style={{ marginTop: 50 }}
+            style={{ marginTop: 40 }}
             onPress={() => {
               signIn();
               navigation.navigate("MapScreen");
@@ -135,14 +135,14 @@ export const SignInScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
         <View style={styles.container4}>
-          <TouchableOpacity style={{ marginTop: -15, right: 15 }}>
-            <SvgXml xml={googleLogin} width={50} height={50} />
+          <TouchableOpacity style={{ marginTop: 55, right: 15 }}>
+            <SvgXml xml={googleLogin} width={45} height={45} />
           </TouchableOpacity>
           <TouchableOpacity
-            style={{ marginTop: -15, left: 15 }}
+            style={{ marginTop: 55, left: 15 }}
             onPress={() => Alert.alert("준비중입니다")}
           >
-            <SvgXml xml={kakaoLogin} width={50} height={50} />
+            <SvgXml xml={kakaoLogin} width={45} height={45} />
           </TouchableOpacity>
         </View>
         <View style={styles.container5}>
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   container4: {
-    flex: 1,
+    flex: 2,
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
@@ -208,6 +208,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 20,
     padding: 5,
+    justifyContent: "center",
   },
   inputBox2: {
     backgroundColor: theme.colors.bg.white,
@@ -219,11 +220,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderRadius: 20,
     padding: 5,
+    justifyContent: "center",
   },
   input: {
-    fontSize: 16,
+    fontSize: 14,
     left: 50,
-    top: 4,
+
     fontFamily: theme.fonts.body,
   },
 });
